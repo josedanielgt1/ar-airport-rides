@@ -4,8 +4,8 @@ import { t, onLangChange } from './i18n/index.js';
 
 gsap.registerPlugin(SplitText);
 
-const VIDEO_SRC = '/media/hero.mp4';
-const STILL_POSTER = '/media/hero-last.jpg';
+const VIDEO_SRC = `${import.meta.env.BASE_URL}media/hero.mp4`;
+const STILL_POSTER = `${import.meta.env.BASE_URL}media/hero-last.jpg`;
 
 // Tiempos en segundos del video (el clip dura ~5,2 s).
 const LINE_AT = 2.0; // primera línea del titular
