@@ -1,0 +1,65 @@
+/* Tokens: ver design-system/ar-airport-rides/MASTER.md */
+
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant-garamond-latin.woff2') format('woff2');
+  font-weight: 300 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('/fonts/manrope-latin.woff2') format('woff2');
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308,
+    U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: dark;
+
+  /* Color */
+  --c-night: #000000;
+  --c-asphalt: #15130f;
+  --c-gold: #c9a24b;
+  --c-beam: #ebcb82;
+  --c-cream: #f3ebdd;
+  --c-mist: #9c9384;
+
+  /* Tipografía */
+  --ff-display: 'Cormorant Garamond', 'Cormorant', Garamond, 'Times New Roman', serif;
+  --ff-text: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.333rem;
+  --fs-lg: 1.777rem;
+  --fs-xl: 2.369rem;
+  --fs-2xl: 3.157rem;
+  --fs-hero: clamp(2.75rem, min(1.9rem + 3.6vw, 8svh), 5rem);
+
+  /* Espacio */
+  --s-1: 0.5rem;
+  --s-2: 1rem;
+  --s-3: 1.5rem;
+  --s-4: 2rem;
+  --s-5: 3rem;
+  --s-6: 4rem;
+  --s-7: 6rem;
+  --s-8: 9rem;
+  --gutter: clamp(1.25rem, 5vw, 6rem);
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --t-fast: 180ms;
+
+  /* Capas */
+  --z-grain: 40;
+  --z-header: 50;
+  --z-fab: 60;
+}

@@ -5,8 +5,8 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 ## Marca
 - Nombre: **AR Airport Rides** ("Reliable & Punctual Transfers").
 - Estilo: lujo sobrio, negro y dorado, mucho espacio, tipografía elegante. Menos es más.
-- Colores base (ajustables): fondo `#0A0A0A`, dorado champagne `#C9A24B`, texto crema `#F3EBDD`.
-- Tipografías: serif fina para títulos (Cormorant Garamond o Playfair Display) + sans limpia para texto (Inter o Manrope).
+- Colores base: fondo `#000` en toda la página (bordes del video medidos: `#000` exacto), dorado champagne `#C9A24B`, texto crema `#F3EBDD`. Tokens completos en `design-system/ar-airport-rides/MASTER.md`.
+- Tipografías: Cormorant Garamond 400/500 para títulos (nunca 300 en móvil) + Manrope 400/600 para texto. Alojadas en `public/fonts/` (woff2, latin, `font-display: swap`); solo se precarga la de títulos.
 - Logo: monograma "AR" con flecha de avión (viene de la tarjeta). Hasta tener el SVG, usar wordmark de texto. El emblema del ancla es secundario u opcional.
 - Nunca mencionar Uber, Lyft ni usar sus marcas.
 - No afirmar "licensed", "insured", "permitted" ni similares salvo que el cliente lo confirme. Licencias, seguro y permisos son responsabilidad del cliente.
@@ -41,7 +41,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 
 ## Estructura de la página (una sola página, scroll cinematográfico)
 1. **Hero:** video de fondo + título + botón fijo "Reserve on WhatsApp".
-2. **Servicios:** tarjetas con animación al hacer scroll.
+2. **Servicios:** lista (no tarjetas) que se "enciende" al pasar el barrido de luz de la transición "carretera de noche". Un solo revelado de grupo, sin hover por fila.
 3. **Área de servicio:** mapa de Texas/Austin estilizado en dorado con las ciudades, o lista limpia. Sin mapas pesados.
 4. **Vehículo:** fotos + qué incluye. Solo incluir amenidades que el cliente confirme (agua, cargador, wifi, etc.).
 5. **Por qué elegirnos:** 3 o 4 puntos cortos (puntualidad, privacidad, trato, experiencia).
@@ -75,11 +75,12 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 
 ## Video y medios
 - Carpeta: `public/media/`.
-- `hero.mp4` (H.264) y `hero.webm`, sin audio. Objetivo: ≤ 3 MB en móvil.
-- `poster.jpg` = **primer frame del video** (evita el salto al cargar) y `hero-last.jpg` = último frame.
-- `vehicle-front.jpg` y `vehicle-side.jpg` son los frames usados para generar el clip.
-- El clip es un arco de cámara de frente a perfil (camioneta quieta, con lluvia). **No usar `loop`**: se vería el salto. Reproducir una vez y dejar el último frame. Aplicar `prefers-reduced-motion` y modo ahorro de datos (`navigator.connection.saveData`): en esos casos mostrar solo el poster.
-- Etiqueta: `<video autoplay muted playsinline preload="auto" poster="/media/poster.jpg">` con fuentes `webm` primero y `mp4` después.
+- Solo `hero.mp4` (H.264, 4:3), sin audio. Objetivo: ≤ 3 MB en móvil. Sin webm (pesaba más que el mp4).
+- `poster.jpg` = **primer frame del video** (solo se ve mientras carga) y `hero-last.jpg` = último frame.
+- `vehicle-front.jpg` y `vehicle-side.jpg` no están en el repo. En la sección Vehículo usar `hero-last.jpg` como marcador con `TODO(cliente)` hasta tener fotos reales.
+- El clip es un arco de cámara de frente a perfil (camioneta quieta, con lluvia) que termina sobre negro puro: el hero usa fondo `#000`. **No usar `loop`**: se vería el salto. Reproducir una vez y dejar el último frame. Con `prefers-reduced-motion` o modo ahorro de datos (`navigator.connection.saveData`) no cargar el video: mostrar `hero-last.jpg` con título y CTA visibles.
+- Título y CTA aparecen en `ended`, a los 4.5 s, si `play()` falla o si hay error (lo que ocurra primero). Sin JS, todo visible.
+- Etiqueta: `<video muted playsinline poster="/media/poster.jpg">`; la fuente `mp4` y el autoplay los agrega JS solo si procede.
 - Un solo video en toda la página. El resto, animaciones ligeras con CSS/GSAP.
 
 ## Rendimiento y calidad

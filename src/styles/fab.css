@@ -1,0 +1,74 @@
+/* Botón fijo de WhatsApp: visible desde t=0 en toda la página. */
+.wa-fab {
+  position: fixed;
+  z-index: var(--z-fab);
+  left: 50%;
+  bottom: calc(var(--s-3) + env(safe-area-inset-bottom));
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 52px;
+  padding: 0 1.5rem 0 1.25rem;
+  border-radius: 999px;
+  background: var(--c-gold);
+  color: var(--c-night);
+  font-weight: 600;
+  font-size: var(--fs-base);
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    background-color var(--t-fast) ease,
+    box-shadow 240ms var(--ease-out),
+    opacity 240ms ease,
+    translate 240ms var(--ease-out);
+}
+
+.wa-fab__icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+
+/* Brillo dorado al pasar o enfocar. */
+@media (hover: hover) {
+  .wa-fab:hover {
+    background: var(--c-beam);
+    box-shadow: 0 0 0 1px rgb(235 203 130 / 0.6), 0 0 36px -4px rgb(235 203 130 / 0.55);
+  }
+}
+
+.wa-fab:focus-visible {
+  outline-color: var(--c-cream);
+  box-shadow: 0 0 0 1px rgb(235 203 130 / 0.6), 0 0 36px -4px rgb(235 203 130 / 0.55);
+}
+
+.wa-fab:active {
+  background: var(--c-beam);
+}
+
+/* Se aparta cuando hay una zona marcada con data-fab-avoid en pantalla (p. ej. enviar del formulario). */
+.wa-fab.is-away {
+  opacity: 0;
+  translate: -50% 120%;
+  pointer-events: none;
+}
+
+@media (min-width: 64rem) {
+  .wa-fab {
+    left: auto;
+    right: var(--gutter);
+    bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
+    translate: 0 0;
+  }
+
+  .wa-fab.is-away {
+    translate: 0 120%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-fab {
+    transition: none;
+  }
+}

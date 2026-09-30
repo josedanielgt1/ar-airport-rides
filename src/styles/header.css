@@ -1,0 +1,78 @@
+.site-header {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: var(--z-header);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(var(--s-2), env(safe-area-inset-top)) var(--gutter) var(--s-2);
+  /* Sombra suave para que marca e idioma se lean aunque el video tenga luces detrás. */
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent);
+}
+
+.brand {
+  display: inline-flex;
+  gap: 0.6rem;
+  min-height: 44px;
+  align-items: center;
+  text-decoration: none;
+}
+
+.brand__mark {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: 1.75rem;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  color: var(--c-gold);
+}
+
+.brand__name {
+  font-size: var(--fs-sm);
+  letter-spacing: 0.02em;
+  color: var(--c-cream);
+}
+
+.lang {
+  display: flex;
+  align-items: center;
+}
+
+.lang__btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  border: 0;
+  background: none;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  color: var(--c-mist);
+  cursor: pointer;
+  transition: color var(--t-fast) ease;
+}
+
+.lang__btn[aria-pressed='true'] {
+  color: var(--c-cream);
+  text-decoration: underline;
+  text-decoration-color: var(--c-gold);
+  text-underline-offset: 0.45em;
+  text-decoration-thickness: 1px;
+}
+
+@media (hover: hover) {
+  .lang__btn:hover {
+    color: var(--c-cream);
+  }
+}
+
+.lang__sep {
+  width: 1px;
+  height: 0.9rem;
+  background: var(--c-mist);
+  opacity: 0.5;
+}
+
+/* Sin JS el selector no puede cambiar el idioma: se oculta. */
+html:not(.js) .lang {
+  display: none;
+}

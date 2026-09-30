@@ -1,0 +1,115 @@
+/*
+  Geometría del hero. El video es 4:3 y la camioneta ocupa aprox. del 25 % al 71 % de su alto;
+  a mitad del clip hay reflejos en el piso mojado, así que la máscara inferior los apaga desde el 70 %
+  y el titular empieza en el 76 % (--copy-at), sobre esa zona ya oscura.
+  --hh  alto del hero        --mh / --mw  alto / ancho del video
+  --mt  top del video        --copy-h     alto reservado para titular + subtítulo
+*/
+.hero {
+  --hh: max(100svh, 38rem);
+  --copy-at: 0.76;
+  --copy-h: calc(var(--fs-hero) * 3.3 + 4.75rem);
+  --fab-space: calc(5.5rem + env(safe-area-inset-bottom));
+  --mw: 100vw;
+  --mh: calc(var(--mw) * 0.75);
+  --mt: max(3.5rem, calc((var(--hh) - var(--fab-space) - var(--mh) * var(--copy-at) - var(--copy-h)) / 2));
+
+  position: relative;
+  height: var(--hh);
+  overflow: hidden;
+  background: var(--c-night);
+}
+
+.hero__media {
+  position: absolute;
+  top: var(--mt);
+  right: 0;
+  width: var(--mw);
+  aspect-ratio: 4 / 3;
+  /* Bordes que se funden con el negro: dos degradados intersectados. */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 92%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent),
+    linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 92%);
+  mask-composite: intersect;
+}
+
+.hero__video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--c-night);
+}
+
+.hero__copy {
+  position: absolute;
+  top: calc(var(--mt) + var(--mh) * var(--copy-at));
+  left: var(--gutter);
+  right: var(--gutter);
+  max-width: 40rem;
+}
+
+.hero__title {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-hero);
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--c-cream);
+}
+
+/* Máscara de SplitText: un poco de aire para no cortar descendentes (y, g). */
+.hero__line-mask {
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.hero__sub {
+  margin-top: var(--s-3);
+  max-width: 30ch;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--c-mist);
+}
+
+/* Con movimiento: el texto espera al video. Respaldo por si el JS no llega: visible a los 6 s. */
+.motion .hero__title,
+.motion .hero__sub {
+  visibility: hidden;
+  animation: hero-failsafe 0s linear 6s forwards;
+}
+
+@keyframes hero-failsafe {
+  to {
+    visibility: visible;
+  }
+}
+
+@media (min-width: 64rem) {
+  .hero {
+    --fab-space: 0px;
+    --mh: min(51vw, calc((var(--hh) - var(--copy-h) - 3rem) / var(--copy-at)));
+    --mw: calc(var(--mh) * 4 / 3);
+    --mt: max(0px, calc(var(--hh) - 3rem - var(--copy-h) - var(--mh) * var(--copy-at)));
+  }
+
+  .hero__title {
+    font-weight: 400;
+  }
+
+  .hero__sub {
+    font-size: var(--fs-md);
+  }
+}
+
+/* Sin JS, Chrome/Safari fuerzan controles nativos en el video: el hero es decorativo, se ocultan. */
+.hero__video::-webkit-media-controls,
+.hero__video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+/* Sin JS se ve poster.jpg (vista frontal, llega más abajo que el perfil final): el texto baja un poco. */
+html:not(.js) .hero {
+  --copy-at: 0.84;
+}
