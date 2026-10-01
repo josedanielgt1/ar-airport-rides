@@ -19,13 +19,13 @@
 /* ---------- Vehículo ---------- */
 
 .vehicle {
-  padding: var(--s-7) var(--gutter);
+  padding: var(--s-6) var(--gutter);
 }
 
 .vehicle__inner {
   display: grid;
   row-gap: var(--s-4);
-  max-width: 82rem;
+  max-width: var(--content-max);
   margin-inline: auto;
 }
 
@@ -63,11 +63,11 @@
 /* ---------- Por qué elegirnos ---------- */
 
 .why {
-  padding: var(--s-7) var(--gutter);
+  padding: var(--s-6) var(--gutter);
 }
 
 .why__inner {
-  max-width: 82rem;
+  max-width: var(--content-max);
   margin-inline: auto;
 }
 
@@ -97,8 +97,12 @@
 .reserve__inner {
   display: grid;
   row-gap: var(--s-5);
-  max-width: 82rem;
+  max-width: var(--content-max);
   margin-inline: auto;
+}
+
+.form {
+  max-width: 46rem;
 }
 
 .form__grid {
@@ -235,7 +239,7 @@
 .site-footer__inner {
   display: grid;
   gap: var(--s-4);
-  max-width: 82rem;
+  max-width: var(--content-max);
   margin-inline: auto;
 }
 
@@ -298,6 +302,11 @@
 }
 
 @media (min-width: 64rem) {
+  .vehicle,
+  .why {
+    padding-block: var(--s-7);
+  }
+
   .section-title {
     font-size: var(--fs-2xl);
   }

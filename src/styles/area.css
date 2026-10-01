@@ -15,7 +15,7 @@
     'map'
     'lists';
   row-gap: var(--s-5);
-  max-width: 82rem;
+  max-width: var(--content-max);
   margin-inline: auto;
 }
 
@@ -111,6 +111,11 @@
 .city__halo {
   fill: var(--c-gold);
   opacity: 0.16;
+}
+
+/* Halo solo en Austin y en AUS: el resto de las ciudades, punto limpio. */
+.city:not(.city--major, .city--airport) .city__halo {
+  display: none;
 }
 
 .city--major .city__label {

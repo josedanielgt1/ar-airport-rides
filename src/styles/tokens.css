@@ -54,6 +54,8 @@
   --s-7: 6rem;
   --s-8: 9rem;
   --gutter: clamp(1.25rem, 5vw, 6rem);
+  /* Contenedor de secciones: amplio para que su borde coincida con el margen del header y el hero. */
+  --content-max: 110rem;
 
   /* Movimiento */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);

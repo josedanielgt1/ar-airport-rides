@@ -55,7 +55,7 @@
 
 .road__inner {
   position: relative;
-  max-width: 82rem;
+  max-width: var(--content-max);
   margin-inline: auto;
 }
 

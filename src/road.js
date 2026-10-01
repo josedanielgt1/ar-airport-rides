@@ -100,11 +100,9 @@ function initRain(scene, state) {
       d.x += d.speed * SLANT * dt;
       if (d.y - d.len > h) Object.assign(d, makeDrop(-rand(0, 40)));
 
-      // Cerca del haz la gota se vuelve dorada y más visible.
+      // Cerca del haz la gota se ve un poco más (sin cambiar de color: un adorno menos).
       const near = Math.max(0, 1 - Math.abs(d.x - state.beamX) / r);
-      const a = d.alpha + near * 0.35;
-      ctx.strokeStyle =
-        near > 0.05 ? `rgba(235, 203, 130, ${a.toFixed(3)})` : `rgba(243, 235, 221, ${a.toFixed(3)})`;
+      ctx.strokeStyle = `rgba(243, 235, 221, ${(d.alpha + near * 0.25).toFixed(3)})`;
       ctx.beginPath();
       ctx.moveTo(d.x, d.y);
       ctx.lineTo(d.x - d.len * SLANT, d.y - d.len);
