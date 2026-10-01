@@ -1,0 +1,262 @@
+/*
+  Área de servicio. Estado por defecto (sin JS, reduced-motion, saveData): todo encendido.
+  .is-armed (JS con movimiento): carreteras tenues + copias doradas que se trazan; ciudades apagadas
+  hasta recibir .is-lit.
+*/
+.area {
+  padding: var(--s-7) var(--gutter) var(--s-8);
+  background: var(--c-night);
+}
+
+.area__inner {
+  display: grid;
+  grid-template-areas:
+    'head'
+    'map'
+    'lists';
+  row-gap: var(--s-5);
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.area__head {
+  grid-area: head;
+}
+
+.area__title {
+  max-width: 18ch;
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-xl);
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  color: var(--c-cream);
+}
+
+.area__sub {
+  margin-top: var(--s-2);
+  max-width: 32ch;
+  color: var(--c-mist);
+}
+
+/* ---------- Diagrama ---------- */
+
+.area__map {
+  grid-area: map;
+  margin: 0;
+  width: 100%;
+  max-width: 28rem;
+  justify-self: center;
+}
+
+.map {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 400 / 560;
+  overflow: visible;
+}
+
+.map__road {
+  fill: none;
+  stroke: var(--c-gold);
+  stroke-opacity: 0.55;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map__road--main {
+  stroke-width: 2;
+  stroke-opacity: 0.75;
+}
+
+.map__label {
+  font-family: var(--ff-text);
+  font-size: 14px;
+  fill: var(--c-cream);
+  /* Halo negro: las etiquetas se leen aunque crucen una carretera. */
+  paint-order: stroke;
+  stroke: var(--c-night);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+
+.map__road-label {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  fill: var(--c-mist);
+}
+
+.city__dot {
+  fill: var(--c-gold);
+  stroke: var(--c-gold);
+  stroke-width: 1.25;
+}
+
+.city__dot--airport {
+  fill: var(--c-night);
+}
+
+.city__plane {
+  color: var(--c-gold);
+}
+
+.city__halo {
+  fill: var(--c-gold);
+  opacity: 0.16;
+}
+
+.city--major .city__label {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: 22px;
+}
+
+.far__arrow {
+  fill: none;
+  stroke: var(--c-gold);
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 3 4;
+}
+
+.far__arrow,
+.far__label {
+  opacity: 0.85;
+}
+
+.far__label {
+  font-size: 12.5px;
+  fill: var(--c-mist);
+}
+
+.area__note {
+  margin-top: var(--s-2);
+  font-size: var(--fs-sm);
+  color: var(--c-mist);
+  text-align: center;
+}
+
+/* ---------- Listas en texto ---------- */
+
+.area__lists {
+  grid-area: lists;
+}
+
+.area__cities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.area__city {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: 1.375rem;
+  color: var(--c-cream);
+}
+
+.area__dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--c-gold);
+}
+
+.area__far {
+  margin-top: var(--s-4);
+}
+
+.area__far-title {
+  color: var(--c-mist);
+}
+
+.area__far-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  margin: var(--s-1) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--c-cream);
+}
+
+.area__airports {
+  color: var(--c-mist);
+}
+
+/* ---------- Encendido (solo con movimiento) ---------- */
+
+.area.is-armed .map__road {
+  stroke: var(--c-mist);
+  stroke-opacity: 0.22;
+}
+
+.area.is-armed .map__road--lit {
+  stroke: var(--c-gold);
+  stroke-opacity: 0.55;
+}
+
+.area.is-armed .map__road--main.map__road--lit {
+  stroke-opacity: 0.75;
+}
+
+.area.is-armed .city,
+.area.is-armed .far,
+.area.is-armed .area__city,
+.area.is-armed .area__far {
+  transition: opacity 600ms var(--ease-out);
+}
+
+.area.is-armed .city:not(.is-lit),
+.area.is-armed .far:not(.is-lit) {
+  opacity: 0.28;
+}
+
+.area.is-armed .city:not(.is-lit) .city__halo {
+  opacity: 0;
+}
+
+.city__halo {
+  transition: opacity 600ms var(--ease-out);
+}
+
+.area.is-armed .area__city:not(.is-lit) {
+  opacity: 0.35;
+}
+
+.area.is-armed .area__city:not(.is-lit) .area__dot {
+  background: var(--c-mist);
+}
+
+.area__dot {
+  transition: background-color 600ms var(--ease-out);
+}
+
+@media (min-width: 64rem) {
+  .area__inner {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-areas:
+      'head map'
+      'lists map';
+    grid-template-rows: auto 1fr;
+    column-gap: var(--s-7);
+    row-gap: var(--s-5);
+  }
+
+  .area__title {
+    font-size: var(--fs-2xl);
+  }
+
+  .area__map {
+    max-width: 32rem;
+  }
+}

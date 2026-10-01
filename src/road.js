@@ -1,7 +1,5 @@
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-gsap.registerPlugin(ScrollTrigger);
+import { oneWayScrub } from './scrub.js';
 
 /*
   Transición "carretera de noche": un haz de faro dorado cruza la sección ligado al scroll y,
@@ -22,15 +20,15 @@ export function initRoad({ still }) {
   if (!section || !scene || !beam || !list || still) return;
 
   // Posición del haz en px (centro, coordenadas de la sección). La lluvia la usa para brillar cerca.
-  const state = { beamX: -1e4, shown: 0, target: 0 };
+  const state = { beamX: -1e4 };
 
   const setLit = (pct) => list.style.setProperty('--lit', `${pct}%`);
 
-  const render = () => {
+  const render = (p) => {
     const w = section.clientWidth;
     const bw = beam.offsetWidth;
     // De fuera por la izquierda a fuera por la derecha.
-    const x = gsap.utils.interpolate(-bw * 0.6, w + bw * 0.6, state.shown);
+    const x = gsap.utils.interpolate(-bw * 0.6, w + bw * 0.6, p);
     state.beamX = x;
     beam.style.transform = `translate3d(${x - bw / 2}px, 0, 0) skewX(-12deg)`;
 
@@ -43,39 +41,12 @@ export function initRoad({ still }) {
   setLit(-LIT_SOFT * 2);
   section.classList.add('is-armed');
 
-  let finished = false;
-  const st = ScrollTrigger.create({
-    trigger: list,
-    // clamp(): el final nunca queda más allá del scroll máximo (p. ej. si esta es la última sección).
-    start: 'clamp(top 85%)',
-    end: 'clamp(bottom 55%)',
-    onUpdate(self) {
-      if (finished || self.progress <= state.target) return;
-      state.target = self.progress;
-      gsap.to(state, {
-        shown: state.target,
-        duration: 0.6,
-        ease: 'power2.out',
-        overwrite: true,
-        onUpdate: render,
-        onComplete: () => {
-          if (state.target >= 1) finish();
-        },
-      });
-    },
-  });
-
-  function finish() {
-    finished = true;
-    st.kill();
+  // Al terminar (o si se carga la página ya pasada la sección) la lista queda encendida.
+  oneWayScrub(list, { start: 'clamp(top 85%)', end: 'clamp(bottom 55%)' }, render, () => {
     section.classList.remove('is-armed');
     list.style.removeProperty('--lit');
     state.beamX = -1e4;
-  }
-
-  // Si se carga la página ya pasada la sección (recarga a mitad de scroll), la lista queda encendida.
-  if (st.progress >= 1) finish();
-  else render();
+  });
 
   initRain(scene, state);
 }

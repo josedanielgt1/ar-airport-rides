@@ -147,6 +147,53 @@
           </ul>
         </div>
       </section>
+
+      <!--
+        Área de servicio: diagrama esquemático (no a escala) de la I-35 con sus ramales reales.
+        Ciudades y posiciones en src/data/service-area.json. Con movimiento: carreteras y ciudades se
+        encienden al hacer scroll. Sin JS / reduced-motion / saveData: todo encendido.
+        TODO(cliente): revisar el diagrama y las ciudades antes de publicar.
+      -->
+      <section class="area" id="area" aria-labelledby="area-title">
+        <div class="area__inner">
+          <div class="area__head">
+            <h2 class="area__title" id="area-title" data-i18n="area.title">From Georgetown to San&nbsp;Marcos.</h2>
+            <p class="area__sub" data-i18n="area.sub">Pickups across Austin and nearby cities.</p>
+          </div>
+
+          <figure class="area__map">
+            <svg class="map" viewBox="0 0 400 560" aria-hidden="true" focusable="false">
+              <!-- Carreteras (rutas reales, trazado esquemático). -->
+              <path class="map__road" data-from="0.16" data-to="0.32" d="M88 132 L120 182 L200 300" />
+              <path class="map__road" data-from="0.06" data-to="0.62" d="M200 70 C240 74 305 100 305 150 V470" />
+              <path class="map__road" data-from="0.54" data-to="0.7" d="M200 300 L392 258" />
+              <path class="map__road" data-from="0.56" data-to="0.74" d="M200 300 L250 342 L300 380" />
+              <path class="map__road map__road--main" data-from="0" data-to="0.9" d="M200 44 V514" />
+
+              <text class="map__label map__road-label" x="208" y="440">I-35</text>
+              <text class="map__label map__road-label" x="96" y="262">US 183</text>
+              <text class="map__label map__road-label" x="224" y="282">US 290</text>
+              <text class="map__label map__road-label" x="312" y="430">SH 130</text>
+              <text class="map__label map__road-label" x="282" y="394">SH 71</text>
+
+              <!-- area:map -->
+            </svg>
+            <figcaption class="area__note" data-i18n="area.note">Schematic map, not to scale.</figcaption>
+          </figure>
+
+          <div class="area__lists">
+            <ul class="area__cities" role="list" aria-label="Cities we serve" data-i18n-attr="aria-label:area.citiesLabel">
+              <!-- area:list -->
+            </ul>
+            <div class="area__far">
+              <p class="area__far-title" data-i18n="area.far">Longer trips, on request</p>
+              <ul class="area__far-list" role="list">
+                <!-- area:far -->
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
 
     <!-- TODO(cliente): número de WhatsApp provisional (= teléfono 737-529-1720). Confirmar. -->

@@ -9,5 +9,11 @@
   "wa.cta": "Reserva por WhatsApp",
   "wa.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
   "services.title": "Cada traslado, a tu horario.",
-  "services.sub": "Por Austin y sus alrededores, aeropuerto incluido."
+  "services.sub": "Por Austin y sus alrededores, aeropuerto incluido.",
+  "area.title": "De Georgetown a San Marcos.",
+  "area.sub": "Recogidas en Austin y ciudades cercanas.",
+  "area.citiesLabel": "Ciudades donde damos servicio",
+  "area.airport": "Aeropuerto AUS",
+  "area.far": "Viajes largos, bajo pedido",
+  "area.note": "Mapa esquemático, no está a escala."
 }

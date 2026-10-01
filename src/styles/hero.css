@@ -1,6 +1,6 @@
 /*
   Geometría del hero. El video es 4:3; en el último frame la camioneta ocupa
-  x 2,34 %–97,42 % e y 25 %–71,35 % (medido en hero-last.jpg).
+  x 2,34 %–97,42 % e y 25 %–71,35 % (medido en hero-last.jpg). La máscara lateral (2 %) no llega a la nariz.
   A mitad del clip hay reflejos en el piso mojado: la máscara inferior los apaga desde el 70 %.
   --hh  alto del hero         --mh / --mw  alto / ancho del video
   --mt  top del video         --mr         margen derecho del video
@@ -11,10 +11,15 @@
   --hh: max(100svh, 40rem);
   --copy-at: 0.76;
   --copy-h: calc(var(--fs-hero) * 3.3 + 9rem);
-  --mw: 100vw;
+  --copy-gap: 1rem; /* aire extra entre la camioneta y el titular (móvil) */
+  /* Móvil: 12 px a cada lado para que no se corte la nariz de la camioneta. */
+  --mw: calc(100vw - 24px);
   --mh: calc(var(--mw) * 0.75);
-  --mr: 0px;
-  --mt: max(3.5rem, calc((var(--hh) - 2rem - var(--mh) * var(--copy-at) - var(--copy-h)) / 2));
+  --mr: 12px;
+  --mt: max(
+    3.5rem,
+    calc((var(--hh) - 2rem - var(--mh) * var(--copy-at) - var(--copy-gap) - var(--copy-h)) / 2)
+  );
 
   position: relative;
   height: var(--hh);
@@ -29,10 +34,10 @@
   width: var(--mw);
   aspect-ratio: 4 / 3;
   /* Bordes que se funden con el negro: dos degradados intersectados. */
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent),
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent),
     linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 88%);
   -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent),
+  mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent),
     linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 88%);
   mask-composite: intersect;
 }
@@ -64,7 +69,7 @@
 
 .hero__copy {
   position: absolute;
-  top: calc(var(--mt) + var(--mh) * var(--copy-at));
+  top: calc(var(--mt) + var(--mh) * var(--copy-at) + var(--copy-gap));
   left: var(--gutter);
   right: var(--gutter);
 }
@@ -122,6 +127,7 @@
 @media (min-width: 64rem) {
   .hero {
     --copy-at: 0.735;
+    --copy-gap: 0px;
     --copy-h: calc(var(--fs-hero) * 3.2 + 5.5rem);
     --mh: min(63vw, calc((var(--hh) - 8rem - var(--copy-h)) / (var(--copy-at) - 0.25)));
     --mw: calc(var(--mh) * 4 / 3);

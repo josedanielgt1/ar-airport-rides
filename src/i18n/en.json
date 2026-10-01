@@ -9,5 +9,11 @@
   "wa.cta": "Reserve on WhatsApp",
   "wa.message": "Hi! I'd like to book a ride with AR Airport Rides.",
   "services.title": "Every ride, on your schedule.",
-  "services.sub": "Across Austin and its suburbs, the airport included."
+  "services.sub": "Across Austin and its suburbs, the airport included.",
+  "area.title": "From Georgetown to San Marcos.",
+  "area.sub": "Pickups across Austin and nearby cities.",
+  "area.citiesLabel": "Cities we serve",
+  "area.airport": "AUS airport",
+  "area.far": "Longer trips, on request",
+  "area.note": "Schematic map, not to scale."
 }

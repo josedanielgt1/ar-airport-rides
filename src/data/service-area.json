@@ -1,0 +1,106 @@
+{
+  "_todo": "TODO(cliente): revisar el diagrama (no está a escala) y confirmar las ciudades. Solo se muestran las confirmadas.",
+  "_coords": "x/y en el viewBox 0 0 400 560 del diagrama (esquemático: la I-35 se dibuja recta y las distancias este-oeste se exageran). 'at' = momento del encendido (0-1) al hacer scroll. 'label': left | right | above | below.",
+  "confirmed": [
+    {
+      "id": "georgetown",
+      "name": "Georgetown",
+      "x": 200,
+      "y": 110,
+      "label": "left",
+      "at": 0.12,
+      "onI35": true
+    },
+    {
+      "id": "cedar-park",
+      "name": "Cedar Park",
+      "x": 120,
+      "y": 182,
+      "label": "left",
+      "at": 0.28,
+      "road": "US 183"
+    },
+    {
+      "id": "pflugerville",
+      "name": "Pflugerville",
+      "x": 290,
+      "y": 212,
+      "label": "left",
+      "at": 0.38,
+      "road": "SH 130"
+    },
+    {
+      "id": "austin",
+      "name": "Austin",
+      "x": 200,
+      "y": 300,
+      "label": "left",
+      "at": 0.54,
+      "onI35": true,
+      "major": true
+    },
+    {
+      "id": "manor",
+      "name": "Manor",
+      "x": 345,
+      "y": 268,
+      "label": "below",
+      "at": 0.68,
+      "road": "US 290"
+    },
+    {
+      "id": "san-marcos",
+      "name": "San Marcos",
+      "x": 200,
+      "y": 500,
+      "label": "left",
+      "at": 0.86,
+      "onI35": true
+    }
+  ],
+  "airport": {
+    "id": "aus",
+    "code": "AUS",
+    "x": 250,
+    "y": 342,
+    "at": 0.74,
+    "road": "SH 71"
+  },
+  "toConfirm": [
+    "Round Rock",
+    "Leander",
+    "Lakeway",
+    "Bee Cave",
+    "Dripping Springs",
+    "Buda",
+    "Kyle",
+    "Hutto"
+  ],
+  "longDistance": {
+    "_todo": "TODO(cliente): confirmar si mantiene los viajes largos (vienen de la tarjeta).",
+    "at": 0.95,
+    "items": [
+      {
+        "id": "dallas",
+        "name": "Dallas",
+        "airports": "DFW, DAL",
+        "dir": "north",
+        "via": "I-35"
+      },
+      {
+        "id": "san-antonio",
+        "name": "San Antonio",
+        "airports": "SAT",
+        "dir": "south",
+        "via": "I-35"
+      },
+      {
+        "id": "houston",
+        "name": "Houston",
+        "airports": "IAH, HOU",
+        "dir": "east",
+        "via": "US 290"
+      }
+    ]
+  }
+}
