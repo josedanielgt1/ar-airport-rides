@@ -1,13 +1,29 @@
+/*
+  Header fijo: marca + EN|ES desde t=0. Al salir del hero (html.is-past-hero, lo pone whatsapp.js)
+  toma fondo negro y, en escritorio, muestra el botón de WhatsApp. En móvil ese botón vive en la barra
+  inferior (.wa-bar). Sin JS: fondo y botón visibles siempre.
+*/
 .site-header {
-  position: absolute;
+  position: fixed;
   inset: 0 0 auto;
   z-index: var(--z-header);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: max(var(--s-2), env(safe-area-inset-top)) var(--gutter) var(--s-2);
+  gap: var(--s-3);
+  min-height: 4.5rem;
+  padding: max(var(--s-1), env(safe-area-inset-top)) var(--gutter) var(--s-1);
   /* Sombra suave para que marca e idioma se lean aunque el video tenga luces detrás. */
   background: linear-gradient(to bottom, rgb(0 0 0 / 0.7), transparent);
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease;
+  border-bottom: 1px solid transparent;
+}
+
+.is-past-hero .site-header,
+html:not(.js) .site-header {
+  background: rgb(0 0 0 / 0.94);
+  border-bottom-color: rgb(201 162 75 / 0.12);
 }
 
 .brand {
@@ -15,6 +31,7 @@
   gap: 0.6rem;
   min-height: 44px;
   align-items: center;
+  margin-right: auto;
   text-decoration: none;
 }
 
@@ -75,4 +92,28 @@
 /* Sin JS el selector no puede cambiar el idioma: se oculta. */
 html:not(.js) .lang {
   display: none;
+}
+
+/* Botón del header: solo escritorio y solo tras salir del hero. */
+.site-header .site-header__cta {
+  display: none;
+}
+
+@media (min-width: 64rem) {
+  .site-header .site-header__cta {
+    display: inline-flex;
+    transition:
+      opacity 240ms ease,
+      visibility 0s linear 0s,
+      background-color var(--t-fast) ease,
+      box-shadow 240ms var(--ease-out);
+  }
+
+  .js:not(.is-past-hero) .site-header__cta {
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity 200ms ease,
+      visibility 0s linear 200ms;
+  }
 }

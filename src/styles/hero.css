@@ -98,6 +98,11 @@
   margin-top: var(--s-3);
 }
 
+/* El enlace de teléfono mide 44 px de alto; en columna se acerca al botón. */
+.hero__meta .hero__tel {
+  margin-top: calc(var(--s-3) * -0.6);
+}
+
 .hero__sub {
   max-width: 30ch;
   font-size: 1.0625rem;
@@ -135,6 +140,21 @@
     --mt: calc(var(--hh) - 2.5rem - var(--copy-h) - var(--mh) * var(--copy-at));
   }
 
+  /*
+    El video queda en medio de la página: a mitad del clip el fondo de ciudad se vería como recuadro.
+    Se suma una viñeta elíptica que suaviza las esquinas sin tocar la camioneta (que va al centro).
+  */
+  .hero__media {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent),
+      linear-gradient(to bottom, transparent, #000 24%, #000 70%, transparent 88%),
+      radial-gradient(ellipse 75% 85% at 50% 50%, #000 70%, transparent 100%);
+    -webkit-mask-composite: source-in, source-in;
+    mask-image: linear-gradient(to right, transparent, #000 2%, #000 98%, transparent),
+      linear-gradient(to bottom, transparent, #000 24%, #000 70%, transparent 88%),
+      radial-gradient(ellipse 75% 85% at 50% 50%, #000 70%, transparent 100%);
+    mask-composite: intersect;
+  }
+
   .hero__title {
     font-weight: 400;
   }
@@ -145,10 +165,99 @@
     gap: var(--s-5);
   }
 
+  .hero__meta .hero__tel {
+    margin-top: 0;
+  }
+
   .hero__sub {
     max-width: 26ch;
     font-size: var(--fs-md);
     line-height: 1.4;
+  }
+}
+
+/* Línea de carretera y resplandor: solo en escritorio ancho. */
+.hero__ground {
+  display: none;
+}
+
+/*
+  Escritorio ancho (≥ 1280 px): titular a la izquierda y camioneta a la derecha (~50 % del ancho),
+  con la línea de las ruedas a la altura de la línea base del último renglón del titular.
+  Línea base medida en el navegador: 2 × 1.04 (interlineado) + 0.833 (ascendente) = 2.913 × fs.
+  --cw ancho visible de la camioneta   --copy-top top del titular   --ground línea de las ruedas
+*/
+@media (min-width: 80rem) {
+  .hero {
+    --hh: clamp(40rem, 100svh, 860px);
+    --cw: clamp(36rem, 50vw, 62rem);
+    --mw: calc(var(--cw) / 0.9508);
+    --mh: calc(var(--mw) * 0.75);
+    --copy-h: calc(var(--fs-hero) * 3.12 + 4.75rem);
+    --copy-top: calc((var(--hh) - var(--copy-h)) / 2 + 2rem);
+    --ground: calc(var(--copy-top) + var(--fs-hero) * 2.913);
+    --mt: calc(var(--ground) - var(--mh) * 0.7135);
+  }
+
+  .hero__copy {
+    top: var(--copy-top);
+  }
+
+  .hero__meta {
+    gap: var(--s-4);
+  }
+
+  /* El reflejo bajo las ruedas se reemplaza por la línea de carretera y el resplandor estático. */
+  .hero__glow {
+    display: none;
+  }
+
+  /* Línea de carretera: 1 px, dorado al ~22 %, desvanecida en ambos extremos. */
+  .hero__ground {
+    display: block;
+    position: absolute;
+    top: var(--ground);
+    right: calc(var(--gutter) * 0.5);
+    width: calc(var(--cw) * 1.35);
+    height: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(201 162 75 / 0.22) 22%,
+      rgb(201 162 75 / 0.22) 78%,
+      transparent
+    );
+  }
+
+  /* Resplandor radial muy tenue (< 10 %) centrado bajo la camioneta; llega a 0 antes del borde. */
+  .hero__ground::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 90%;
+    height: calc(var(--mh) * 0.5);
+    translate: -50% -50%;
+    background: radial-gradient(closest-side, rgb(201 162 75 / 0.08), transparent);
+  }
+}
+
+
+.hero__tel {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--fs-sm);
+  letter-spacing: 0.01em;
+  color: var(--c-mist);
+  text-decoration: none;
+  transition: color var(--t-fast) ease;
+}
+
+@media (hover: hover) {
+  .hero__tel:hover {
+    color: var(--c-cream);
   }
 }
 

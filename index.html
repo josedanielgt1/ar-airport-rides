@@ -79,6 +79,12 @@
         <span class="lang__sep" aria-hidden="true"></span>
         <button class="lang__btn" type="button" data-lang="es" aria-pressed="false" lang="es">ES</button>
       </div>
+
+      <!-- Escritorio: aparece al salir del hero (en móvil lo reemplaza la barra inferior). -->
+      <a class="btn-wa btn-wa--sm site-header__cta" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
+        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
+        <span data-i18n="wa.cta">Reserve on WhatsApp</span>
+      </a>
     </header>
 
     <main id="top">
@@ -105,6 +111,7 @@
           </script>
         </div>
         <div class="hero__glow" aria-hidden="true"></div>
+        <div class="hero__ground" aria-hidden="true"></div>
 
         <div class="hero__copy">
           <h1 class="hero__title" id="hero-title">Arrive refreshed. <br />On time. <br />Every time.</h1>
@@ -114,13 +121,15 @@
             <a
               class="btn-wa hero__cta"
               data-wa
-              href="https://wa.me/17375291720?text=Hi!%20I%27d%20like%20to%20book%20a%20ride%20with%20AR%20Airport%20Rides."
+              href="@@waUrl@@"
               target="_blank"
               rel="noopener"
             >
               <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
               <span data-i18n="wa.cta">Reserve on WhatsApp</span>
             </a>
+            <!-- TODO(cliente): confirmar teléfono y atención 24/7. -->
+            <a class="hero__tel" href="tel:@@phoneTel@@"><span>@@phone@@ · <span data-i18n="contact.hours">24/7</span></span></a>
           </div>
         </div>
       </section>
@@ -196,17 +205,13 @@
       </section>
     </main>
 
-    <!-- TODO(cliente): número de WhatsApp provisional (= teléfono 737-529-1720). Confirmar. -->
-    <a
-      class="btn-wa wa-fab"
-      data-wa
-      href="https://wa.me/17375291720?text=Hi!%20I%27d%20like%20to%20book%20a%20ride%20with%20AR%20Airport%20Rides."
-      target="_blank"
-      rel="noopener"
-    >
-      <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
-      <span data-i18n="wa.cta">Reserve on WhatsApp</span>
-    </a>
+    <!-- Móvil: barra inferior con el botón de WhatsApp; aparece al salir del hero. -->
+    <div class="wa-bar">
+      <a class="btn-wa wa-bar__btn" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
+        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
+        <span data-i18n="wa.cta">Reserve on WhatsApp</span>
+      </a>
+    </div>
 
     <script type="module" src="/src/main.js"></script>
   </body>

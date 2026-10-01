@@ -1,7 +1,8 @@
-/* Botón de WhatsApp: el del hero (junto al subtítulo) y el fijo comparten estilo. */
+/* Botones de WhatsApp: el del hero, el del header (escritorio) y el de la barra inferior (móvil). */
 .btn-wa {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
   min-height: 52px;
   padding: 0 1.5rem 0 1.25rem;
@@ -15,6 +16,12 @@
   transition:
     background-color var(--t-fast) ease,
     box-shadow 240ms var(--ease-out);
+}
+
+.btn-wa--sm {
+  min-height: 44px;
+  padding: 0 1.1rem 0 0.95rem;
+  font-size: var(--fs-sm);
 }
 
 .btn-wa__icon {
@@ -40,47 +47,58 @@
   background: var(--c-beam);
 }
 
-/* Fijo: aparece solo al salir del hero (JS añade .is-on). Sin JS queda siempre visible. */
-.wa-fab {
-  --hide-y: 0;
+/*
+  Móvil y tablet: barra inferior fija con padding y safe-area. Aparece al salir del hero
+  (html.is-past-hero) y se aparta cuando hay en pantalla una zona data-fab-avoid (el botón de enviar).
+  El body reserva su alto para que nunca tape el final del contenido. Sin JS: siempre visible.
+*/
+.wa-bar {
+  --bar-h: calc(52px + 1.5rem + env(safe-area-inset-bottom));
   position: fixed;
+  inset: auto 0 0;
   z-index: var(--z-fab);
-  left: 50%;
-  bottom: calc(var(--s-3) + env(safe-area-inset-bottom));
-  translate: -50% var(--hide-y);
+  padding: 0.75rem var(--gutter) calc(0.75rem + env(safe-area-inset-bottom));
+  background: linear-gradient(to top, rgb(0 0 0 / 0.96) 70%, rgb(0 0 0 / 0));
   transition:
-    background-color var(--t-fast) ease,
-    box-shadow 240ms var(--ease-out),
-    opacity 240ms ease,
     translate 320ms var(--ease-out),
+    opacity 240ms ease,
     visibility 0s linear 0s;
 }
 
-.js .wa-fab:not(.is-on),
-.wa-fab.is-away {
-  --hide-y: 140%;
+.wa-bar__btn {
+  width: 100%;
+}
+
+body {
+  padding-bottom: calc(52px + 1.5rem + env(safe-area-inset-bottom));
+}
+
+.js:not(.is-past-hero) .wa-bar,
+.wa-bar.is-away {
+  translate: 0 110%;
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
   transition:
-    opacity 200ms ease,
     translate 240ms ease-in,
+    opacity 200ms ease,
     visibility 0s linear 240ms;
 }
 
 @media (min-width: 64rem) {
-  .wa-fab {
-    left: auto;
-    right: var(--gutter);
-    bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
-    translate: 0 var(--hide-y);
+  .wa-bar {
+    display: none;
+  }
+
+  body {
+    padding-bottom: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wa-fab,
-  .js .wa-fab:not(.is-on),
-  .wa-fab.is-away {
+  .wa-bar,
+  .js:not(.is-past-hero) .wa-bar,
+  .wa-bar.is-away,
+  .site-header__cta {
     transition: none;
   }
 }

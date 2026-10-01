@@ -5,6 +5,7 @@ export const whatsappUrl = (message) =>
   `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}`;
 
 export function initWhatsApp() {
+  const root = document.documentElement;
   const links = document.querySelectorAll('[data-wa]');
   const update = () => {
     const href = whatsappUrl(t('wa.message'));
@@ -13,28 +14,30 @@ export function initWhatsApp() {
   update();
   onLangChange(update);
 
-  const fab = document.querySelector('.wa-fab');
-  if (!fab) return;
   if (!('IntersectionObserver' in window)) {
-    fab.classList.add('is-on');
+    root.classList.add('is-past-hero');
     return;
   }
 
-  // El fijo aparece solo cuando el botón del hero sale de pantalla, y se aparta mientras haya
-  // en pantalla una zona marcada con data-fab-avoid (p. ej. el botón de enviar del formulario).
+  // Al salir el botón del hero de pantalla: header con botón (escritorio) o barra inferior (móvil).
   const heroCta = document.querySelector('.hero__cta');
   if (heroCta) {
-    new IntersectionObserver(([e]) => fab.classList.toggle('is-on', !e.isIntersecting)).observe(heroCta);
+    new IntersectionObserver(([e]) =>
+      root.classList.toggle('is-past-hero', !e.isIntersecting && e.boundingClientRect.top < 0),
+    ).observe(heroCta);
   } else {
-    fab.classList.add('is-on');
+    root.classList.add('is-past-hero');
   }
 
+  // La barra inferior se aparta mientras haya en pantalla una zona marcada con data-fab-avoid
+  // (el botón de enviar del formulario), para no taparla.
+  const bar = document.querySelector('.wa-bar');
   const avoid = document.querySelectorAll('[data-fab-avoid]');
-  if (!avoid.length) return;
+  if (!bar || !avoid.length) return;
   const visible = new Set();
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)));
-    fab.classList.toggle('is-away', visible.size > 0);
+    bar.classList.toggle('is-away', visible.size > 0);
   });
   avoid.forEach((el) => io.observe(el));
 }

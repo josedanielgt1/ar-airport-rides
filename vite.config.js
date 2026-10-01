@@ -1,12 +1,27 @@
 import { defineConfig } from 'vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
+import { CONFIG } from './src/config.js';
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 const dataFile = (name) => new URL(`./src/data/${name}`, import.meta.url);
 const readData = (name) => JSON.parse(readFileSync(dataFile(name), 'utf-8'));
+const readJson = (path) => JSON.parse(readFileSync(new URL(path, import.meta.url), 'utf-8'));
+
+/** Valores de src/config.js para el HTML (marcadores @@clave@@). El HTML base está en inglés. */
+function configTokens() {
+  const en = readJson('./src/i18n/en.json');
+  return {
+    phone: CONFIG.phone,
+    phoneTel: CONFIG.phoneTel,
+    email: CONFIG.email,
+    waUrl: `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(en['wa.message'])}`,
+    payments: CONFIG.payments.join(', '),
+    year: String(new Date().getFullYear()),
+  };
+}
 
 /** Lista de servicios (en inglés) desde services.json; src/services.js la traduce en el navegador. */
 function servicesMarkup() {
@@ -98,6 +113,8 @@ function dataMarkup() {
     },
     transformIndexHtml(html) {
       const area = areaMarkup();
+      const tokens = configTokens();
+      html = html.replace(/@@(\w+)@@/g, (m, k) => (k in tokens ? esc(tokens[k]) : m));
       return html
         .replace('<!-- services:list -->', servicesMarkup())
         .replace('<!-- area:map -->', area.map)
