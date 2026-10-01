@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build",
-    "preview": "vite preview --host"
+    "preview": "vite preview --host",
+    "test": "node --test \"test/**/*.test.js\"",
+    "check:i18n": "node scripts/check-i18n.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.0"
