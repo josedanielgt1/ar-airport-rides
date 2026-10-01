@@ -37,7 +37,7 @@
   margin: 0;
 }
 
-/* La imagen es el último frame del video (4:3 con franjas negras): se recorta a 16:10 sin tocar la camioneta. */
+/* Primer frame del video (4:3 sobre negro; la camioneta ocupa ~14–80 % del alto): recorte 16:10 sin tocarla. */
 .vehicle__img {
   width: 100%;
   height: auto;
