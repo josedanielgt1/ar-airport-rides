@@ -25,7 +25,7 @@
       "name": "Pflugerville",
       "x": 290,
       "y": 212,
-      "label": "left",
+      "label": "above",
       "at": 0.38,
       "road": "SH 130"
     },
@@ -46,7 +46,8 @@
       "y": 268,
       "label": "below",
       "at": 0.68,
-      "road": "US 290"
+      "road": "US 290",
+      "todo": "TODO(cliente): validar la posición de Manor (al este de la SH 130, sobre la US 290)."
     },
     {
       "id": "san-marcos",

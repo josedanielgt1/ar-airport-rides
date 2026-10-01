@@ -19,6 +19,11 @@
   margin-inline: auto;
 }
 
+/* Móvil: el aside no crea caja; título, mapa y listas se ordenan con las áreas del grid. */
+.area__aside {
+  display: contents;
+}
+
 .area__head {
   grid-area: head;
 }
@@ -73,7 +78,8 @@
 
 .map__label {
   font-family: var(--ff-text);
-  font-size: 14px;
+  /* Unidades del viewBox: a 360 px el mapa se dibuja a 0,8× → 16 ≈ 12,8 px y 15 = 12 px reales. */
+  font-size: 16px;
   fill: var(--c-cream);
   /* Halo negro: las etiquetas se leen aunque crucen una carretera. */
   paint-order: stroke;
@@ -83,7 +89,7 @@
 }
 
 .map__road-label {
-  font-size: 12px;
+  font-size: 15px;
   letter-spacing: 0.02em;
   fill: var(--c-mist);
 }
@@ -110,7 +116,7 @@
 .city--major .city__label {
   font-family: var(--ff-display);
   font-weight: 500;
-  font-size: 22px;
+  font-size: 24px;
 }
 
 .far__arrow {
@@ -128,7 +134,7 @@
 }
 
 .far__label {
-  font-size: 12.5px;
+  font-size: 15px;
   fill: var(--c-mist);
 }
 
@@ -244,12 +250,19 @@
 @media (min-width: 64rem) {
   .area__inner {
     grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-    grid-template-areas:
-      'head map'
-      'lists map';
-    grid-template-rows: auto 1fr;
+    grid-template-areas: 'aside map';
     column-gap: var(--s-7);
-    row-gap: var(--s-5);
+  }
+
+  /* Título y listas fijos mientras el mapa (más alto) pasa y se enciende. */
+  .area__aside {
+    grid-area: aside;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-5);
+    position: sticky;
+    top: 7.5rem;
+    align-self: start;
   }
 
   .area__title {
@@ -258,5 +271,22 @@
 
   .area__map {
     max-width: 32rem;
+  }
+
+  /* El mapa se dibuja a ~1,28×: etiquetas más chicas en unidades del viewBox. */
+  .map__label {
+    font-size: 14px;
+  }
+
+  .map__road-label {
+    font-size: 11.5px;
+  }
+
+  .far__label {
+    font-size: 12.5px;
+  }
+
+  .city--major .city__label {
+    font-size: 22px;
   }
 }

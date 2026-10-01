@@ -165,15 +165,32 @@
       -->
       <section class="area" id="area" aria-labelledby="area-title">
         <div class="area__inner">
-          <div class="area__head">
-            <h2 class="area__title" id="area-title" data-i18n="area.title">From Georgetown to San&nbsp;Marcos.</h2>
-            <p class="area__sub" data-i18n="area.sub">Pickups across Austin and nearby cities.</p>
+          <!-- Escritorio: título y listas quedan fijos (sticky) mientras el mapa se enciende. -->
+          <div class="area__aside">
+            <div class="area__head">
+              <h2 class="area__title" id="area-title" data-i18n="area.title">From Georgetown to San&nbsp;Marcos.</h2>
+              <p class="area__sub" data-i18n="area.sub">Pickups across Austin and nearby cities.</p>
+            </div>
+
+
+            <div class="area__lists">
+              <ul class="area__cities" role="list" aria-label="Cities we serve" data-i18n-attr="aria-label:area.citiesLabel">
+                <!-- area:list -->
+              </ul>
+              <div class="area__far">
+                <p class="area__far-title" data-i18n="area.far">Longer trips, on request</p>
+                <ul class="area__far-list" role="list">
+                  <!-- area:far -->
+                </ul>
+              </div>
+            </div>
           </div>
 
           <figure class="area__map">
             <svg class="map" viewBox="0 0 400 560" aria-hidden="true" focusable="false">
               <!-- Carreteras (rutas reales, trazado esquemático). -->
               <path class="map__road" data-from="0.16" data-to="0.32" d="M88 132 L120 182 L200 300" />
+              <!-- TODO(cliente): validar la posición de la SH 130 y de Manor respecto a ella. -->
               <path class="map__road" data-from="0.06" data-to="0.62" d="M200 70 C240 74 305 100 305 150 V470" />
               <path class="map__road" data-from="0.54" data-to="0.7" d="M200 300 L392 258" />
               <path class="map__road" data-from="0.56" data-to="0.74" d="M200 300 L250 342 L300 380" />
@@ -189,18 +206,6 @@
             </svg>
             <figcaption class="area__note" data-i18n="area.note">Schematic map, not to scale.</figcaption>
           </figure>
-
-          <div class="area__lists">
-            <ul class="area__cities" role="list" aria-label="Cities we serve" data-i18n-attr="aria-label:area.citiesLabel">
-              <!-- area:list -->
-            </ul>
-            <div class="area__far">
-              <p class="area__far-title" data-i18n="area.far">Longer trips, on request</p>
-              <ul class="area__far-list" role="list">
-                <!-- area:far -->
-              </ul>
-            </div>
-          </div>
         </div>
       </section>
     </main>
