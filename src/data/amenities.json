@@ -1,0 +1,10 @@
+{
+  "_todo": "TODO(cliente): confirmar cada amenidad del vehículo. Solo se muestran las que tengan confirmed: true.",
+  "items": [
+    { "id": "water", "confirmed": false, "en": "Bottled water", "es": "Agua embotellada" },
+    { "id": "charger", "confirmed": false, "en": "Phone chargers", "es": "Cargadores de teléfono" },
+    { "id": "wifi", "confirmed": false, "en": "Wi-Fi", "es": "Wi-Fi" },
+    { "id": "climate", "confirmed": false, "en": "Climate control", "es": "Climatización" },
+    { "id": "luggage", "confirmed": false, "en": "Room for luggage", "es": "Espacio para equipaje" }
+  ]
+}

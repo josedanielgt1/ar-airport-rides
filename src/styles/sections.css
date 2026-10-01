@@ -1,0 +1,338 @@
+/* Secciones sobrias: vehículo, por qué elegirnos, reserva y footer. Sin animación de entrada. */
+
+.section-title {
+  max-width: 18ch;
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-xl);
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  color: var(--c-cream);
+}
+
+.section-sub {
+  margin-top: var(--s-2);
+  max-width: 36ch;
+  color: var(--c-mist);
+}
+
+/* ---------- Vehículo ---------- */
+
+.vehicle {
+  padding: var(--s-7) var(--gutter);
+}
+
+.vehicle__inner {
+  display: grid;
+  row-gap: var(--s-4);
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.vehicle__copy {
+  order: -1;
+}
+
+.vehicle__media {
+  margin: 0;
+}
+
+/* La imagen es el último frame del video (4:3 con franjas negras): se recorta a 16:10 sin tocar la camioneta. */
+.vehicle__img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  object-position: 50% 48%;
+}
+
+.vehicle__amenities-label {
+  margin-top: var(--s-4);
+  color: var(--c-mist);
+}
+
+.vehicle__amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: var(--s-1) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------- Por qué elegirnos ---------- */
+
+.why {
+  padding: var(--s-7) var(--gutter);
+}
+
+.why__inner {
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.why__list {
+  display: grid;
+  gap: var(--s-4);
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.why__item {
+  max-width: 22ch;
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-lg);
+  line-height: 1.15;
+  color: var(--c-cream);
+}
+
+/* ---------- Reserva ---------- */
+
+.reserve {
+  padding: var(--s-7) var(--gutter) var(--s-8);
+}
+
+.reserve__inner {
+  display: grid;
+  row-gap: var(--s-5);
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.form__grid {
+  display: grid;
+  gap: var(--s-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.field__label {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+.field__input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 0.9rem;
+  border: 1px solid rgb(156 147 132 / 0.45);
+  border-radius: 6px;
+  background: var(--c-asphalt);
+  color: var(--c-cream);
+  /* 16 px: evita el zoom automático de iOS al enfocar. */
+  font: inherit;
+  font-size: 1rem;
+  transition: border-color var(--t-fast) ease;
+}
+
+.field__input--area {
+  min-height: 7rem;
+  padding: 0.75rem 0.9rem;
+  resize: vertical;
+}
+
+.field__input:focus-visible {
+  border-color: var(--c-gold);
+  outline-offset: 2px;
+}
+
+.field__input[aria-invalid='true'] {
+  border-color: var(--c-alert);
+}
+
+.field__error {
+  font-size: var(--fs-sm);
+  color: var(--c-alert);
+}
+
+/* Honeypot: fuera de la vista y del orden de tabulación. */
+.form__hp {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-3);
+  margin-top: var(--s-4);
+}
+
+.form__submit[aria-busy='true'] {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.form__status {
+  font-size: var(--fs-sm);
+  color: var(--c-mist);
+}
+
+.form__status.is-error {
+  color: var(--c-alert);
+}
+
+.form__result,
+.form__nojs {
+  margin-top: var(--s-4);
+  padding-left: var(--s-3);
+  border-left: 2px solid var(--c-gold);
+}
+
+.form__result-title {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-lg);
+  line-height: 1.15;
+  color: var(--c-cream);
+}
+
+.form__result-text {
+  margin-top: var(--s-1);
+  max-width: 44ch;
+  color: var(--c-mist);
+}
+
+.form__wa {
+  margin-top: var(--s-3);
+  min-height: 56px;
+  font-size: 1.0625rem;
+}
+
+.form__result:focus,
+.form__nojs:focus {
+  outline: none;
+}
+
+/* Sin JS: mensajes que muestra la redirección del servidor (#reserve-sent / #reserve-error). */
+.form__nojs {
+  display: none;
+}
+
+.form__nojs:target {
+  display: block;
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  padding: var(--s-6) var(--gutter) var(--s-5);
+  border-top: 1px solid rgb(201 162 75 / 0.14);
+}
+
+.site-footer__inner {
+  display: grid;
+  gap: var(--s-4);
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.site-footer__brand .brand__mark {
+  display: inline-block;
+  margin-bottom: var(--s-1);
+}
+
+.site-footer__name {
+  color: var(--c-cream);
+}
+
+.site-footer__hours,
+.site-footer__pay,
+.site-footer__legal {
+  font-size: var(--fs-sm);
+  color: var(--c-mist);
+}
+
+.site-footer__contact {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__contact a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--c-cream);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+@media (hover: hover) {
+  .site-footer__contact a:hover {
+    color: var(--c-beam);
+  }
+}
+
+/* ---------- Puntos de quiebre ---------- */
+
+@media (min-width: 40rem) {
+  .form__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-3);
+  }
+
+  .field--full {
+    grid-column: 1 / -1;
+  }
+
+  .why__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-5);
+    row-gap: var(--s-5);
+  }
+}
+
+@media (min-width: 64rem) {
+  .section-title {
+    font-size: var(--fs-2xl);
+  }
+
+  .vehicle__inner {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    column-gap: var(--s-6);
+    align-items: center;
+  }
+
+  .vehicle__copy {
+    order: 0;
+  }
+
+  .why__item {
+    font-size: var(--fs-xl);
+  }
+
+  .reserve__inner {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    column-gap: var(--s-7);
+    align-items: start;
+  }
+
+  .reserve__head {
+    position: sticky;
+    top: 7.5rem;
+  }
+
+  .site-footer__inner {
+    grid-template-columns: 1.2fr 1fr 1fr;
+    align-items: start;
+  }
+
+  .site-footer__legal {
+    grid-column: 1 / -1;
+  }
+}

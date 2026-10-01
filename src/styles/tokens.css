@@ -30,6 +30,7 @@
   --c-beam: #ebcb82;
   --c-cream: #f3ebdd;
   --c-mist: #9c9384;
+  --c-alert: #e8917f; /* errores del formulario: coral suave, AA sobre negro y asfalto */
 
   /* Tipografía */
   --ff-display: 'Cormorant Garamond', 'Cormorant', Garamond, 'Times New Roman', serif;

@@ -208,7 +208,172 @@
           </figure>
         </div>
       </section>
+
+      <!-- Vehículo. TODO(cliente): reemplazar por fotos reales de su camioneta (hoy: último frame del video). -->
+      <section class="vehicle" id="vehicle" aria-labelledby="vehicle-title">
+        <div class="vehicle__inner">
+          <figure class="vehicle__media">
+            <picture>
+              <source
+                type="image/webp"
+                srcset="/media/vehicle-640.webp 640w, /media/vehicle-1280.webp 1280w"
+                sizes="(min-width: 64rem) 55vw, 100vw"
+              />
+              <img
+                class="vehicle__img"
+                src="/media/hero-last.jpg"
+                width="1280"
+                height="960"
+                loading="lazy"
+                decoding="async"
+                alt="Black full-size SUV, side view."
+                data-i18n-attr="alt:vehicle.alt"
+              />
+            </picture>
+          </figure>
+          <div class="vehicle__copy">
+            <h2 class="section-title" id="vehicle-title" data-i18n="vehicle.title">The vehicle.</h2>
+            <p class="section-sub" data-i18n="vehicle.text">A full-size luxury SUV, clean and quiet, with room for you and your luggage.</p>
+            <!-- Amenidades desde src/data/amenities.json: solo las confirmed: true. -->
+            <!-- amenities:list -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Por qué elegirnos. TODO(cliente): validar el texto. Sin afirmar licencia, seguro ni permisos. -->
+      <section class="why" id="why" aria-labelledby="why-title">
+        <div class="why__inner">
+          <h2 class="section-title" id="why-title" data-i18n="why.title">Why ride with us.</h2>
+          <ul class="why__list" role="list">
+            <li class="why__item" data-i18n="why.punctual">On time, planned ahead.</li>
+            <li class="why__item" data-i18n="why.private">Private, start to finish.</li>
+            <li class="why__item" data-i18n="why.care">Courteous and discreet.</li>
+            <li class="why__item" data-i18n="why.local">We know Austin&rsquo;s roads.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!--
+        Reserva. Con JS: valida (src/lib/validate.js), POST a /api/reserve y ofrece seguir por WhatsApp.
+        Sin JS: envío normal; el servidor redirige a #reserve-sent o #reserve-error.
+      -->
+      <section class="reserve" id="reserve" aria-labelledby="reserve-title">
+        <div class="reserve__inner">
+          <div class="reserve__head">
+            <h2 class="section-title" id="reserve-title" data-i18n="reserve.title">Book your ride.</h2>
+            <p class="section-sub" data-i18n="reserve.sub">Send the details and we&rsquo;ll confirm your ride.</p>
+          </div>
+
+          <form class="form" id="reserve-form" action="/api/reserve" method="post">
+            <div class="form__grid">
+              <div class="field">
+                <label class="field__label" for="f-name" data-i18n="form.name">Full name</label>
+                <input class="field__input" id="f-name" name="name" type="text" autocomplete="name" required maxlength="80" aria-describedby="f-name-error" />
+                <p class="field__error" id="f-name-error" hidden></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-phone" data-i18n="form.phone">Phone</label>
+                <input class="field__input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required maxlength="25" aria-describedby="f-phone-error" />
+                <p class="field__error" id="f-phone-error" hidden></p>
+              </div>
+              <div class="field field--full">
+                <label class="field__label" for="f-service" data-i18n="form.service">Service</label>
+                <select class="field__input" id="f-service" name="service" required aria-describedby="f-service-error">
+                  <option value="" data-i18n="form.servicePlaceholder">Choose a service</option>
+                  <!-- form:services -->
+                </select>
+                <p class="field__error" id="f-service-error" hidden></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-date" data-i18n="form.date">Date</label>
+                <input class="field__input" id="f-date" name="date" type="date" required aria-describedby="f-date-error" />
+                <p class="field__error" id="f-date-error" hidden></p>
+              </div>
+              <div class="field">
+                <label class="field__label" for="f-time" data-i18n="form.time">Time</label>
+                <input class="field__input" id="f-time" name="time" type="time" required aria-describedby="f-time-error" />
+                <p class="field__error" id="f-time-error" hidden></p>
+              </div>
+              <div class="field field--full">
+                <label class="field__label" for="f-origin" data-i18n="form.origin">Pickup address</label>
+                <input class="field__input" id="f-origin" name="origin" type="text" autocomplete="off" required maxlength="160" aria-describedby="f-origin-error" />
+                <p class="field__error" id="f-origin-error" hidden></p>
+              </div>
+              <div class="field field--full">
+                <label class="field__label" for="f-destination" data-i18n="form.destination">Destination</label>
+                <input class="field__input" id="f-destination" name="destination" type="text" autocomplete="off" required maxlength="160" aria-describedby="f-destination-error" />
+                <p class="field__error" id="f-destination-error" hidden></p>
+              </div>
+              <div class="field">
+                <!-- TODO(cliente): confirmar la capacidad máxima de pasajeros (provisional: 7). -->
+                <label class="field__label" for="f-passengers" data-i18n="form.passengers">Passengers</label>
+                <input class="field__input" id="f-passengers" name="passengers" type="number" inputmode="numeric" min="1" max="7" step="1" value="1" required aria-describedby="f-passengers-error" />
+                <p class="field__error" id="f-passengers-error" hidden></p>
+              </div>
+              <div class="field field--full">
+                <label class="field__label" for="f-notes" data-i18n="form.notes">Notes (optional)</label>
+                <textarea class="field__input field__input--area" id="f-notes" name="notes" rows="3" maxlength="1000" aria-describedby="f-notes-error"></textarea>
+                <p class="field__error" id="f-notes-error" hidden></p>
+              </div>
+            </div>
+
+            <!-- Honeypot anti-spam: invisible para personas; si llega con texto, el servidor lo descarta. -->
+            <div class="form__hp" aria-hidden="true">
+              <label for="f-company" data-i18n="form.hp">Leave this field empty</label>
+              <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off" />
+            </div>
+            <input type="hidden" name="lang" value="en" />
+            <input type="hidden" name="ref" value="" />
+
+            <div class="form__actions" data-fab-avoid>
+              <button class="btn btn--primary form__submit" type="submit">
+                <span data-i18n="form.submit">Send request</span>
+              </button>
+              <p class="form__status" role="status" aria-live="polite"></p>
+            </div>
+
+            <div class="form__result" hidden tabindex="-1">
+              <p class="form__result-title"></p>
+              <p class="form__result-text"></p>
+              <a class="btn-wa form__wa" href="@@waUrl@@" target="_blank" rel="noopener">
+                <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
+                <span data-i18n="form.continueWa">Continue on WhatsApp</span>
+              </a>
+            </div>
+          </form>
+
+          <!-- Sin JS: el servidor redirige aquí (se muestran con :target). -->
+          <div class="form__nojs" id="reserve-sent" tabindex="-1">
+            <p class="form__result-title" data-i18n="form.successTitle">Request sent.</p>
+            <p class="form__result-text" data-i18n="form.successNoJs">We&rsquo;ll confirm shortly. For a faster reply, message us on WhatsApp.</p>
+          </div>
+          <div class="form__nojs" id="reserve-error" tabindex="-1">
+            <p class="form__result-title" data-i18n="form.errorTitle">We couldn&rsquo;t send your request.</p>
+            <p class="form__result-text" data-i18n="form.errorNoJs">Please message us on WhatsApp or call us instead.</p>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <div class="site-footer__brand">
+          <span class="brand__mark" aria-hidden="true">AR</span>
+          <p class="site-footer__name">AR Airport Rides</p>
+          <p class="site-footer__hours" data-i18n="footer.hours">24/7 Reservations</p>
+        </div>
+        <!-- TODO(cliente): confirmar teléfono, correo, WhatsApp y métodos de pago (src/config.js). -->
+        <ul class="site-footer__contact" role="list">
+          <li><a href="tel:@@phoneTel@@">@@phone@@</a></li>
+          <li><a href="mailto:@@email@@">@@email@@</a></li>
+          <li><a data-wa href="@@waUrl@@" target="_blank" rel="noopener">WhatsApp</a></li>
+        </ul>
+        <p class="site-footer__pay">
+          <span data-i18n="footer.payments">Payments accepted:</span> @@payments@@
+        </p>
+        <p class="site-footer__legal">&copy; <span data-year>@@year@@</span> AR Airport Rides</p>
+      </div>
+    </footer>
 
     <!-- Móvil: barra inferior con el botón de WhatsApp; aparece al salir del hero. -->
     <div class="wa-bar">

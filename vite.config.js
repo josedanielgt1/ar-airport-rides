@@ -39,6 +39,27 @@ function servicesMarkup() {
     .join('\n            ');
 }
 
+/** <option> del selector de servicio del formulario (en inglés; se traducen en el navegador). */
+function serviceOptionsMarkup() {
+  const { items } = readData('services.json');
+  return items
+    .map((s) => `<option value="${esc(s.id)}">${esc(s.en.name)}</option>`)
+    .join('\n                  ');
+}
+
+/** Amenidades: solo las confirmadas. Si no hay ninguna, no se genera nada. */
+function amenitiesMarkup() {
+  const items = readData('amenities.json').items.filter((a) => a.confirmed === true);
+  if (!items.length) return '';
+  const li = items
+    .map((a) => `<li class="vehicle__amenity" data-amenity="${esc(a.id)}">${esc(a.en)}</li>`)
+    .join('\n              ');
+  return `<p class="vehicle__amenities-label" data-i18n="vehicle.amenitiesLabel">Included</p>
+            <ul class="vehicle__amenities" role="list">
+              ${li}
+            </ul>`;
+}
+
 // Posición de la etiqueta de cada ciudad respecto a su punto (unidades del viewBox).
 const LABEL = {
   left: { x: -12, y: 4.5, anchor: 'end' },
@@ -109,7 +130,7 @@ function dataMarkup() {
   return {
     name: 'data-markup',
     configureServer(server) {
-      for (const f of ['services.json', 'service-area.json']) server.watcher.add(fileURLToPath(dataFile(f)));
+      for (const f of ['services.json', 'service-area.json', 'amenities.json']) server.watcher.add(fileURLToPath(dataFile(f)));
     },
     transformIndexHtml(html) {
       const area = areaMarkup();
@@ -117,6 +138,8 @@ function dataMarkup() {
       html = html.replace(/@@(\w+)@@/g, (m, k) => (k in tokens ? esc(tokens[k]) : m));
       return html
         .replace('<!-- services:list -->', servicesMarkup())
+        .replace('<!-- form:services -->', serviceOptionsMarkup())
+        .replace('<!-- amenities:list -->', amenitiesMarkup())
         .replace('<!-- area:map -->', area.map)
         .replace('<!-- area:list -->', area.list)
         .replace('<!-- area:far -->', area.farList);

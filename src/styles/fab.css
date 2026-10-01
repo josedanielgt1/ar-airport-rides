@@ -1,4 +1,5 @@
-/* Botones de WhatsApp: el del hero, el del header (escritorio) y el de la barra inferior (móvil). */
+/* Botones dorados: .btn (p. ej. enviar) y .btn-wa (hero, header, barra inferior, resultado del formulario). */
+.btn,
 .btn-wa {
   display: inline-flex;
   align-items: center;
@@ -13,9 +14,16 @@
   font-size: var(--fs-base);
   white-space: nowrap;
   text-decoration: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
   transition:
     background-color var(--t-fast) ease,
     box-shadow 240ms var(--ease-out);
+}
+
+.btn {
+  padding: 0 1.75rem;
 }
 
 .btn-wa--sm {
@@ -32,17 +40,20 @@
 
 /* Brillo dorado solo al pasar o enfocar. */
 @media (hover: hover) {
+  .btn:hover,
   .btn-wa:hover {
     background: var(--c-beam);
     box-shadow: 0 0 0 1px rgb(235 203 130 / 0.6), 0 0 36px -4px rgb(235 203 130 / 0.55);
   }
 }
 
+.btn:focus-visible,
 .btn-wa:focus-visible {
   outline-color: var(--c-cream);
   box-shadow: 0 0 0 1px rgb(235 203 130 / 0.6), 0 0 36px -4px rgb(235 203 130 / 0.55);
 }
 
+.btn:active,
 .btn-wa:active {
   background: var(--c-beam);
 }
