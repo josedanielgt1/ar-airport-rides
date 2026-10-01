@@ -94,7 +94,11 @@ html:not(.js) .lang {
   display: none;
 }
 
-/* Botón del header: solo escritorio y solo tras salir del hero. */
+/*
+  Botón del header: solo escritorio y solo tras salir del hero. Va ANTES de EN|ES y al ocultarse usa
+  visibility (conserva su espacio), así EN|ES queda siempre en el margen derecho, alineado con la
+  parte trasera de la camioneta del hero (margen + 0.75rem).
+*/
 .site-header .site-header__cta {
   display: none;
 }
