@@ -34,7 +34,9 @@ y también como lista de texto. Con reduced-motion todo aparece encendido.
 `hero-last.jpg` tal cual (WebP 640/1280 + JPG, recorte 16:10 sin tocar la camioneta) con TODO(cliente). Amenidades en `amenities.json`, solo las `confirmed: true`.
 
 ## Por qué elegirnos
-4 frases cortas en serif (puntualidad, privacidad, trato, conocimiento de Austin), cuadrícula 2×2 desde 640 px, sin íconos ni numeración. Sin afirmar licencia, seguro ni permisos (TODO(cliente)).
+Escritorio: título sticky a la izquierda; a la derecha 4 promesas sobre una "línea de carretera" vertical (1 px, dorado 40 %) con un punto de 8 px por promesa. Título de cada promesa en Cormorant Garamond cursiva 500 (~2rem, 1.75rem en móvil; woff2 propio, sin precarga) + una línea en Manrope niebla. Sin tarjetas, íconos, numeración ni mayúsculas.
+Scroll (scrub, sin pin, `src/why.js`): la línea se dibuja por tramos (`scaleY`) y cada promesa pasa de 38 % a 100 % de opacidad al alcanzarla; el punto se rellena (opacidad). Sin JS / reduced-motion / saveData: todo encendido.
+Cierre en Manrope + botón "Book a ride" → #reserve. Textos con TODO(cliente). Sin licencia, seguro, permisos ni estadísticas.
 
 ## Reserva
 Encabezado sticky en escritorio; formulario de hasta 46rem, 2 columnas desde 640 px. Etiquetas visibles, error bajo cada campo (color alerta), estado en aria-live, foco al primer error. Resultado con borde dorado a la izquierda y botón grande "Continue on WhatsApp".

@@ -62,5 +62,11 @@
   "footer.hours": "Reservas 24/7",
   "footer.payments": "Pagos aceptados:",
   "wa.notes": "Notas",
-  "a11y.skip": "Saltar a la reserva"
+  "a11y.skip": "Saltar a la reserva",
+  "why.punctualDesc": "Revisamos la ruta antes de cada recogida y dejamos margen.",
+  "why.privateDesc": "Solo tú y tu grupo. Sin viajes compartidos ni paradas no planeadas.",
+  "why.careDesc": "Conversación si la quieres, silencio si no.",
+  "why.localDesc": "De Georgetown a San Marcos, aeropuerto incluido.",
+  "why.close": "Dinos dónde y cuándo.",
+  "why.cta": "Reservar traslado"
 }

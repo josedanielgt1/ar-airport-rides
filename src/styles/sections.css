@@ -60,33 +60,7 @@
   list-style: none;
 }
 
-/* ---------- Por qué elegirnos ---------- */
-
-.why {
-  padding: var(--s-6) var(--gutter);
-}
-
-.why__inner {
-  max-width: var(--content-max);
-  margin-inline: auto;
-}
-
-.why__list {
-  display: grid;
-  gap: var(--s-4);
-  margin: var(--s-5) 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.why__item {
-  max-width: 22ch;
-  font-family: var(--ff-display);
-  font-weight: 500;
-  font-size: var(--fs-lg);
-  line-height: 1.15;
-  color: var(--c-cream);
-}
+/* Por qué elegirnos: ver why.css */
 
 /* ---------- Reserva ---------- */
 
@@ -293,17 +267,10 @@
   .field--full {
     grid-column: 1 / -1;
   }
-
-  .why__list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: var(--s-5);
-    row-gap: var(--s-5);
-  }
 }
 
 @media (min-width: 64rem) {
-  .vehicle,
-  .why {
+  .vehicle {
     padding-block: var(--s-7);
   }
 
@@ -319,10 +286,6 @@
 
   .vehicle__copy {
     order: 0;
-  }
-
-  .why__item {
-    font-size: var(--fs-xl);
   }
 
   .reserve__inner {

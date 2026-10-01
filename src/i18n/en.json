@@ -23,7 +23,7 @@
   "vehicle.amenitiesLabel": "Included",
   "why.title": "Why ride with us.",
   "why.punctual": "On time, planned ahead.",
-  "why.private": "Private, start to finish.",
+  "why.private": "Private from start to finish.",
   "why.care": "Courteous and discreet.",
   "why.local": "We know Austin’s roads.",
   "reserve.title": "Book your ride.",
@@ -62,5 +62,11 @@
   "footer.hours": "24/7 Reservations",
   "footer.payments": "Payments accepted:",
   "wa.notes": "Notes",
-  "a11y.skip": "Skip to booking"
+  "a11y.skip": "Skip to booking",
+  "why.punctualDesc": "We check the route before every pickup and leave margin.",
+  "why.privateDesc": "Just you and your party. No shared rides, no unplanned stops.",
+  "why.careDesc": "Conversation if you want it, quiet if you don’t.",
+  "why.localDesc": "From Georgetown to San Marcos, the airport included.",
+  "why.close": "Tell us where and when.",
+  "why.cta": "Book a ride"
 }

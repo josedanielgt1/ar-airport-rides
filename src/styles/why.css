@@ -1,0 +1,123 @@
+/*
+  Por qué elegirnos. Escritorio: título sticky a la izquierda; a la derecha, 4 promesas sobre una
+  "línea de carretera" vertical (1 px, dorado al 40 %) con un punto de 8 px por promesa.
+  La línea es una suma de tramos (.why__seg), uno por promesa salvo la última: cada tramo va del punto
+  de su promesa al de la siguiente. Así la línea termina exactamente en el último punto, sin medir con JS.
+  Estado por defecto (sin JS, reduced-motion, saveData): todo encendido y la línea completa.
+  Con movimiento, src/why.js anima solo transform (scaleY de los tramos) y opacity (promesas y puntos).
+*/
+.why {
+  /* Tamaño del título de cada promesa; el centro de su primera línea fija la altura del punto. */
+  --why-t: 1.75rem;
+  --why-lh: 1.15;
+  --why-mid: calc(var(--why-t) * var(--why-lh) / 2);
+  --why-gap: var(--s-5);
+  padding: var(--s-6) var(--gutter);
+}
+
+.why__inner {
+  display: grid;
+  row-gap: var(--s-5);
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+.why__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.why__item {
+  position: relative;
+  padding-left: 2.25rem;
+  padding-bottom: var(--why-gap);
+}
+
+.why__item:last-child {
+  padding-bottom: 0;
+}
+
+/* Tramo de línea: del punto de esta promesa al de la siguiente (alto del ítem = distancia entre puntos). */
+.why__seg {
+  position: absolute;
+  left: 3.5px;
+  top: var(--why-mid);
+  width: 1px;
+  height: 100%;
+  background: rgb(201 162 75 / 0.4);
+  transform-origin: 50% 0;
+}
+
+.why__item:last-child .why__seg {
+  display: none;
+}
+
+/* Punto de 8 px: aro dorado; el relleno es una capa aparte que solo cambia de opacidad. */
+.why__dot {
+  position: absolute;
+  left: 0;
+  top: calc(var(--why-mid) - 4px);
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--c-gold);
+  border-radius: 50%;
+  background: var(--c-night);
+}
+
+.why__fill {
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  background: var(--c-gold);
+}
+
+.why__title {
+  max-width: 24ch;
+  font-family: var(--ff-display);
+  font-style: italic;
+  font-weight: 500;
+  font-size: var(--why-t);
+  line-height: var(--why-lh);
+  color: var(--c-cream);
+}
+
+.why__desc {
+  margin-top: 0.5rem;
+  max-width: 44ch;
+  color: var(--c-mist);
+}
+
+.why__close {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-2) var(--s-4);
+  margin-top: var(--s-6);
+  padding-left: 2.25rem;
+}
+
+/* Cierre en la sans (un adorno menos): la serif queda para el título y las promesas. */
+.why__close-text {
+  font-size: 1.0625rem;
+  color: var(--c-cream);
+}
+
+@media (min-width: 64rem) {
+  .why {
+    --why-t: 2rem;
+    --why-gap: var(--s-6);
+    padding-block: var(--s-7);
+  }
+
+  .why__inner {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    column-gap: var(--s-7);
+    align-items: start;
+  }
+
+  .why__head {
+    position: sticky;
+    top: 7.5rem;
+  }
+}

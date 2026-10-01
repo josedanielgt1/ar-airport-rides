@@ -242,16 +242,48 @@
         </div>
       </section>
 
-      <!-- Por qué elegirnos. TODO(cliente): validar el texto. Sin afirmar licencia, seguro ni permisos. -->
+      <!--
+        Por qué elegirnos: título sticky (escritorio) + 4 promesas sobre una "línea de carretera" que se
+        dibuja con el scroll (src/why.js). Sin JS / reduced-motion / saveData: todo encendido.
+        TODO(cliente): validar títulos y descripciones. Sin afirmar licencia, seguro, permisos ni estadísticas.
+      -->
       <section class="why" id="why" aria-labelledby="why-title">
         <div class="why__inner">
-          <h2 class="section-title" id="why-title" data-i18n="why.title">Why ride with us.</h2>
-          <ul class="why__list" role="list">
-            <li class="why__item" data-i18n="why.punctual">On time, planned ahead.</li>
-            <li class="why__item" data-i18n="why.private">Private, start to finish.</li>
-            <li class="why__item" data-i18n="why.care">Courteous and discreet.</li>
-            <li class="why__item" data-i18n="why.local">We know Austin&rsquo;s roads.</li>
-          </ul>
+          <div class="why__head">
+            <h2 class="section-title" id="why-title" data-i18n="why.title">Why ride with us.</h2>
+          </div>
+          <div class="why__body">
+            <ul class="why__list" role="list">
+              <li class="why__item">
+                <span class="why__seg" aria-hidden="true"></span>
+                <span class="why__dot" aria-hidden="true"><span class="why__fill"></span></span>
+                <h3 class="why__title" data-i18n="why.punctual">On time, planned ahead.</h3>
+                <p class="why__desc" data-i18n="why.punctualDesc">We check the route before every pickup and leave margin.</p>
+              </li>
+              <li class="why__item">
+                <span class="why__seg" aria-hidden="true"></span>
+                <span class="why__dot" aria-hidden="true"><span class="why__fill"></span></span>
+                <h3 class="why__title" data-i18n="why.private">Private from start to finish.</h3>
+                <p class="why__desc" data-i18n="why.privateDesc">Just you and your party. No shared rides, no unplanned stops.</p>
+              </li>
+              <li class="why__item">
+                <span class="why__seg" aria-hidden="true"></span>
+                <span class="why__dot" aria-hidden="true"><span class="why__fill"></span></span>
+                <h3 class="why__title" data-i18n="why.care">Courteous and discreet.</h3>
+                <p class="why__desc" data-i18n="why.careDesc">Conversation if you want it, quiet if you don&rsquo;t.</p>
+              </li>
+              <li class="why__item">
+                <span class="why__seg" aria-hidden="true"></span>
+                <span class="why__dot" aria-hidden="true"><span class="why__fill"></span></span>
+                <h3 class="why__title" data-i18n="why.local">We know Austin&rsquo;s roads.</h3>
+                <p class="why__desc" data-i18n="why.localDesc">From Georgetown to San Marcos, the airport included.</p>
+              </li>
+            </ul>
+            <div class="why__close">
+              <p class="why__close-text" data-i18n="why.close">Tell us where and when.</p>
+              <a class="btn btn--primary" href="#reserve" data-i18n="why.cta">Book a ride</a>
+            </div>
+          </div>
         </div>
       </section>
 

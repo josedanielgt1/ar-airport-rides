@@ -4,6 +4,7 @@ import { initHero } from './hero.js';
 import { initContent } from './content.js';
 import { initRoad } from './road.js';
 import { initArea } from './area.js';
+import { initWhy } from './why.js';
 import { initRef } from './ref.js';
 import { initForm } from './form.js';
 
@@ -16,4 +17,5 @@ initContent();
 initHero({ still });
 initRoad({ still });
 initArea({ still });
+initWhy({ still });
 initForm();
