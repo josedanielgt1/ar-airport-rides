@@ -9,7 +9,9 @@ Hero → carretera de noche (transición) → servicios (lista) → área de ser
 - Fondo `#000`. Video 4:3 (`hero.mp4`, 1280×960) con `object-fit: contain` y bordes con `mask-image`.
 - Móvil: video a todo el ancho bajo la marca; el titular sube sobre la franja negra inferior del video.
 - Escritorio: camioneta grande (~28 % más que la v1), con la base de las ruedas apoyada sobre el bloque del titular y la parte trasera alineada al margen de EN|ES. Reflejo dorado muy sutil bajo las ruedas (degradados radiales, sin recuadro).
-- Marca (AR + EN|ES) visible desde t=0. Botón de WhatsApp junto al subtítulo (aparece con él); el fijo solo al salir del hero.
+- Marca (AR + EN|ES) visible desde t=0 en un header fijo. Botón de WhatsApp y teléfono "737-529-1720 · 24/7" junto al subtítulo (aparecen con él).
+- Escritorio ≥ 1280 px: titular izquierda / camioneta derecha (~50 vw, `clamp(36rem, 50vw, 62rem)`), ruedas en la línea base del último renglón (2,913 × fs desde el top del titular, medido), línea de carretera de 1 px (dorado 22 %, desvanecida) y resplandor radial < 10 %, estático. Alto máximo 860 px.
+- Escritorio 1024–1279 px: camioneta grande sobre el titular. Viñeta elíptica en la máscara para suavizar el fondo de ciudad a mitad del clip.
 - Titular en 3 líneas (SplitText por líneas, `aria` automático → el H1 sigue siendo un solo elemento accesible).
   Línea 1 hacia los 2 s del video, las otras escalonadas; subtítulo + botón + reflejo al final. Todo visible antes de 4,5 s.
 - Respaldo del revelado: `ended`, 4,5 s, fallo de `play()` o `error` — lo que ocurra primero. Sin JS: todo visible.
@@ -29,10 +31,16 @@ AUS con avión SVG. Larga distancia como flechas al borde (TODO(cliente)). Ciuda
 y también como lista de texto. Con reduced-motion todo aparece encendido.
 
 ## Vehículo
-`hero-last.jpg` como marcador con TODO(cliente). Amenidades solo si el cliente las confirma.
+`hero-last.jpg` tal cual (WebP 640/1280 + JPG, recorte 16:10 sin tocar la camioneta) con TODO(cliente). Amenidades en `amenities.json`, solo las `confirmed: true`.
 
 ## Por qué elegirnos
-4 frases cortas en serif, sin íconos. Sin afirmar licencia, seguro ni permisos (TODO(cliente)).
+4 frases cortas en serif (puntualidad, privacidad, trato, conocimiento de Austin), cuadrícula 2×2 desde 640 px, sin íconos ni numeración. Sin afirmar licencia, seguro ni permisos (TODO(cliente)).
 
-## Botón fijo de WhatsApp
-Aparece solo cuando el botón del hero sale de pantalla. Respeta `safe-area-inset-bottom`; no tapa el botón de enviar del formulario (se oculta o se aparta cuando el formulario está en pantalla).
+## Reserva
+Encabezado sticky en escritorio; formulario de hasta 46rem, 2 columnas desde 640 px. Etiquetas visibles, error bajo cada campo (color alerta), estado en aria-live, foco al primer error. Resultado con borde dorado a la izquierda y botón grande "Continue on WhatsApp".
+
+## Footer
+Marca, "24/7 Reservations", teléfono, correo y WhatsApp (enlaces ≥ 44 px), pagos solo como texto, ©.
+
+## Botón de WhatsApp fuera del hero
+Escritorio: en el header fijo. Móvil/tablet: barra inferior a todo el ancho; el body reserva su alto. Aparece solo cuando el botón del hero sale de pantalla y se aparta mientras el formulario está visible. Respeta `safe-area-inset-bottom`; no tapa el botón de enviar del formulario (se oculta o se aparta cuando el formulario está en pantalla).

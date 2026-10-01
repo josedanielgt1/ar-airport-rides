@@ -40,10 +40,10 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Número de WhatsApp: **pendiente de confirmar** (puede ser el mismo teléfono). Guardarlo en config.
 
 ## Estructura de la página (una sola página, scroll cinematográfico)
-1. **Hero:** video de fondo + título + subtítulo con botón "Reserve on WhatsApp" al lado. El botón fijo de WhatsApp solo aparece al salir del hero (y se aparta del botón de enviar del formulario).
+1. **Hero:** video de fondo + título + subtítulo con botón "Reserve on WhatsApp" y el teléfono "737-529-1720 · 24/7" (enlace tel:) al lado. Al salir del hero, el botón de WhatsApp pasa al header fijo (escritorio ≥ 1024 px) o a una barra inferior (móvil/tablet, con safe-area; se aparta mientras el formulario está en pantalla). Escritorio ≥ 1280 px: titular a la izquierda, camioneta a la derecha (~50 % del ancho) con la línea de las ruedas en la línea base del último renglón, línea de carretera dorada de 1 px y resplandor radial estático; alto máximo del hero 860 px.
 2. **Servicios:** lista (no tarjetas) que se "enciende" al pasar el barrido de luz de la transición "carretera de noche". Un solo revelado de grupo, sin hover por fila.
-3. **Área de servicio:** mapa de Texas/Austin estilizado en dorado con las ciudades, o lista limpia. Sin mapas pesados.
-4. **Vehículo:** fotos + qué incluye. Solo incluir amenidades que el cliente confirme (agua, cargador, wifi, etc.).
+3. **Área de servicio:** diagrama esquemático (no a escala) de la I-35 con US 183, SH 130, US 290 y SH 71, ciudades que se encienden con el scroll y lista en texto. En escritorio, título y lista quedan sticky. Etiquetas del mapa ≥ 12 px reales en móvil.
+4. **Vehículo:** por ahora `hero-last.jpg` (WebP 640/1280 + JPG) y texto genérico "full-size luxury SUV". Amenidades en `src/data/amenities.json` con `confirmed`: solo se muestran las `true` (hoy ninguna).
 5. **Por qué elegirnos:** 3 o 4 puntos cortos (puntualidad, privacidad, trato, experiencia).
 6. **Reserva:** formulario.
 7. **Footer:** teléfono, correo, WhatsApp, pagos aceptados.
@@ -98,6 +98,16 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Commits pequeños y con mensaje claro. Nunca subir secretos.
 - Antes de agregar una dependencia o un servicio de pago, preguntar.
 - Si algo del brief es ambiguo o está marcado como pendiente, dejar un `TODO(cliente)` visible en el código en vez de inventar el dato.
+
+## Implementación (decisiones tomadas)
+- Datos editables: `src/config.js` (contacto y pagos), `src/data/services.json`, `src/data/service-area.json`, `src/data/amenities.json`. El HTML recibe estos datos en el build (plugin en `vite.config.js`, marcadores `@@clave@@` y comentarios `<!-- x:list -->`), así la página es legible sin JS; el JS solo traduce.
+- Formulario: validación compartida en `src/lib/validate.js` (cliente, servidor y simulación). Lógica de servidor en `src/lib/reservation.js`; función Vercel en `api/reserve.js` (Resend por REST con `fetch`, honeypot `company`, límite de 5 envíos / 10 min por IP en memoria, 503 si faltan variables). Correo fijo en inglés con idioma, origen (`ref`: card / direct) y hora de America/Chicago.
+- Cliente (`src/form.js`): el enlace de WhatsApp se arma antes de esperar al servidor; tras el envío se muestra "Continue on WhatsApp" (enlace normal, sin `window.open`). Si el correo falla, mismo botón + aviso. Sin JS, el servidor redirige a `#reserve-sent` / `#reserve-error`.
+- `npm run dev` incluye una SIMULACIÓN de `/api/reserve` que valida y responde `{ ok, simulated }` sin enviar correos. Para probar el envío real: `vercel dev` con `.env`.
+- `ref` de la URL (`/r` → `/?ref=card`) se guarda en sessionStorage (try/catch) y viaja en el correo.
+- Builds: raíz (Vercel) y `GH_PAGES=1` (GitHub Pages, base `/ar-airport-rides/`). En Pages no hay `/api`: el formulario cae al estado de error con el botón de WhatsApp.
+- Calidad: `npm test` (node:test), `npm run check:i18n`, `npm run check:contrast`.
+- Se quitó el grano de película (aclaraba el negro puro del video).
 
 ## Pendientes (fuera del código)
 - Confirmar con el cliente: ciudades finales, servicios reales, amenidades del vehículo, número de WhatsApp y si mantiene larga distancia.

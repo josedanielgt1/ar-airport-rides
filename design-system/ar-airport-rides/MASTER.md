@@ -20,6 +20,7 @@
 | `--c-beam` | Faro | `#EBCB82` | Solo el punto más brillante del barrido de luz y del brillo de botones |
 | `--c-cream` | Crema | `#F3EBDD` | Texto principal. ~17:1 sobre negro |
 | `--c-mist` | Niebla | `#9C9384` | Texto secundario. 6,9:1 sobre negro |
+| `--c-alert` | Alerta | `#E8917F` | Solo errores del formulario. 8,8:1 sobre negro, 7,8:1 sobre asfalto |
 
 - El dorado nunca va en párrafos largos ni como degradado sobre texto.
 - Texto sobre botón dorado: `--c-night` (8,7:1).
@@ -34,7 +35,7 @@
 
 - Archivos en `public/fonts/`. `font-display: swap`. Precargar solo Cormorant Garamond.
 - Escala 1.333 (cuarta justa), base 16 px (1 rem):
-  `--fs-sm 0.875rem` · `--fs-base 1rem` · `--fs-md 1.333rem` · `--fs-lg 1.777rem` · `--fs-xl 2.369rem` · `--fs-2xl 3.157rem` · `--fs-hero clamp(2.75rem, 1.6rem + 5.2vw, 6rem)`.
+  `--fs-sm 0.875rem` · `--fs-base 1rem` · `--fs-md 1.333rem` · `--fs-lg 1.777rem` · `--fs-xl 2.369rem` · `--fs-2xl 3.157rem` · `--fs-hero clamp(2.75rem, min(1.9rem + 3.6vw, 8svh), 5rem)`.
 - Interlineado: titulares 1.02–1.1; texto sans 1.55; líneas ≤ 65 caracteres.
 - Todo en minúscula normal (sentence case). Sin etiquetas en mayúsculas, sin rótulos encima de cada título,
   sin resaltar una sola palabra del titular, sin "→" pegado a botones.
@@ -42,11 +43,12 @@
 ## Espacio
 
 Escala espaciosa: `--s-1 0.5rem` · `--s-2 1rem` · `--s-3 1.5rem` · `--s-4 2rem` · `--s-5 3rem` · `--s-6 4rem` · `--s-7 6rem` · `--s-8 9rem`.
-Margen lateral: `clamp(1.25rem, 5vw, 6rem)`. Contenido alineado a la izquierda.
+Margen lateral: `clamp(1.25rem, 5vw, 6rem)`. Contenedor de secciones `--content-max: 110rem` (su borde coincide con el del header hasta ~1950 px). Contenido alineado a la izquierda.
 
 ## Forma
 
 - Radio: botones en píldora (`999px`); campos `6px`. Nada más lleva radio.
+- Bordes de campos: niebla al 70 % (3,7:1, cumple WCAG 1.4.11).
 - Íconos: SVG propios de trazo fino (1.25–1.5 px), `currentColor`, `aria-hidden` si son decorativos. Nunca emojis.
 
 ## Movimiento
@@ -56,7 +58,7 @@ Margen lateral: `clamp(1.25rem, 5vw, 6rem)`. Contenido alineado a la izquierda.
 - Curvas: `power3.out` para entradas, `power2.inOut` para barridos; 150–250 ms en estados de interacción.
 - Prohibido: fade-and-slide-up en cada sección, hover en cada tarjeta, numeración 01/02/03 si no es secuencia, cursor con glow.
 - `prefers-reduced-motion` y `saveData`: sin video (se muestra `hero-last.jpg`), sin lluvia, sin scroll-scrub; todo en su estado final.
-- Grano de película: estático y muy tenue. Lluvia: pocas partículas, ≤ 30 fps, en pausa fuera de pantalla y con batería baja.
+- Sin grano de película (se quitó: aclaraba el negro puro). Lluvia: pocas partículas, ≤ 30 fps, en pausa fuera de pantalla y con batería baja; sin tinte dorado.
 
 ## Calidad (no negociable)
 
