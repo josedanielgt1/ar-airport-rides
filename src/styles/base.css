@@ -7,6 +7,9 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Header fijo arriba y barra de WhatsApp abajo: el foco y los anclas no quedan tapados. */
+  scroll-padding-top: 6rem;
+  scroll-padding-bottom: 6rem;
 }
 
 body {

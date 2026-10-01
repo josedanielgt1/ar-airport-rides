@@ -264,7 +264,7 @@
             <p class="section-sub" data-i18n="reserve.sub">Send the details and we&rsquo;ll confirm your ride.</p>
           </div>
 
-          <form class="form" id="reserve-form" action="/api/reserve" method="post">
+          <form class="form" id="reserve-form" action="/api/reserve" method="post" data-fab-avoid>
             <div class="form__grid">
               <div class="field">
                 <label class="field__label" for="f-name" data-i18n="form.name">Full name</label>
@@ -325,7 +325,7 @@
             <input type="hidden" name="lang" value="en" />
             <input type="hidden" name="ref" value="" />
 
-            <div class="form__actions" data-fab-avoid>
+            <div class="form__actions">
               <button class="btn btn--primary form__submit" type="submit">
                 <span data-i18n="form.submit">Send request</span>
               </button>

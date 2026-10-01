@@ -60,5 +60,6 @@
   "form.error.passengers": "Escribe entre 1 y 7 pasajeros.",
   "wa.formIntro": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
   "footer.hours": "Reservas 24/7",
-  "footer.payments": "Pagos aceptados:"
+  "footer.payments": "Pagos aceptados:",
+  "wa.notes": "Notas"
 }

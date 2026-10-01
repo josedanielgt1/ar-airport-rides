@@ -60,5 +60,6 @@
   "form.error.passengers": "Enter between 1 and 7 passengers.",
   "wa.formIntro": "Hi! I’d like to book a ride with AR Airport Rides.",
   "footer.hours": "24/7 Reservations",
-  "footer.payments": "Payments accepted:"
+  "footer.payments": "Payments accepted:",
+  "wa.notes": "Notes"
 }

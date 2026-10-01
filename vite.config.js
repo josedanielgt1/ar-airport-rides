@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { CONFIG } from './src/config.js';
+import { handleReservation, parseBody } from './src/lib/reservation.js';
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -147,8 +148,49 @@ function dataMarkup() {
   };
 }
 
+/**
+ * SOLO DESARROLLO — SIMULACIÓN de /api/reserve: valida igual que el servidor real y responde
+ * { ok: true, simulated: true } SIN ENVIAR NINGÚN CORREO. En producción responde api/reserve.js (Vercel).
+ */
+function devReserveSimulation() {
+  return {
+    name: 'dev-reserve-simulation',
+    apply: 'serve',
+    configureServer(server) {
+      const services = readData('services.json');
+      const serviceIds = services.items.map((s) => s.id);
+      server.middlewares.use('/api/reserve', (req, res) => {
+        if (req.method !== 'POST') {
+          res.statusCode = 405;
+          return res.end();
+        }
+        const chunks = [];
+        req.on('data', (c) => chunks.push(c));
+        req.on('end', async () => {
+          const contentType = String(req.headers['content-type'] ?? '');
+          const input = parseBody(Buffer.concat(chunks), contentType);
+          const result = await handleReservation(input, {
+            ip: `dev-${Date.now()}-${Math.random()}`, // sin límite por IP en la simulación
+            serviceIds,
+            send: async () => ({ simulated: true }),
+          });
+          server.config.logger.info(`[simulación] POST /api/reserve → ${result.status} (no se envió ningún correo)`);
+          if (!contentType.includes('application/json')) {
+            res.statusCode = 303;
+            res.setHeader('Location', `/#${result.anchor}`);
+            return res.end();
+          }
+          res.statusCode = result.status;
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify(result.body));
+        });
+      });
+    },
+  };
+}
+
 // GitHub Pages sirve el sitio en /ar-airport-rides/; Vercel, en la raíz.
 export default defineConfig({
   base: process.env.GH_PAGES ? '/ar-airport-rides/' : '/',
-  plugins: [dataMarkup()],
+  plugins: [dataMarkup(), devReserveSimulation()],
 });

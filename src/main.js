@@ -4,12 +4,16 @@ import { initHero } from './hero.js';
 import { initContent } from './content.js';
 import { initRoad } from './road.js';
 import { initArea } from './area.js';
+import { initRef } from './ref.js';
+import { initForm } from './form.js';
 
 const still = document.documentElement.classList.contains('still');
 
 initI18n();
+initRef();
 initWhatsApp();
 initContent();
 initHero({ still });
 initRoad({ still });
 initArea({ still });
+initForm();
