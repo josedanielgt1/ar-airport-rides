@@ -61,5 +61,6 @@
   "wa.formIntro": "Hi! I’d like to book a ride with AR Airport Rides.",
   "footer.hours": "24/7 Reservations",
   "footer.payments": "Payments accepted:",
-  "wa.notes": "Notes"
+  "wa.notes": "Notes",
+  "a11y.skip": "Skip to booking"
 }

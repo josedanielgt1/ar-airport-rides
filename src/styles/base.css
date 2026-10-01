@@ -62,3 +62,21 @@ button {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   mix-blend-mode: screen;
 }
+
+/* Enlace para saltar a la reserva: invisible hasta recibir el foco con teclado. */
+.skip-link {
+  position: fixed;
+  top: 0.75rem;
+  left: var(--gutter);
+  z-index: calc(var(--z-header) + 10);
+  padding: 0.75rem 1rem;
+  background: var(--c-cream);
+  color: var(--c-night);
+  font-weight: 600;
+  text-decoration: none;
+  translate: 0 -200%;
+}
+
+.skip-link:focus-visible {
+  translate: 0 0;
+}

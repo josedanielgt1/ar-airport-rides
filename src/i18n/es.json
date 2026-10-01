@@ -61,5 +61,6 @@
   "wa.formIntro": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
   "footer.hours": "Reservas 24/7",
   "footer.payments": "Pagos aceptados:",
-  "wa.notes": "Notas"
+  "wa.notes": "Notas",
+  "a11y.skip": "Saltar a la reserva"
 }
