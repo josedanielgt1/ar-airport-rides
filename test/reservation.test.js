@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { handleReservation, buildEmail, parseBody, rateLimited } from '../src/lib/reservation.js';
+import { handleReservation, buildEmail, parseBody, rateLimited, headerSafe } from '../src/lib/reservation.js';
 import handler from '../api/reserve.js';
 
 const IDS = ['city', 'airport'];
@@ -22,11 +22,13 @@ const input = (extra = {}) => ({
 let ipSeq = 0;
 const ctx = (extra = {}) => ({ ip: `10.0.0.${++ipSeq}`, serviceIds: IDS, now: NOW, ...extra });
 
-test('honeypot: responde ok sin enviar', async () => {
+test('honeypot: misma respuesta que un éxito real, sin enviar', async () => {
   let calls = 0;
-  const r = await handleReservation(input({ company: 'bot' }), ctx({ send: async () => (calls++, true) }));
-  assert.equal(r.status, 200);
-  assert.equal(calls, 0);
+  const send = async () => (calls++, true);
+  const spam = await handleReservation(input({ company: 'bot' }), ctx({ send }));
+  const real = await handleReservation(input(), ctx({ send }));
+  assert.equal(calls, 1, 'solo el envío real llama a send');
+  assert.deepEqual(spam, real);
 });
 
 test('datos inválidos: 422 con errores por campo', async () => {
@@ -36,10 +38,10 @@ test('datos inválidos: 422 con errores por campo', async () => {
   assert.equal(r.anchor, 'reserve-error');
 });
 
-test('sin variables de entorno: 503 claro', async () => {
+test('sin variables de entorno: 503 con código genérico, sin detalles internos', async () => {
   const r = await handleReservation(input(), ctx({ env: {} }));
   assert.equal(r.status, 503);
-  assert.equal(r.body.error, 'not_configured');
+  assert.deepEqual(r.body, { ok: false, error: 'unavailable' });
 });
 
 test('envío correcto y fallo del proveedor', async () => {
@@ -47,8 +49,10 @@ test('envío correcto y fallo del proveedor', async () => {
   assert.equal(ok.status, 200);
   const bad = await handleReservation(input(), ctx({ send: async () => false }));
   assert.equal(bad.status, 502);
-  const thrown = await handleReservation(input(), ctx({ send: async () => { throw new Error('net'); } }));
+  assert.deepEqual(bad.body, { ok: false, error: 'unavailable' });
+  const thrown = await handleReservation(input(), ctx({ send: async () => { throw new Error('secreto interno'); } }));
   assert.equal(thrown.status, 502);
+  assert.ok(!JSON.stringify(thrown.body).includes('secreto'));
 });
 
 test('límite de envíos por IP', () => {
@@ -70,11 +74,23 @@ test('correo en inglés con idioma, origen y hora de Chicago, y HTML escapado', 
   assert.ok(!html.includes('<b>Austin</b>'));
 });
 
+test('asunto y cabeceras sin saltos de línea (no se pueden inyectar cabeceras)', () => {
+  const { subject, html } = buildEmail({ ...input(), passengers: 2 }, {
+    serviceName: () => 'Airport\r\nBcc: victim@example.com',
+    now: NOW,
+  });
+  assert.ok(!/[\r\n]/.test(subject));
+  assert.match(subject, /Airport Bcc: victim@example.com/);
+  assert.equal(headerSafe('a\r\nb\u2028c\u0000d'), 'a b c d');
+  assert.ok(html.includes('<title>New ride request: Airport Bcc: victim@example.com'));
+});
+
 test('parseBody: JSON, urlencoded y objeto', () => {
   assert.deepEqual(parseBody('{"a":"1"}', 'application/json'), { a: '1' });
   assert.deepEqual(parseBody('a=1&b=x+y', 'application/x-www-form-urlencoded'), { a: '1', b: 'x y' });
   assert.deepEqual(parseBody({ a: 1 }), { a: 1 });
   assert.deepEqual(parseBody('{roto', 'application/json'), {});
+  assert.deepEqual(parseBody('[1,2]', 'application/json'), {});
 });
 
 // Respuesta mínima compatible con la de Node.
@@ -109,5 +125,14 @@ test('api/reserve: JSON sin configuración → 503 JSON', async () => {
   await handler({ method: 'POST', headers: { 'content-type': 'application/json', 'x-forwarded-for': '198.51.100.8' }, body: input() }, res);
   Object.assign(process.env, saved);
   assert.equal(res.statusCode, 503);
-  assert.equal(JSON.parse(res.body).error, 'not_configured');
+  assert.deepEqual(JSON.parse(res.body), { ok: false, error: 'unavailable' });
+});
+
+test('api/reserve: un error inesperado responde 500 genérico', async () => {
+  const res = fakeRes();
+  const req = { method: 'POST' };
+  Object.defineProperty(req, 'headers', { get() { throw new Error('detalle interno'); } });
+  await handler(req, res);
+  assert.equal(res.statusCode, 500);
+  assert.deepEqual(JSON.parse(res.body), { ok: false, error: 'unavailable' });
 });

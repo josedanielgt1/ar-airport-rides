@@ -19,6 +19,18 @@ export function rateLimited(ip, now = Date.now()) {
   return recent.length > RATE.max;
 }
 
+/**
+ * Valor seguro para cabeceras (asunto, remitente, destinatario): sin saltos de línea ni caracteres de
+ * control, para que nadie pueda inyectar cabeceras nuevas. Corta a 200 caracteres.
+ */
+export const headerSafe = (v) =>
+  String(v ?? '')
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\r\n\u2028\u2029\u0000-\u001F\u007F]+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim()
+    .slice(0, 200);
+
 const LANG_NAME = { en: 'English (en)', es: 'Spanish (es)' };
 const SOURCE = { card: 'QR card (ref=card)', direct: 'Direct visit' };
 
@@ -56,9 +68,10 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date() } 
     ['Received', `${received} (America/Chicago)`],
   ];
 
-  const subject = `New ride request: ${service}, ${data.date} ${data.time}`;
+  const subject = headerSafe(`New ride request: ${service}, ${data.date} ${data.time}`);
   const text = ['New ride request from the AR Airport Rides website.', '', ...rows.map(([k, v]) => `${k}: ${v}`)].join('\n');
-  const html = `<!doctype html><html><body style="font-family:Arial,Helvetica,sans-serif;color:#111">
+  // Todo valor variable pasa por escapeHtml (también el asunto en <title>).
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(subject)}</title></head><body style="font-family:Arial,Helvetica,sans-serif;color:#111">
 <p style="margin:0 0 12px">New ride request from the AR Airport Rides website.</p>
 <table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px">
 ${rows
@@ -77,7 +90,7 @@ export async function sendWithResend({ apiKey, from, to }, { subject, text, html
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ from, to: [to], subject, text, html }),
+    body: JSON.stringify({ from: headerSafe(from), to: [headerSafe(to)], subject: headerSafe(subject), text, html }),
     signal: AbortSignal.timeout(10_000),
   });
   if (!res.ok) console.error(`reserve: Resend respondió ${res.status}`);
@@ -94,9 +107,10 @@ export async function sendWithResend({ apiKey, from, to }, { subject, text, html
 export async function handleReservation(input, ctx) {
   const now = ctx.now ?? new Date();
   const sent = (extra = {}) => ({ status: 200, body: { ok: true, ...extra }, anchor: 'reserve-sent' });
+  // Los errores solo llevan un código público; nunca detalles internos (configuración, proveedor, pila).
   const fail = (status, error, extra = {}) => ({ status, body: { ok: false, error, ...extra }, anchor: 'reserve-error' });
 
-  // Bots: se responde como si todo fuera bien, sin enviar nada.
+  // Bots: exactamente la misma respuesta que un envío correcto, sin enviar nada.
   if (isSpam(input)) return sent();
   if (rateLimited(ctx.ip, now.getTime())) return fail(429, 'rate_limited');
 
@@ -110,16 +124,16 @@ export async function handleReservation(input, ctx) {
   const send = ctx.send ?? sendWithResend;
   if (!ctx.send && (!config.apiKey || !config.to || !config.from)) {
     console.error('reserve: faltan variables de entorno de correo');
-    return fail(503, 'not_configured', { message: 'Email delivery is not configured yet.' });
+    return fail(503, 'unavailable');
   }
 
   try {
     const delivered = await send(config, buildEmail(data, { serviceName: ctx.serviceName, now }));
-    if (delivered === false) return fail(502, 'send_failed');
+    if (delivered === false) return fail(502, 'unavailable');
     return sent(delivered && typeof delivered === 'object' ? delivered : {});
   } catch (err) {
     console.error(`reserve: error al enviar (${err?.name ?? 'Error'})`);
-    return fail(502, 'send_failed');
+    return fail(502, 'unavailable');
   }
 }
 
@@ -129,7 +143,8 @@ export function parseBody(raw, contentType = '') {
   const s = Buffer.isBuffer?.(raw) ? raw.toString('utf8') : String(raw ?? '');
   if (contentType.includes('application/json')) {
     try {
-      return JSON.parse(s || '{}');
+      const parsed = JSON.parse(s || '{}');
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
     } catch {
       return {};
     }
