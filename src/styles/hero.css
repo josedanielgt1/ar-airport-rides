@@ -1,18 +1,20 @@
 /*
-  Geometría del hero. El video es 4:3 y la camioneta ocupa aprox. del 25 % al 71 % de su alto;
-  a mitad del clip hay reflejos en el piso mojado, así que la máscara inferior los apaga desde el 70 %
-  y el titular empieza en el 76 % (--copy-at), sobre esa zona ya oscura.
-  --hh  alto del hero        --mh / --mw  alto / ancho del video
-  --mt  top del video        --copy-h     alto reservado para titular + subtítulo
+  Geometría del hero. El video es 4:3; en el último frame la camioneta ocupa
+  x 2,34 %–97,42 % e y 25 %–71,35 % (medido en hero-last.jpg).
+  A mitad del clip hay reflejos en el piso mojado: la máscara inferior los apaga desde el 70 %.
+  --hh  alto del hero         --mh / --mw  alto / ancho del video
+  --mt  top del video         --mr         margen derecho del video
+  --copy-at  dónde empieza el texto (fracción del alto del video)
+  --copy-h   alto reservado para titular + subtítulo + botón
 */
 .hero {
-  --hh: max(100svh, 38rem);
+  --hh: max(100svh, 40rem);
   --copy-at: 0.76;
-  --copy-h: calc(var(--fs-hero) * 3.3 + 4.75rem);
-  --fab-space: calc(5.5rem + env(safe-area-inset-bottom));
+  --copy-h: calc(var(--fs-hero) * 3.3 + 9rem);
   --mw: 100vw;
   --mh: calc(var(--mw) * 0.75);
-  --mt: max(3.5rem, calc((var(--hh) - var(--fab-space) - var(--mh) * var(--copy-at) - var(--copy-h)) / 2));
+  --mr: 0px;
+  --mt: max(3.5rem, calc((var(--hh) - 2rem - var(--mh) * var(--copy-at) - var(--copy-h)) / 2));
 
   position: relative;
   height: var(--hh);
@@ -23,15 +25,15 @@
 .hero__media {
   position: absolute;
   top: var(--mt);
-  right: 0;
+  right: var(--mr);
   width: var(--mw);
   aspect-ratio: 4 / 3;
   /* Bordes que se funden con el negro: dos degradados intersectados. */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent),
-    linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 92%);
+    linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 88%);
   -webkit-mask-composite: source-in;
   mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent),
-    linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 92%);
+    linear-gradient(to bottom, transparent, #000 18%, #000 70%, transparent 88%);
   mask-composite: intersect;
 }
 
@@ -42,15 +44,33 @@
   background: var(--c-night);
 }
 
+/*
+  Reflejo dorado bajo las ruedas. Cada capa es un degradado radial "closest-side",
+  que llega a transparente antes del borde de su caja: no se ve ningún recuadro.
+  Ruedas en el último frame: centros aprox. al 18 % y 75 % del ancho del video.
+*/
+.hero__glow {
+  position: absolute;
+  top: calc(var(--mt) + var(--mh) * 0.7135 - var(--mh) * 0.05);
+  right: calc(var(--mr) + var(--mw) * 0.0258);
+  width: calc(var(--mw) * 0.9508);
+  height: calc(var(--mh) * 0.1);
+  pointer-events: none;
+  background:
+    radial-gradient(closest-side, rgb(235 203 130 / 0.16), transparent) 13% 50% / 24% 70% no-repeat,
+    radial-gradient(closest-side, rgb(235 203 130 / 0.16), transparent) 76% 50% / 24% 70% no-repeat,
+    radial-gradient(closest-side, rgb(201 162 75 / 0.06), transparent) 50% 50% / 100% 100% no-repeat;
+}
+
 .hero__copy {
   position: absolute;
   top: calc(var(--mt) + var(--mh) * var(--copy-at));
   left: var(--gutter);
   right: var(--gutter);
-  max-width: 40rem;
 }
 
 .hero__title {
+  max-width: 40rem;
   font-family: var(--ff-display);
   font-weight: 500;
   font-size: var(--fs-hero);
@@ -65,8 +85,15 @@
   margin-bottom: -0.1em;
 }
 
-.hero__sub {
+.hero__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--s-3);
   margin-top: var(--s-3);
+}
+
+.hero__sub {
   max-width: 30ch;
   font-size: 1.0625rem;
   line-height: 1.5;
@@ -75,7 +102,8 @@
 
 /* Con movimiento: el texto espera al video. Respaldo por si el JS no llega: visible a los 6 s. */
 .motion .hero__title,
-.motion .hero__sub {
+.motion .hero__meta,
+.motion .hero__glow {
   visibility: hidden;
   animation: hero-failsafe 0s linear 6s forwards;
 }
@@ -86,20 +114,35 @@
   }
 }
 
+/*
+  Escritorio: camioneta ~28 % más grande, apoyada justo sobre el bloque del titular
+  (base de las ruedas → titular) y con su parte trasera alineada al margen de EN|ES.
+  El top del video puede quedar fuera de pantalla: ese 25 % superior es negro / está enmascarado.
+*/
 @media (min-width: 64rem) {
   .hero {
-    --fab-space: 0px;
-    --mh: min(51vw, calc((var(--hh) - var(--copy-h) - 3rem) / var(--copy-at)));
+    --copy-at: 0.735;
+    --copy-h: calc(var(--fs-hero) * 3.2 + 5.5rem);
+    --mh: min(63vw, calc((var(--hh) - 8rem - var(--copy-h)) / (var(--copy-at) - 0.25)));
     --mw: calc(var(--mh) * 4 / 3);
-    --mt: max(0px, calc(var(--hh) - 3rem - var(--copy-h) - var(--mh) * var(--copy-at)));
+    --mr: calc(var(--gutter) + 0.75rem - var(--mw) * 0.0258);
+    --mt: calc(var(--hh) - 2.5rem - var(--copy-h) - var(--mh) * var(--copy-at));
   }
 
   .hero__title {
     font-weight: 400;
   }
 
+  .hero__meta {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--s-5);
+  }
+
   .hero__sub {
+    max-width: 26ch;
     font-size: var(--fs-md);
+    line-height: 1.4;
   }
 }
 
@@ -109,7 +152,11 @@
   display: none !important;
 }
 
-/* Sin JS se ve poster.jpg (vista frontal, llega más abajo que el perfil final): el texto baja un poco. */
+/* Sin JS se ve poster.jpg (vista frontal, llega más abajo que el perfil final): texto y reflejo se ajustan. */
 html:not(.js) .hero {
   --copy-at: 0.84;
+}
+
+html:not(.js) .hero__glow {
+  display: none;
 }

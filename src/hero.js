@@ -10,7 +10,7 @@ const STILL_POSTER = `${import.meta.env.BASE_URL}media/hero-last.jpg`;
 // Tiempos en segundos del video (el clip dura ~5,2 s).
 const LINE_AT = 2.0; // primera línea del titular
 const LINE_GAP = 0.45; // escalonado entre líneas
-const SUB_AT = 3.4; // subtítulo; todo termina hacia 4,2 s
+const META_AT = 3.4; // subtítulo + botón y reflejo; todo termina hacia 4,2 s
 const FALLBACK_MS = 4500; // respaldo si el video no avanza
 
 /** Titular como texto + <br>. El espacio antes de cada <br> mantiene el aria-label legible. */
@@ -25,9 +25,10 @@ function setTitle(el, lines) {
 
 export function initHero({ still }) {
   const title = document.querySelector('.hero__title');
-  const sub = document.querySelector('.hero__sub');
+  const meta = document.querySelector('.hero__meta');
+  const glow = document.querySelector('.hero__glow');
   const video = document.querySelector('.hero__video');
-  if (!title || !sub || !video) return;
+  if (!title || !meta || !video) return;
 
   setTitle(title, t('hero.title'));
 
@@ -58,11 +59,12 @@ export function initHero({ still }) {
         LINE_AT,
       )
       .fromTo(
-        sub,
+        meta,
         { autoAlpha: 0, y: 8 },
         { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' },
-        SUB_AT,
-      );
+        META_AT,
+      )
+      .fromTo(glow, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.8, ease: 'none' }, META_AT);
   };
 
   // Al terminar se deshace la separación: el H1 vuelve a ser texto plano (sin máscaras que recalcular).
@@ -99,7 +101,7 @@ export function initHero({ still }) {
   const pending = new Promise((resolve) => {
     fontsReady.then(() => {
       build();
-      gsap.set([title, sub], { animation: 'none' });
+      gsap.set([title, meta, glow], { animation: 'none' });
       gsap.set(title, { visibility: 'visible' });
       resolve();
     });

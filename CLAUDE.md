@@ -40,7 +40,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Número de WhatsApp: **pendiente de confirmar** (puede ser el mismo teléfono). Guardarlo en config.
 
 ## Estructura de la página (una sola página, scroll cinematográfico)
-1. **Hero:** video de fondo + título + botón fijo "Reserve on WhatsApp".
+1. **Hero:** video de fondo + título + subtítulo con botón "Reserve on WhatsApp" al lado. El botón fijo de WhatsApp solo aparece al salir del hero (y se aparta del botón de enviar del formulario).
 2. **Servicios:** lista (no tarjetas) que se "enciende" al pasar el barrido de luz de la transición "carretera de noche". Un solo revelado de grupo, sin hover por fila.
 3. **Área de servicio:** mapa de Texas/Austin estilizado en dorado con las ciudades, o lista limpia. Sin mapas pesados.
 4. **Vehículo:** fotos + qué incluye. Solo incluir amenidades que el cliente confirme (agua, cargador, wifi, etc.).

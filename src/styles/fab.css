@@ -1,10 +1,5 @@
-/* Botón fijo de WhatsApp: visible desde t=0 en toda la página. */
-.wa-fab {
-  position: fixed;
-  z-index: var(--z-fab);
-  left: 50%;
-  bottom: calc(var(--s-3) + env(safe-area-inset-bottom));
-  translate: -50% 0;
+/* Botón de WhatsApp: el del hero (junto al subtítulo) y el fijo comparten estilo. */
+.btn-wa {
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
@@ -19,39 +14,58 @@
   text-decoration: none;
   transition:
     background-color var(--t-fast) ease,
-    box-shadow 240ms var(--ease-out),
-    opacity 240ms ease,
-    translate 240ms var(--ease-out);
+    box-shadow 240ms var(--ease-out);
 }
 
-.wa-fab__icon {
+.btn-wa__icon {
   width: 1.25rem;
   height: 1.25rem;
   flex: none;
 }
 
-/* Brillo dorado al pasar o enfocar. */
+/* Brillo dorado solo al pasar o enfocar. */
 @media (hover: hover) {
-  .wa-fab:hover {
+  .btn-wa:hover {
     background: var(--c-beam);
     box-shadow: 0 0 0 1px rgb(235 203 130 / 0.6), 0 0 36px -4px rgb(235 203 130 / 0.55);
   }
 }
 
-.wa-fab:focus-visible {
+.btn-wa:focus-visible {
   outline-color: var(--c-cream);
   box-shadow: 0 0 0 1px rgb(235 203 130 / 0.6), 0 0 36px -4px rgb(235 203 130 / 0.55);
 }
 
-.wa-fab:active {
+.btn-wa:active {
   background: var(--c-beam);
 }
 
-/* Se aparta cuando hay una zona marcada con data-fab-avoid en pantalla (p. ej. enviar del formulario). */
+/* Fijo: aparece solo al salir del hero (JS añade .is-on). Sin JS queda siempre visible. */
+.wa-fab {
+  --hide-y: 0;
+  position: fixed;
+  z-index: var(--z-fab);
+  left: 50%;
+  bottom: calc(var(--s-3) + env(safe-area-inset-bottom));
+  translate: -50% var(--hide-y);
+  transition:
+    background-color var(--t-fast) ease,
+    box-shadow 240ms var(--ease-out),
+    opacity 240ms ease,
+    translate 320ms var(--ease-out),
+    visibility 0s linear 0s;
+}
+
+.js .wa-fab:not(.is-on),
 .wa-fab.is-away {
+  --hide-y: 140%;
   opacity: 0;
-  translate: -50% 120%;
+  visibility: hidden;
   pointer-events: none;
+  transition:
+    opacity 200ms ease,
+    translate 240ms ease-in,
+    visibility 0s linear 240ms;
 }
 
 @media (min-width: 64rem) {
@@ -59,16 +73,14 @@
     left: auto;
     right: var(--gutter);
     bottom: calc(var(--s-4) + env(safe-area-inset-bottom));
-    translate: 0 0;
-  }
-
-  .wa-fab.is-away {
-    translate: 0 120%;
+    translate: 0 var(--hide-y);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wa-fab {
+  .wa-fab,
+  .js .wa-fab:not(.is-on),
+  .wa-fab.is-away {
     transition: none;
   }
 }

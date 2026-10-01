@@ -5,19 +5,32 @@ export const whatsappUrl = (message) =>
   `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(message)}`;
 
 export function initWhatsApp() {
-  const fab = document.querySelector('.wa-fab');
-  if (!fab) return;
-
+  const links = document.querySelectorAll('[data-wa]');
   const update = () => {
-    fab.href = whatsappUrl(t('wa.message'));
+    const href = whatsappUrl(t('wa.message'));
+    links.forEach((a) => (a.href = href));
   };
   update();
   onLangChange(update);
 
-  // Se aparta cuando hay en pantalla una zona marcada con data-fab-avoid
-  // (p. ej. el botón de enviar del formulario), para no taparla.
+  const fab = document.querySelector('.wa-fab');
+  if (!fab) return;
+  if (!('IntersectionObserver' in window)) {
+    fab.classList.add('is-on');
+    return;
+  }
+
+  // El fijo aparece solo cuando el botón del hero sale de pantalla, y se aparta mientras haya
+  // en pantalla una zona marcada con data-fab-avoid (p. ej. el botón de enviar del formulario).
+  const heroCta = document.querySelector('.hero__cta');
+  if (heroCta) {
+    new IntersectionObserver(([e]) => fab.classList.toggle('is-on', !e.isIntersecting)).observe(heroCta);
+  } else {
+    fab.classList.add('is-on');
+  }
+
   const avoid = document.querySelectorAll('[data-fab-avoid]');
-  if (!avoid.length || !('IntersectionObserver' in window)) return;
+  if (!avoid.length) return;
   const visible = new Set();
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)));

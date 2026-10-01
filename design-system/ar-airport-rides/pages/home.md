@@ -8,10 +8,10 @@ Hero → carretera de noche (transición) → servicios (lista) → área de ser
 ## Hero
 - Fondo `#000`. Video 4:3 (`hero.mp4`, 1280×960) con `object-fit: contain` y bordes con `mask-image`.
 - Móvil: video a todo el ancho bajo la marca; el titular sube sobre la franja negra inferior del video.
-- Escritorio: video a la derecha; titular a la izquierda, abajo, sobre la zona negra bajo la camioneta.
-- Marca (AR + EN|ES) y botón fijo de WhatsApp visibles desde t=0.
+- Escritorio: camioneta grande (~28 % más que la v1), con la base de las ruedas apoyada sobre el bloque del titular y la parte trasera alineada al margen de EN|ES. Reflejo dorado muy sutil bajo las ruedas (degradados radiales, sin recuadro).
+- Marca (AR + EN|ES) visible desde t=0. Botón de WhatsApp junto al subtítulo (aparece con él); el fijo solo al salir del hero.
 - Titular en 3 líneas (SplitText por líneas, `aria` automático → el H1 sigue siendo un solo elemento accesible).
-  Línea 1 hacia los 2 s del video, las otras escalonadas; subtítulo al final. Todo visible antes de 4,5 s.
+  Línea 1 hacia los 2 s del video, las otras escalonadas; subtítulo + botón + reflejo al final. Todo visible antes de 4,5 s.
 - Respaldo del revelado: `ended`, 4,5 s, fallo de `play()` o `error` — lo que ocurra primero. Sin JS: todo visible.
 - Reduced-motion o saveData: no se carga el video, se muestra `hero-last.jpg`, texto visible desde el inicio.
 - Al cambiar EN|ES: `revert()` y volver a separar el titular sin salto de layout.
@@ -35,4 +35,4 @@ y también como lista de texto. Con reduced-motion todo aparece encendido.
 4 frases cortas en serif, sin íconos. Sin afirmar licencia, seguro ni permisos (TODO(cliente)).
 
 ## Botón fijo de WhatsApp
-Respeta `safe-area-inset-bottom`; no tapa el botón de enviar del formulario (se oculta o se aparta cuando el formulario está en pantalla).
+Aparece solo cuando el botón del hero sale de pantalla. Respeta `safe-area-inset-bottom`; no tapa el botón de enviar del formulario (se oculta o se aparta cuando el formulario está en pantalla).

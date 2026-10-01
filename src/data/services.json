@@ -1,0 +1,42 @@
+{
+  "_todo": "TODO(cliente): confirmar la lista final de servicios reales. Bodas y tours solo se agregan si el cliente los confirma.",
+  "items": [
+    {
+      "id": "city",
+      "icon": "route",
+      "en": { "name": "City & suburbs", "desc": "Point-to-point rides across Austin and nearby towns." },
+      "es": { "name": "Ciudad y suburbios", "desc": "Traslados punto a punto por Austin y sus alrededores." }
+    },
+    {
+      "id": "airport",
+      "icon": "plane",
+      "todo": "TODO(cliente): confirmar si ofrece seguimiento de vuelo antes de mencionarlo.",
+      "en": { "name": "Airport (AUS)", "desc": "Pickup and drop-off at Austin-Bergstrom." },
+      "es": { "name": "Aeropuerto (AUS)", "desc": "Recogida y entrega en Austin-Bergstrom." }
+    },
+    {
+      "id": "door",
+      "icon": "door",
+      "en": { "name": "Door to door", "desc": "From your door straight to where you need to be." },
+      "es": { "name": "Puerta a puerta", "desc": "De tu puerta directo a donde necesitas llegar." }
+    },
+    {
+      "id": "events",
+      "icon": "ticket",
+      "en": { "name": "Events", "desc": "Concerts, games and Austin's festival season." },
+      "es": { "name": "Eventos", "desc": "Conciertos, partidos y la temporada de festivales de Austin." }
+    },
+    {
+      "id": "corporate",
+      "icon": "briefcase",
+      "en": { "name": "Corporate", "desc": "Executives, meetings and business travel." },
+      "es": { "name": "Corporativo", "desc": "Ejecutivos, reuniones y viajes de negocios." }
+    },
+    {
+      "id": "hourly",
+      "icon": "clock",
+      "en": { "name": "By the hour", "desc": "A chauffeur at your disposal, on your schedule." },
+      "es": { "name": "Por horas", "desc": "Chofer a tu disposición, a tu ritmo." }
+    }
+  ]
+}

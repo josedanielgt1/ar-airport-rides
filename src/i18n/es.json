@@ -1,7 +1,13 @@
 {
   "lang.label": "Idioma",
-  "hero.title": ["Llega descansado.", "A tiempo.", "Siempre."],
+  "hero.title": [
+    "Llega descansado.",
+    "A tiempo.",
+    "Siempre."
+  ],
   "hero.sub": "Traslados privados premium en Austin y el centro de Texas.",
   "wa.cta": "Reserva por WhatsApp",
-  "wa.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides."
+  "wa.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
+  "services.title": "Cada traslado, a tu horario.",
+  "services.sub": "Por Austin y sus alrededores, aeropuerto incluido."
 }

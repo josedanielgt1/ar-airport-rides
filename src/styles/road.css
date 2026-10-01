@@ -1,0 +1,155 @@
+/*
+  Transición "carretera de noche" + servicios.
+  El tramo superior (padding-top) es la carretera: negro, lluvia y el paso del haz.
+  Estado por defecto (sin JS, reduced-motion, saveData): lista encendida, sin haz ni lluvia.
+*/
+.road {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(8rem, 28svh, 16rem) var(--gutter) var(--s-8);
+  background: var(--c-night);
+}
+
+.road__scene {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.road__rain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* La lluvia vive arriba (la carretera) y se apaga antes de llegar al texto largo. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 35%, transparent 60%);
+  mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 35%, transparent 60%);
+}
+
+/* Haz de faro: banda vertical suave, inclinada, que se suma a la escena con "screen". */
+.road__beam {
+  display: none;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: clamp(16rem, 55vw, 44rem);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(201 162 75 / 0.06) 28%,
+    rgb(235 203 130 / 0.2) 50%,
+    rgb(201 162 75 / 0.06) 72%,
+    transparent
+  );
+  /* Sin bordes rectos arriba ni abajo: el haz se desvanece en vertical. */
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 30%, #000 70%, transparent);
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.road.is-armed .road__beam {
+  display: block;
+}
+
+.road__inner {
+  position: relative;
+  max-width: 82rem;
+  margin-inline: auto;
+}
+
+.services__title {
+  max-width: 18ch;
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-xl);
+  line-height: 1.08;
+  letter-spacing: -0.005em;
+  color: var(--c-cream);
+}
+
+.services__sub {
+  margin-top: var(--s-2);
+  max-width: 32ch;
+  color: var(--c-mist);
+}
+
+.services__list {
+  display: grid;
+  gap: var(--s-4);
+  margin: var(--s-6) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+  Encendido: una sola máscara para todo el grupo. --lit es la posición del haz (en % del ancho de la
+  lista); a su izquierda la lista está encendida, a su derecha queda tenue. Por defecto: encendida.
+*/
+.road.is-armed .services__list {
+  -webkit-mask-image: linear-gradient(
+    100deg,
+    #000 calc(var(--lit, 130%) - 14%),
+    rgb(0 0 0 / 0.16) calc(var(--lit, 130%) + 14%)
+  );
+  mask-image: linear-gradient(
+    100deg,
+    #000 calc(var(--lit, 130%) - 14%),
+    rgb(0 0 0 / 0.16) calc(var(--lit, 130%) + 14%)
+  );
+}
+
+.service {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  column-gap: var(--s-2);
+  align-items: start;
+}
+
+.service__icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: 0.3rem;
+  color: var(--c-gold);
+}
+
+.service__name {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: 1.6rem;
+  line-height: 1.15;
+  color: var(--c-cream);
+}
+
+.service__desc {
+  margin-top: 0.25rem;
+  max-width: 34ch;
+  font-size: 0.975rem;
+  color: var(--c-mist);
+}
+
+@media (min-width: 48rem) {
+  .services__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--s-6);
+    row-gap: var(--s-5);
+  }
+}
+
+@media (min-width: 64rem) {
+  .road__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+    column-gap: var(--s-7);
+    align-items: start;
+  }
+
+  .services__title {
+    font-size: var(--fs-2xl);
+  }
+
+  .services__list {
+    margin-top: 0.6rem;
+  }
+}
