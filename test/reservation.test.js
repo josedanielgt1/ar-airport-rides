@@ -5,11 +5,13 @@ import handler from '../api/reserve.js';
 
 const IDS = ['city', 'airport'];
 const NOW = new Date('2026-10-01T20:04:00Z'); // 3:04 PM en Austin (CDT)
+// Fecha de viaje siempre futura (también para el handler real, que valida contra la fecha de hoy).
+const TRIP_DATE = new Date(Math.max(Date.now(), NOW.getTime()) + 30 * 86400000).toISOString().slice(0, 10);
 const input = (extra = {}) => ({
   name: 'Ana López',
   phone: '737-529-1720',
   service: 'airport',
-  date: '2026-10-02',
+  date: TRIP_DATE,
   time: '07:30',
   origin: 'Downtown <b>Austin</b>',
   destination: 'AUS',
@@ -66,7 +68,7 @@ test('límite de envíos por IP', () => {
 test('correo en inglés con idioma, origen y hora de Chicago, y HTML escapado', () => {
   const data = { ...input(), passengers: 2 };
   const { subject, text, html } = buildEmail(data, { serviceName: () => 'Airport (AUS)', now: NOW });
-  assert.match(subject, /Airport \(AUS\), 2026-10-02 07:30/);
+  assert.ok(subject.includes(`Airport (AUS), ${TRIP_DATE} 07:30`));
   assert.match(text, /Visitor language: Spanish \(es\)/);
   assert.match(text, /Source: QR card \(ref=card\)/);
   assert.match(text, /Received: .*3:04.PM.*CDT.*America\/Chicago/);

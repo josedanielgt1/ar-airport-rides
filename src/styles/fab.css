@@ -60,8 +60,9 @@
 
 /*
   Móvil y tablet: barra inferior fija con padding y safe-area. Aparece al salir del hero
-  (html.is-past-hero) y se aparta cuando hay en pantalla una zona data-fab-avoid (el botón de enviar).
-  El body reserva su alto para que nunca tape el final del contenido. Sin JS: siempre visible.
+  (html.is-past-hero) y se oculta mientras haya en pantalla una zona data-fab-avoid: el botón del hero,
+  el cierre de #why y el formulario (ya ofrecen su propia acción). El body reserva su alto para que
+  nunca tape el final del contenido. Sin JS: siempre visible.
 */
 .wa-bar {
   --bar-h: calc(52px + 1.5rem + env(safe-area-inset-bottom));
@@ -70,9 +71,9 @@
   z-index: var(--z-fab);
   padding: 0.75rem var(--gutter) calc(0.75rem + env(safe-area-inset-bottom));
   background: linear-gradient(to top, rgb(0 0 0 / 0.96) 70%, rgb(0 0 0 / 0));
+  /* Solo opacidad (corta): la barra es fija, ocultarla no mueve nada del layout. */
   transition:
-    translate 320ms var(--ease-out),
-    opacity 240ms ease,
+    opacity 160ms ease,
     visibility 0s linear 0s;
 }
 
@@ -86,13 +87,12 @@ body {
 
 .js:not(.is-past-hero) .wa-bar,
 .wa-bar.is-away {
-  translate: 0 110%;
   opacity: 0;
   visibility: hidden;
+  pointer-events: none;
   transition:
-    translate 240ms ease-in,
-    opacity 200ms ease,
-    visibility 0s linear 240ms;
+    opacity 160ms ease,
+    visibility 0s linear 160ms;
 }
 
 @media (min-width: 64rem) {

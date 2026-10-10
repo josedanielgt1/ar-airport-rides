@@ -29,8 +29,8 @@ export function initWhatsApp() {
     root.classList.add('is-past-hero');
   }
 
-  // La barra inferior se aparta mientras haya en pantalla una zona marcada con data-fab-avoid
-  // (el botón de enviar del formulario), para no taparla.
+  // La barra inferior se oculta mientras haya en pantalla una zona marcada con data-fab-avoid
+  // (botón del hero, cierre de #why, formulario): ahí ya hay una acción visible.
   const bar = document.querySelector('.wa-bar');
   const avoid = document.querySelectorAll('[data-fab-avoid]');
   if (!bar || !avoid.length) return;
