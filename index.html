@@ -223,23 +223,17 @@
       <section class="vehicle" id="vehicle" aria-labelledby="vehicle-title">
         <div class="vehicle__inner">
           <figure class="vehicle__media">
-            <picture>
-              <source
-                type="image/webp"
-                srcset="/media/vehicle-640.webp 640w, /media/vehicle-1280.webp 1280w"
-                sizes="(min-width: 64rem) 55vw, 100vw"
-              />
-              <img
-                class="vehicle__img"
-                src="/media/poster.jpg"
-                width="1280"
-                height="960"
-                loading="lazy"
-                decoding="async"
-                alt="Black full-size SUV, front three-quarter view."
-                data-i18n-attr="alt:vehicle.alt"
-              />
-            </picture>
+            <!-- Una sola ruta: reemplazar public/media/vehicle-front.webp por la foto real (Expedition 2022). -->
+            <img
+              class="vehicle__img"
+              src="/media/vehicle-front.webp"
+              width="1280"
+              height="960"
+              loading="lazy"
+              decoding="async"
+              alt="Black full-size SUV, front three-quarter view."
+              data-i18n-attr="alt:vehicle.alt"
+            />
           </figure>
           <div class="vehicle__copy">
             <h2 class="section-title" id="vehicle-title" data-i18n="vehicle.title">The vehicle.</h2>

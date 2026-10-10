@@ -43,7 +43,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 1. **Hero:** video de fondo + título + subtítulo con botón "Reserve on WhatsApp" y el teléfono "737-529-1720 · 24/7" (enlace tel:) al lado. Al salir del hero, el botón de WhatsApp pasa al header fijo (escritorio ≥ 1024 px) o a una barra inferior (móvil/tablet, con safe-area; se aparta mientras el formulario está en pantalla). Escritorio ≥ 1280 px: titular a la izquierda, camioneta a la derecha (~50 % del ancho) con la línea de las ruedas en la línea base del último renglón, línea de carretera dorada de 1 px y resplandor radial estático; alto máximo del hero 860 px.
 2. **Servicios:** lista (no tarjetas) que se "enciende" al pasar el barrido de luz de la transición "carretera de noche". Un solo revelado de grupo, sin hover por fila.
 3. **Área de servicio:** diagrama esquemático (no a escala) de la I-35 con US 183, SH 130, US 290 y SH 71, ciudades que se encienden con el scroll y lista en texto. En escritorio, título y lista quedan sticky. Etiquetas del mapa ≥ 12 px reales en móvil.
-4. **Vehículo:** por ahora `hero-last.jpg` (WebP 640/1280 + JPG) y texto genérico "full-size luxury SUV". Amenidades en `src/data/amenities.json` con `confirmed`: solo se muestran las `true` (hoy ninguna).
+4. **Vehículo:** una sola imagen en `public/media/vehicle-front.webp` (hoy el primer frame del video; se reemplazará por la foto real de la Expedition 2022) y texto "full-size luxury SUV with room for you and your luggage". Amenidades en `src/data/amenities.json` con `confirmed`: solo se muestran las `true` (hoy ninguna).
 5. **Por qué elegirnos:** 3 o 4 puntos cortos (puntualidad, privacidad, trato, experiencia).
 6. **Reserva:** formulario.
 7. **Footer:** teléfono, correo, WhatsApp, pagos aceptados.
@@ -77,7 +77,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Carpeta: `public/media/`.
 - Solo `hero.mp4` (H.264, 4:3), sin audio. Objetivo: ≤ 3 MB en móvil. Sin webm (pesaba más que el mp4).
 - `poster.jpg` = **primer frame del video** (solo se ve mientras carga) y `hero-last.jpg` = último frame.
-- `vehicle-front.jpg` y `vehicle-side.jpg` no están en el repo. En la sección Vehículo usar `hero-last.jpg` como marcador con `TODO(cliente)` hasta tener fotos reales.
+- La sección Vehículo usa una sola ruta: `public/media/vehicle-front.webp` (hoy un marcador con `TODO(cliente)`; reemplazar por la foto real).
 - El clip es un arco de cámara de frente a perfil (camioneta quieta, con lluvia) que termina sobre negro puro: el hero usa fondo `#000`. **No usar `loop`**: se vería el salto. Reproducir una vez y dejar el último frame. Con `prefers-reduced-motion` o modo ahorro de datos (`navigator.connection.saveData`) no cargar el video: mostrar `hero-last.jpg` con título y CTA visibles.
 - Título y CTA aparecen en `ended`, a los 4.5 s, si `play()` falla o si hay error (lo que ocurra primero). Sin JS, todo visible.
 - Etiqueta: `<video muted playsinline poster="/media/poster.jpg">`; la fuente `mp4` y el autoplay los agrega JS solo si procede.
@@ -106,6 +106,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - `npm run dev` incluye una SIMULACIÓN de `/api/reserve` que valida y responde `{ ok, simulated }` sin enviar correos. Para probar el envío real: `vercel dev` con `.env`.
 - `ref` de la URL (`/r` → `/?ref=card`) se guarda en sessionStorage (try/catch) y viaja en el correo.
 - Builds: raíz (Vercel) y `GH_PAGES=1` (GitHub Pages, base `/ar-airport-rides/`). En Pages no hay `/api`: el formulario cae al estado de error con el botón de WhatsApp.
+- Mensajes de texto (SMS): `smsNumber` en `src/config.js`; enlaces con `src/lib/sms.js` (iOS/iPadOS `sms:<n>&body=`, Android `sms:<n>?body=`, otros `sms:<n>`). En táctil "Text us" es la acción principal (dorado sólido) y WhatsApp la secundaria (contorno); en escritorio el botón de mensaje muestra el teléfono como `tel:` y WhatsApp sigue como principal. Barra móvil con ambos botones; se oculta mientras se ven los botones del hero, el cierre de #why o el formulario.
 - Calidad: `npm test` (node:test), `npm run check:i18n`, `npm run check:contrast`.
 - Se quitó el grano de película (aclaraba el negro puro del video).
 
