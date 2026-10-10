@@ -132,13 +132,17 @@
 */
 @media (min-width: 64rem) {
   .hero {
+    /* Escritorio: alto acotado (en pantallas grandes no deja un hueco negro antes de servicios). */
+    --hh: clamp(560px, 100svh, 780px);
     --copy-at: 0.735;
     --copy-gap: 0px;
     --copy-h: calc(var(--fs-hero) * 3.2 + 5.5rem);
     --mh: min(63vw, calc((var(--hh) - 8rem - var(--copy-h)) / (var(--copy-at) - 0.25)));
     --mw: calc(var(--mh) * 4 / 3);
     --mr: calc(var(--gutter) + 0.75rem - var(--mw) * 0.0258);
-    --mt: calc(var(--hh) - 2.5rem - var(--copy-h) - var(--mh) * var(--copy-at));
+    /* --copy-drop baja todo el conjunto (titular, camioneta, suelo, botones) para no dejar aire bajo el botón. */
+    --copy-drop: 4rem;
+    --mt: calc(var(--hh) - 2.5rem - var(--copy-h) - var(--mh) * var(--copy-at) + var(--copy-drop));
   }
 
   /*
@@ -190,12 +194,12 @@
 */
 @media (min-width: 80rem) {
   .hero {
-    --hh: clamp(40rem, 100svh, 860px);
+    --hh: clamp(560px, 100svh, 780px);
     --cw: clamp(36rem, 50vw, 62rem);
     --mw: calc(var(--cw) / 0.9508);
     --mh: calc(var(--mw) * 0.75);
     --copy-h: calc(var(--fs-hero) * 3.12 + 4.75rem);
-    --copy-top: calc((var(--hh) - var(--copy-h)) / 2 + 2rem);
+    --copy-top: calc((var(--hh) - var(--copy-h)) / 2 + 2rem + var(--copy-drop));
     --ground: calc(var(--copy-top) + var(--fs-hero) * 2.913);
     --mt: calc(var(--ground) - var(--mh) * 0.7135);
   }

@@ -4,15 +4,27 @@
   Estado por defecto (sin JS, reduced-motion, saveData): lista encendida, sin haz ni lluvia.
 */
 .road {
+  /* Alto de la escena que se superpone a la parte baja del hero (lluvia + haz). */
+  --road-overlap: clamp(140px, 22svh, 240px);
   position: relative;
-  overflow: hidden;
-  padding: clamp(8rem, 28svh, 16rem) var(--gutter) var(--s-8);
+  /* clip (no hidden): recorta en horizontal sin crear contenedor de scroll; en vertical la escena sube sobre el hero. */
+  overflow-x: clip;
+  overflow-y: visible;
+  padding: clamp(96px, 14svh, 150px) var(--gutter) 96px;
   background: var(--c-night);
 }
 
+/*
+  Escena (lluvia + haz) superpuesta: cubre la parte baja del hero y la alta de #services, sin depender
+  de espacio vacío. Absoluta, sin eventos de puntero; recorta su propio contenido (el haz se desplaza).
+*/
 .road__scene {
   position: absolute;
-  inset: 0;
+  top: calc(var(--road-overlap) * -1);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: hidden;
   pointer-events: none;
 }
 
@@ -22,8 +34,8 @@
   width: 100%;
   height: 100%;
   /* La lluvia vive arriba (la carretera) y se apaga antes de llegar al texto largo. */
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 35%, transparent 60%);
-  mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 35%, transparent 60%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 32%, transparent 52%);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 32%, transparent 52%);
 }
 
 /* Haz de faro: banda vertical suave, inclinada, que se suma a la escena con "screen". */
