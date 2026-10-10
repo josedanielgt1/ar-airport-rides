@@ -49,6 +49,17 @@ function serviceOptionsMarkup() {
     .join('\n                  ');
 }
 
+/** Créditos de fotos de terceros (src/data/credits.json): "Photo: <autor>, <licencia>" con enlaces. */
+function creditsMarkup() {
+  const { items } = readData('credits.json');
+  return items
+    .map(
+      (c) =>
+        `<p class="site-footer__credit" data-credit="${esc(c.id)}"><span data-i18n="credits.photo">Photo:</span> <a href="${esc(c.source)}" target="_blank" rel="noopener">${esc(c.author)}</a>, <a href="${esc(c.licenseUrl)}" target="_blank" rel="noopener license">${esc(c.license)}</a></p>`,
+    )
+    .join('\n        ');
+}
+
 /** Amenidades: solo las confirmadas. Si no hay ninguna, no se genera nada. */
 function amenitiesMarkup() {
   const items = readData('amenities.json').items.filter((a) => a.confirmed === true);
@@ -132,7 +143,7 @@ function dataMarkup() {
   return {
     name: 'data-markup',
     configureServer(server) {
-      for (const f of ['services.json', 'service-area.json', 'amenities.json']) server.watcher.add(fileURLToPath(dataFile(f)));
+      for (const f of ['services.json', 'service-area.json', 'amenities.json', 'credits.json']) server.watcher.add(fileURLToPath(dataFile(f)));
     },
     transformIndexHtml(html) {
       const area = areaMarkup();
@@ -142,6 +153,7 @@ function dataMarkup() {
         .replace('<!-- services:list -->', servicesMarkup())
         .replace('<!-- form:services -->', serviceOptionsMarkup())
         .replace('<!-- amenities:list -->', amenitiesMarkup())
+        .replace('<!-- credits:list -->', creditsMarkup())
         .replace('<!-- area:map -->', area.map)
         .replace('<!-- area:list -->', area.list)
         .replace('<!-- area:far -->', area.farList);

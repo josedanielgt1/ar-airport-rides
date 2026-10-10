@@ -253,9 +253,20 @@
 
 .site-footer__hours,
 .site-footer__pay,
-.site-footer__legal {
+.site-footer__legal,
+.site-footer__credit {
   font-size: var(--fs-sm);
   color: var(--c-mist);
+}
+
+/* El crédito va pegado a la línea del ©, no como un bloque más del footer. */
+.site-footer__credit {
+  margin-top: calc(var(--s-4) * -0.75);
+}
+
+.site-footer__credit a {
+  color: inherit;
+  text-underline-offset: 0.2em;
 }
 
 .site-footer__contact {
@@ -329,7 +340,8 @@
     align-items: start;
   }
 
-  .site-footer__legal {
+  .site-footer__legal,
+  .site-footer__credit {
     grid-column: 1 / -1;
   }
 }

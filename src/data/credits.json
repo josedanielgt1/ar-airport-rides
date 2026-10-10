@@ -1,0 +1,15 @@
+{
+  "_todo": "TODO(cliente): reemplazar por fotos propias de su camioneta y quitar este crédito.",
+  "items": [
+    {
+      "id": "vehicle",
+      "files": ["public/media/vehicle-front.webp", "public/media/vehicle-front.jpg"],
+      "title": "23 Ford Expedition Limited",
+      "author": "HJUdall",
+      "authorUrl": "https://commons.wikimedia.org/wiki/User:HJUdall",
+      "license": "CC0 1.0",
+      "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source": "https://commons.wikimedia.org/wiki/File:23_Ford_Expedition_Limited.jpg"
+    }
+  ]
+}

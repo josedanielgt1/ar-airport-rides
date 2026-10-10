@@ -73,5 +73,6 @@
   "sms.ctaShort": "Mensaje",
   "sms.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
   "wa.ctaShort": "WhatsApp",
-  "form.continueSms": "Enviar por mensaje"
+  "form.continueSms": "Enviar por mensaje",
+  "credits.photo": "Foto:"
 }

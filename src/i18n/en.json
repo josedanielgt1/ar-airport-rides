@@ -73,5 +73,6 @@
   "sms.ctaShort": "Text us",
   "sms.message": "Hi! I’d like to book a ride with AR Airport Rides.",
   "wa.ctaShort": "WhatsApp",
-  "form.continueSms": "Send as a text"
+  "form.continueSms": "Send as a text",
+  "credits.photo": "Photo:"
 }
