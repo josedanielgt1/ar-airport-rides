@@ -8,9 +8,10 @@
   --copy-h   alto reservado para titular + subtítulo + botón
 */
 .hero {
-  --hh: max(100svh, 40rem);
+  --hh: max(100svh, 42rem);
   --copy-at: 0.76;
-  --copy-h: calc(var(--fs-hero) * 3.3 + 9rem);
+  /* titular + subtítulo + botones (dos en táctil) + teléfono */
+  --copy-h: calc(var(--fs-hero) * 3.3 + 12.5rem);
   --copy-gap: 1rem; /* aire extra entre la camioneta y el titular (móvil) */
   /* Móvil: 12 px a cada lado para que no se corte la nariz de la camioneta. */
   --mw: calc(100vw - 24px);

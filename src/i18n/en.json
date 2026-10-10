@@ -43,11 +43,11 @@
   "form.sending": "Sending your request…",
   "form.checkFields": "Please check the highlighted fields.",
   "form.successTitle": "Request sent.",
-  "form.successText": "We’ll confirm shortly. For a faster reply, continue on WhatsApp.",
+  "form.successText": "We’ll confirm shortly. For a faster reply, send your details by text or WhatsApp.",
   "form.successNoJs": "We’ll confirm shortly. For a faster reply, message us on WhatsApp.",
   "form.simulated": "Local test: nothing was emailed.",
   "form.errorTitle": "We couldn’t send your request.",
-  "form.errorText": "Your details are ready on WhatsApp. Tap the button to send them there.",
+  "form.errorText": "Your details are ready. Send them by text or WhatsApp with one tap.",
   "form.errorNoJs": "Please message us on WhatsApp or call us instead.",
   "form.continueWa": "Continue on WhatsApp",
   "form.error.required": "This field is required.",
@@ -68,5 +68,10 @@
   "why.careDesc": "Conversation if you want it, quiet if you don’t.",
   "why.localDesc": "From Georgetown to San Marcos, the airport included.",
   "why.close": "Tell us where and when.",
-  "why.cta": "Book a ride"
+  "why.cta": "Book a ride",
+  "sms.cta": "Text us",
+  "sms.ctaShort": "Text us",
+  "sms.message": "Hi! I’d like to book a ride with AR Airport Rides.",
+  "wa.ctaShort": "WhatsApp",
+  "form.continueSms": "Send as a text"
 }

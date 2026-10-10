@@ -96,7 +96,7 @@ body {
 }
 
 @media (min-width: 64rem) {
-  .wa-bar {
+  .wa-bar.wa-bar {
     display: none;
   }
 
@@ -112,4 +112,78 @@ body {
   .site-header__cta {
     transition: none;
   }
+}
+
+/* ---------- Mensaje de texto (SMS) y jerarquía táctil ---------- */
+
+/*
+  Escritorio (puntero fino): el botón de mensaje muestra el teléfono como enlace tel: (src/sms.js) y es
+  secundario (contorno). Táctil: "Text us" es la acción principal (dorado sólido) y WhatsApp pasa a
+  secundario (contorno dorado). El header (solo escritorio) no cambia.
+*/
+.btn--outline,
+.btn--sms {
+  background: transparent;
+  color: var(--c-gold);
+  box-shadow: inset 0 0 0 1px var(--c-gold);
+}
+
+.sms__label {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .btn--sms {
+    background: var(--c-gold);
+    color: var(--c-night);
+    box-shadow: none;
+  }
+
+  .sms__label {
+    display: inline;
+  }
+
+  .sms__tel {
+    display: none;
+  }
+
+  .btn-wa:not(.site-header__cta) {
+    background: transparent;
+    color: var(--c-gold);
+    box-shadow: inset 0 0 0 1px var(--c-gold);
+  }
+
+  .btn-wa:not(.site-header__cta):active {
+    background: rgb(201 162 75 / 0.14);
+  }
+
+  .btn--sms:active {
+    background: var(--c-beam);
+  }
+}
+
+/* En escritorio el hero ya muestra el teléfono (enlace tel:): no se repite como botón. */
+@media (hover: hover), (pointer: fine) {
+  .hero__sms {
+    display: none;
+  }
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Barra inferior: dos botones lado a lado. */
+.wa-bar {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.wa-bar__btn {
+  min-width: 0;
+  padding-inline: 0.75rem;
+  font-size: 0.9375rem;
 }

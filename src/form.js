@@ -4,13 +4,15 @@ import { t, getLang, onLangChange } from './i18n/index.js';
 import { whatsappUrl } from './whatsapp.js';
 import { serviceName } from './content.js';
 import { getRef } from './ref.js';
+import { setSmsMessage } from './sms.js';
 
 /*
   Formulario de reserva con JS:
   1. Valida con el mismo módulo que el servidor; muestra el error junto a cada campo y enfoca el primero.
-  2. Prepara el enlace de WhatsApp con los datos ANTES de esperar al servidor (no se usa window.open
+  2. Prepara los enlaces (WhatsApp y SMS) con los datos ANTES de esperar al servidor (no se usa window.open
      después de un await: el visitante toca un enlace normal).
-  3. POST a /api/reserve. Éxito → "Continue on WhatsApp". Fallo del correo → el mismo botón y un aviso.
+  3. POST a /api/reserve. Éxito → "Send as a text" (SMS, principal en táctil) y "Continue on WhatsApp",
+     ambos con los datos de la reserva. Fallo del correo → los mismos botones y un aviso.
   Sin JS el formulario se envía normal y el servidor redirige a #reserve-sent / #reserve-error.
 */
 
@@ -33,6 +35,7 @@ export function initForm() {
   const resultTitle = result.querySelector('.form__result-title');
   const resultText = result.querySelector('.form__result-text');
   const waBtn = result.querySelector('.form__wa');
+  const smsBtn = result.querySelector('.form__sms');
   const dateInput = form.elements.namedItem('date');
   dateInput.min = localToday();
 
@@ -71,8 +74,8 @@ export function initForm() {
     fieldInput(first)?.focus();
   };
 
-  // Mensaje de WhatsApp en el idioma activo, con los datos de la solicitud.
-  const waMessage = (data) => {
+  // Mensaje (WhatsApp y SMS) en el idioma activo, con los datos de la solicitud.
+  const bookingMessage = (data) => {
     const lang = getLang();
     const lines = [
       t('wa.formIntro'),
@@ -90,6 +93,13 @@ export function initForm() {
     return lines.join('\n');
   };
 
+  // Ambos botones del resultado llevan el mismo resumen; el de SMS se vuelve a armar al cambiar de idioma.
+  const updateLinks = () => {
+    if (!lastData) return;
+    waBtn.href = whatsappUrl(bookingMessage(lastData));
+    if (smsBtn) setSmsMessage(smsBtn, () => (lastData ? bookingMessage(lastData) : t('sms.message')));
+  };
+
   const renderResult = () => {
     if (!outcome) {
       result.hidden = true;
@@ -99,7 +109,7 @@ export function initForm() {
     resultTitle.textContent = t(ok ? 'form.successTitle' : 'form.errorTitle');
     resultText.textContent = t(ok ? 'form.successText' : 'form.errorText');
     if (outcome === 'simulated') resultText.textContent += ` ${t('form.simulated')}`;
-    if (lastData) waBtn.href = whatsappUrl(waMessage(lastData));
+    updateLinks();
     result.hidden = false;
   };
 
@@ -135,7 +145,7 @@ export function initForm() {
 
     // Enlace listo antes de esperar al servidor: sirve aunque falle el correo.
     lastData = check.data;
-    waBtn.href = whatsappUrl(waMessage(lastData));
+    updateLinks();
     outcome = null;
     renderResult();
 

@@ -43,11 +43,11 @@
   "form.sending": "Enviando tu solicitud…",
   "form.checkFields": "Revisa los campos marcados.",
   "form.successTitle": "Solicitud enviada.",
-  "form.successText": "Te confirmamos en breve. Para una respuesta más rápida, sigue por WhatsApp.",
+  "form.successText": "Te confirmamos en breve. Para una respuesta más rápida, envía tus datos por mensaje o WhatsApp.",
   "form.successNoJs": "Te confirmamos en breve. Para una respuesta más rápida, escríbenos por WhatsApp.",
   "form.simulated": "Prueba local: no se envió ningún correo.",
   "form.errorTitle": "No pudimos enviar tu solicitud.",
-  "form.errorText": "Tus datos están listos en WhatsApp. Toca el botón para enviarlos por ahí.",
+  "form.errorText": "Tus datos están listos. Envíalos por mensaje o WhatsApp con un toque.",
   "form.errorNoJs": "Escríbenos por WhatsApp o llámanos.",
   "form.continueWa": "Seguir por WhatsApp",
   "form.error.required": "Este campo es obligatorio.",
@@ -68,5 +68,10 @@
   "why.careDesc": "Conversación si la quieres, silencio si no.",
   "why.localDesc": "De Georgetown a San Marcos, aeropuerto incluido.",
   "why.close": "Dinos dónde y cuándo.",
-  "why.cta": "Reservar traslado"
+  "why.cta": "Reservar traslado",
+  "sms.cta": "Escríbenos por mensaje",
+  "sms.ctaShort": "Mensaje",
+  "sms.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
+  "wa.ctaShort": "WhatsApp",
+  "form.continueSms": "Enviar por mensaje"
 }

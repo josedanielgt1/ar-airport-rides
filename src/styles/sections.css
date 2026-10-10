@@ -183,8 +183,15 @@
   color: var(--c-mist);
 }
 
-.form__wa {
+.form__result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin-top: var(--s-3);
+}
+
+.form__result-actions .btn,
+.form__result-actions .btn-wa {
   min-height: 56px;
   font-size: 1.0625rem;
 }

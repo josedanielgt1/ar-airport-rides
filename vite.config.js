@@ -17,6 +17,7 @@ function configTokens() {
   return {
     phone: CONFIG.phone,
     phoneTel: CONFIG.phoneTel,
+    smsNumber: CONFIG.smsNumber,
     email: CONFIG.email,
     waUrl: `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(en['wa.message'])}`,
     payments: CONFIG.payments.join(', '),
