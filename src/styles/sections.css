@@ -34,10 +34,28 @@
 }
 
 .vehicle__media {
+  position: relative;
   margin: 0;
 }
 
-/* Primer frame del video (4:3 sobre negro; la camioneta ocupa ~14–80 % del alto): recorte 16:10 sin tocarla. */
+/*
+  La foto actual no está sobre negro (lote a pleno sol): viñeta oscura que funde el fondo con la página
+  y deja la camioneta al centro. Solo decorativa. TODO(cliente): con fotos propias sobre negro, se puede quitar.
+*/
+.vehicle__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* Bordes a negro en los cuatro lados + elipse que oscurece las esquinas + un velo general suave. */
+  background:
+    linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.6) 18%, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0) 72%, #000 100%),
+    linear-gradient(to right, #000 0%, rgb(0 0 0 / 0) 12%, rgb(0 0 0 / 0) 88%, #000 100%),
+    radial-gradient(ellipse 60% 56% at 50% 56%, rgb(0 0 0 / 0) 50%, rgb(0 0 0 / 0.7) 85%, #000 100%),
+    rgb(0 0 0 / 0.18);
+}
+
+/* Foto 4:3 recortada a 16:10 sin tocar la camioneta (ocupa ~18–84 % del alto). */
 .vehicle__img {
   width: 100%;
   height: auto;

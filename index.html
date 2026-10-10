@@ -223,17 +223,24 @@
       <section class="vehicle" id="vehicle" aria-labelledby="vehicle-title">
         <div class="vehicle__inner">
           <figure class="vehicle__media">
-            <!-- Una sola ruta: reemplazar public/media/vehicle-front.webp por la foto real (Expedition 2022). -->
-            <img
-              class="vehicle__img"
-              src="/media/vehicle-front.webp"
-              width="1280"
-              height="960"
-              loading="lazy"
-              decoding="async"
-              alt="Black full-size SUV, front three-quarter view."
-              data-i18n-attr="alt:vehicle.alt"
-            />
+            <!--
+              Foto de referencia (Wikimedia Commons, CC0; crédito en el footer, src/data/credits.json).
+              TODO(cliente): reemplazar por fotos propias de su camioneta (mismas rutas vehicle-front.webp / .jpg).
+              El fondo no es negro: marco 16:10 con viñeta oscura (.vehicle__media::after).
+            -->
+            <picture>
+              <source type="image/webp" srcset="/media/vehicle-front.webp" />
+              <img
+                class="vehicle__img"
+                src="/media/vehicle-front.jpg"
+                width="1280"
+                height="960"
+                loading="lazy"
+                decoding="async"
+                alt="Black full-size SUV, front three-quarter view."
+                data-i18n-attr="alt:vehicle.alt"
+              />
+            </picture>
           </figure>
           <div class="vehicle__copy">
             <h2 class="section-title" id="vehicle-title" data-i18n="vehicle.title">The vehicle.</h2>
