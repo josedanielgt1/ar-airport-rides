@@ -74,5 +74,11 @@
   "sms.message": "Hi! I’d like to book a ride with AR Airport Rides.",
   "wa.ctaShort": "WhatsApp",
   "form.continueSms": "Send as a text",
-  "credits.photo": "Photo:"
+  "credits.photo": "Photo:",
+  "pay.title": "Pay for your ride",
+  "pay.venmoAlt": "Venmo QR code to pay AR Airport Rides",
+  "pay.cashappAlt": "Cash App QR code to pay AR Airport Rides",
+  "pay.venmoCta": "Pay with Venmo",
+  "pay.cashappCta": "Pay with Cash App",
+  "pay.zelle": "Ask us for the Zelle details when you book."
 }

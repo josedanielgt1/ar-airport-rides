@@ -343,3 +343,75 @@
     grid-column: 1 / -1;
   }
 }
+
+/* ---------- Pagos (footer) ---------- */
+
+.pay {
+  grid-column: 1 / -1;
+}
+
+.pay__title {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-lg);
+  line-height: 1.15;
+  color: var(--c-cream);
+}
+
+.pay__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4) var(--s-5);
+  margin: var(--s-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pay__item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pay__qr {
+  margin: 0;
+}
+
+/* QR tal cual (con su margen blanco), a 160 px: escaneable con la cámara del teléfono. */
+.pay__qr img {
+  display: block;
+  width: 160px;
+  height: 160px;
+  border-radius: 6px;
+}
+
+.pay__label {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+.pay__item--text .pay__label {
+  margin-top: 0;
+}
+
+.pay__note {
+  max-width: 24ch;
+  font-size: var(--fs-sm);
+  color: var(--c-mist);
+}
+
+/* Botón de pago: solo en táctil (allí no se puede escanear la propia pantalla). */
+.pay__btn {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .pay__qr {
+    display: none;
+  }
+
+  .pay__btn {
+    display: inline-flex;
+  }
+}

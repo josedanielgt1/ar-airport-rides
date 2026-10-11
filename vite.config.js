@@ -21,6 +21,8 @@ function configTokens() {
     email: CONFIG.email,
     waUrl: `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(en['wa.message'])}`,
     payments: CONFIG.payments.join(', '),
+    venmoUrl: CONFIG.payLinks.venmo,
+    cashappUrl: CONFIG.payLinks.cashapp,
     year: String(new Date().getFullYear()),
   };
 }

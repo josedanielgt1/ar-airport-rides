@@ -11,5 +11,10 @@ export const CONFIG = {
   // TODO(cliente): cambiar a correo con dominio propio cuando exista.
   email: 'abrahandrojasm@gmail.com',
   // TODO(cliente): confirmar métodos de pago (se muestran solo como texto, sin logos).
+  // Enlaces decodificados de los QR del cliente (host verificado: venmo.com / cash.app).
+  payLinks: {
+    venmo: 'https://venmo.com/code?user_id=4534982609470700534&created=1791307404',
+    cashapp: 'https://cash.app/$AbrahanRojas19?qr=1',
+  },
   payments: ['Venmo', 'Cash App', 'Zelle'],
 };

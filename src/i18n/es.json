@@ -74,5 +74,11 @@
   "sms.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
   "wa.ctaShort": "WhatsApp",
   "form.continueSms": "Enviar por mensaje",
-  "credits.photo": "Foto:"
+  "credits.photo": "Foto:",
+  "pay.title": "Paga tu traslado",
+  "pay.venmoAlt": "Código QR de Venmo para pagar a AR Airport Rides",
+  "pay.cashappAlt": "Código QR de Cash App para pagar a AR Airport Rides",
+  "pay.venmoCta": "Pagar con Venmo",
+  "pay.cashappCta": "Pagar con Cash App",
+  "pay.zelle": "Pídenos los datos de Zelle al reservar."
 }

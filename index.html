@@ -421,6 +421,36 @@
         <p class="site-footer__pay">
           <span data-i18n="footer.payments">Payments accepted:</span> @@payments@@
         </p>
+        <!--
+          Pagos. Escritorio: QR (escanear con el teléfono). Táctil: botón con el enlace del QR.
+          Sin logos de marca en la interfaz; el logo dentro del QR de Cash App es parte del código.
+        -->
+        <div class="pay" role="group" aria-labelledby="pay-title">
+          <p class="pay__title" id="pay-title" data-i18n="pay.title">Pay for your ride</p>
+          <ul class="pay__list" role="list">
+            <li class="pay__item">
+              <figure class="pay__qr">
+                <img src="/media/pay/venmo-qr.png" width="160" height="160" loading="lazy" decoding="async"
+                  alt="Venmo QR code to pay AR Airport Rides" data-i18n-attr="alt:pay.venmoAlt" />
+                <figcaption class="pay__label">Venmo</figcaption>
+              </figure>
+              <a class="btn btn--outline pay__btn" href="@@venmoUrl@@" target="_blank" rel="noopener" data-i18n="pay.venmoCta">Pay with Venmo</a>
+            </li>
+            <li class="pay__item">
+              <figure class="pay__qr">
+                <img src="/media/pay/cashapp-qr.png" width="160" height="160" loading="lazy" decoding="async"
+                  alt="Cash App QR code to pay AR Airport Rides" data-i18n-attr="alt:pay.cashappAlt" />
+                <figcaption class="pay__label">Cash App</figcaption>
+              </figure>
+              <a class="btn btn--outline pay__btn" href="@@cashappUrl@@" target="_blank" rel="noopener" data-i18n="pay.cashappCta">Pay with Cash App</a>
+            </li>
+            <li class="pay__item pay__item--text">
+              <!-- TODO(cliente): confirmar el correo o teléfono de Zelle para mostrarlo aquí. -->
+              <p class="pay__label">Zelle</p>
+              <p class="pay__note" data-i18n="pay.zelle">Ask us for the Zelle details when you book.</p>
+            </li>
+          </ul>
+        </div>
         <p class="site-footer__legal">&copy; <span data-year>@@year@@</span> AR Airport Rides</p>
         <!-- Créditos de fotos de terceros (src/data/credits.json). TODO(cliente): quitar al usar fotos propias. -->
         <!-- credits:list -->
