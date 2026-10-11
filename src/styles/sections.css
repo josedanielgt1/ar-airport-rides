@@ -41,22 +41,12 @@
   }
 }
 
-/*
-  Foto completa (4:3, sin recorte). La foto actual no está sobre negro: sus bordes se desvanecen hacia el
-  fondo #000 con una máscara (el centro no se oscurece). Izquierda más amplia: ahí hay otra camioneta y
-  letreros. TODO(cliente): con fotos propias sobre negro, se puede quitar la máscara.
-*/
+/* Foto completa, sin recorte. El fondo ya es negro (#000): se funde con la sección sin máscara. */
 .vehicle__img {
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1066 / 646;
   object-fit: contain;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 22%, #000 90%, transparent),
-    linear-gradient(to bottom, transparent, #000 16%, #000 88%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, transparent, #000 22%, #000 90%, transparent),
-    linear-gradient(to bottom, transparent, #000 16%, #000 88%, transparent);
-  mask-composite: intersect;
 }
 
 .vehicle__amenities-label {

@@ -226,15 +226,15 @@
             <!--
               Foto de referencia (Wikimedia Commons, CC0; crédito en el footer, src/data/credits.json).
               TODO(cliente): reemplazar por fotos propias de su camioneta (mismas rutas vehicle-front.webp / .jpg).
-              El fondo no es negro: marco 16:10 con viñeta oscura (.vehicle__media::after).
+              Fondo recortado y pasado a negro (se funde con la página, sin máscara).
             -->
             <picture>
               <source type="image/webp" srcset="/media/vehicle-front.webp" />
               <img
                 class="vehicle__img"
                 src="/media/vehicle-front.jpg"
-                width="1280"
-                height="960"
+                width="1066"
+                height="646"
                 loading="lazy"
                 decoding="async"
                 alt="Black full-size SUV, front three-quarter view."
