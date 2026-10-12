@@ -81,9 +81,8 @@
       </a>
 
       <!-- Escritorio: aparece al salir del hero, a la izquierda de EN|ES (que no se mueve: oculto conserva su espacio). En móvil lo reemplaza la barra inferior. -->
-      <a class="btn-wa btn-wa--sm site-header__cta" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
-        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
-        <span data-i18n="wa.cta">Reserve on WhatsApp</span>
+      <a class="btn-wa btn-wa--sm site-header__cta" href="#reserve">
+        <span data-i18n="hero.book">Book now</span>
       </a>
 
       <div class="lang" role="group" aria-label="Language" data-i18n-attr="aria-label:lang.label">
@@ -128,14 +127,8 @@
               queda en el enlace tel: de abajo. TODO(cliente): confirmar números de SMS y WhatsApp.
             -->
             <div class="hero__actions" data-fab-avoid>
-              <a class="btn btn--sms hero__sms" data-sms href="sms:@@smsNumber@@">
-                <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-sms" /></svg>
-                <span class="sms__label" data-i18n="sms.cta">Text us</span>
-                <span class="sms__tel">@@phone@@</span>
-              </a>
-              <a class="btn-wa hero__cta" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
-                <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
-                <span data-i18n="wa.cta">Reserve on WhatsApp</span>
+              <a class="btn btn--primary hero__book hero__cta" href="#reserve">
+                <span data-i18n="hero.book">Book now</span>
               </a>
             </div>
             <!-- TODO(cliente): confirmar teléfono y atención 24/7. -->
@@ -320,8 +313,8 @@
                 <p class="field__error" id="f-phone-error" hidden></p>
               </div>
               <div class="field field--full">
-                <label class="field__label" for="f-email" data-i18n="form.email">Email (optional)</label>
-                <input class="field__input" id="f-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" aria-describedby="f-email-error" />
+                <label class="field__label" for="f-email" data-i18n="form.email">Email</label>
+                <input class="field__input" id="f-email" name="email" type="email" autocomplete="email" inputmode="email" maxlength="120" required aria-describedby="f-email-error" />
                 <p class="field__error" id="f-email-error" hidden></p>
               </div>
               <div class="field field--full">
@@ -453,14 +446,18 @@
 
     <!-- Móvil: barra inferior con el botón de WhatsApp; aparece al salir del hero. -->
     <div class="wa-bar">
-      <a class="btn btn--sms wa-bar__btn" data-sms href="sms:@@smsNumber@@">
-        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-sms" /></svg>
-        <span class="sms__label" data-i18n="sms.ctaShort">Text us</span>
-        <span class="sms__tel">@@phone@@</span>
+      <a class="btn btn--primary wa-bar__btn" href="#reserve">
+        <span data-i18n="hero.book">Book now</span>
       </a>
-      <a class="btn-wa wa-bar__btn" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
-        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
-        <span data-i18n="wa.ctaShort">WhatsApp</span>
+    </div>
+
+    <!-- Contacto aislado: botones redondos en la esquina (mensaje de texto y WhatsApp). El camino principal es el formulario. -->
+    <div class="contact-fab" data-fab-contact>
+      <a class="contact-fab__btn contact-fab__btn--sms" data-sms href="sms:@@smsNumber@@" data-i18n-attr="aria-label:sms.cta">
+        <svg class="contact-fab__icon" aria-hidden="true" focusable="false"><use href="#i-sms" /></svg>
+      </a>
+      <a class="contact-fab__btn contact-fab__btn--wa" data-wa href="@@waUrl@@" target="_blank" rel="noopener" data-i18n-attr="aria-label:wa.cta">
+        <svg class="contact-fab__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
       </a>
     </div>
 

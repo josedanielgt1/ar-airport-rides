@@ -28,6 +28,7 @@ const input = (extra = {}) => ({
   origin: 'Downtown <b>Austin</b>',
   destination: 'AUS',
   passengers: '2',
+  email: 'ana@example.com',
   notes: '',
   lang: 'es',
   ref: 'card',
@@ -244,7 +245,7 @@ test('buildEmail con correo del pasajero: botones de correo y SMS, reply-to y HT
 });
 
 test('buildEmail sin correo del pasajero: solo SMS y sin reply-to', () => {
-  const { html, text, replyTo } = buildEmail({ ...input(), passengers: 2 }, { now: NOW, pay: PAY });
+  const { html, text, replyTo } = buildEmail({ ...input({ email: '' }), passengers: 2 }, { now: NOW, pay: PAY });
   assert.equal(replyTo, undefined);
   assert.ok(!html.includes('Email payment details'));
   assert.ok(html.includes('Text payment details'));

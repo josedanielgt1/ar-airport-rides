@@ -134,8 +134,8 @@ test('handleReservation: genera el enlace (sin QR) solo si hay correo, clave y s
   assert.match(email.text, /\/api\/confirm\?t=/);
   assert.equal(email.attachments.length, 0);
 
-  await handleReservation({ ...base, name: 'Ana' }, ctx(ENV)); // sin correo del pasajero
-  assert.ok(!/\/api\/confirm/.test(email.text));
+  const noMail = await handleReservation({ ...base, name: 'Ana' }, ctx(ENV)); // el correo es obligatorio
+  assert.equal(noMail.status, 422);
 
   await handleReservation({ ...base, name: 'Ana', email: 'ana@example.com' }, ctx({}));
   assert.ok(!/\/api\/confirm/.test(email.text), 'sin CONFIRM_SECRET no hay enlace');

@@ -6,6 +6,7 @@
     "Every time."
   ],
   "hero.sub": "Premium private rides across Austin & Central Texas.",
+  "hero.book": "Book now",
   "wa.cta": "Reserve on WhatsApp",
   "wa.message": "Hi! I'd like to book a ride with AR Airport Rides.",
   "services.title": "Every ride, on your schedule.",
@@ -30,7 +31,7 @@
   "reserve.sub": "Send the details and we’ll confirm your ride.",
   "form.name": "Full name",
   "form.phone": "Phone",
-  "form.email": "Email (optional)",
+  "form.email": "Email",
   "form.service": "Service",
   "form.servicePlaceholder": "Choose a service",
   "form.date": "Date",

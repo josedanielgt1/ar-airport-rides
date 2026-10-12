@@ -14,6 +14,7 @@ const valid = () => ({
   origin: 'Downtown Austin',
   destination: 'AUS',
   passengers: '2',
+  email: 'ana@example.com',
   notes: 'Two bags.\r\nFlight AA 123',
   lang: 'es',
   ref: 'card',
@@ -105,14 +106,14 @@ test('fechas auxiliares', () => {
   assert.equal(shiftDate('2026-03-01', -1), '2026-02-28');
 });
 
-test('correo del pasajero: opcional, con formato prudente y sin inyección de cabeceras', () => {
+test('correo del pasajero: obligatorio, con formato prudente y sin inyección de cabeceras', () => {
   const ok = validateReservation({ ...valid(), email: '  Ana.Lopez+rides@Example.com ' }, { serviceIds: IDS, today: TODAY });
   assert.equal(ok.ok, true, JSON.stringify(ok.errors));
   assert.equal(ok.data.email, 'Ana.Lopez+rides@Example.com');
 
   const empty = validateReservation({ ...valid(), email: '' }, { serviceIds: IDS, today: TODAY });
-  assert.equal(empty.ok, true);
-  assert.equal(empty.data.email, '');
+  assert.equal(empty.ok, false);
+  assert.equal(empty.errors.email, 'required');
 
   for (const email of ['x', 'a@b', 'a b@c.com', '<a@b.com>', 'a@b.com, c@d.com', 'ana@example.com\r\nBcc: v@x.com', `${'a'.repeat(130)}@example.com`]) {
     const r = validateReservation({ ...valid(), email }, { serviceIds: IDS, today: TODAY });

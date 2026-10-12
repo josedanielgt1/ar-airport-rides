@@ -76,7 +76,7 @@ export function validateReservation(input, { serviceIds, today } = {}) {
 
   // Correo del pasajero: opcional. Con él, el chofer puede responderle por correo; sin él, por SMS.
   // Formato prudente (sin espacios, comillas, comas ni símbolos de cabecera); el valor nunca lleva saltos de línea.
-  text('email', LIMITS.email, { required: false });
+  text('email', LIMITS.email);
   if (!errors.email && data.email && !EMAIL_RE.test(data.email)) errors.email = 'email';
 
   data.service = oneLine(src.service);

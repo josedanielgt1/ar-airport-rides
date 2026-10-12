@@ -6,6 +6,7 @@
     "Siempre."
   ],
   "hero.sub": "Traslados privados premium en Austin y el centro de Texas.",
+  "hero.book": "Reservar ahora",
   "wa.cta": "Reserva por WhatsApp",
   "wa.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
   "services.title": "Cada traslado, a tu horario.",
@@ -30,7 +31,7 @@
   "reserve.sub": "Envía los detalles y te confirmamos el traslado.",
   "form.name": "Nombre completo",
   "form.phone": "Teléfono",
-  "form.email": "Correo (opcional)",
+  "form.email": "Correo",
   "form.service": "Servicio",
   "form.servicePlaceholder": "Elige un servicio",
   "form.date": "Fecha",
