@@ -8,6 +8,7 @@ import { initArea } from './area.js';
 import { initWhy } from './why.js';
 import { initRef } from './ref.js';
 import { initForm } from './form.js';
+import { initPlaces } from './places.js';
 
 const still = document.documentElement.classList.contains('still');
 
@@ -21,3 +22,4 @@ initRoad({ still });
 initArea({ still });
 initWhy({ still });
 initForm();
+initPlaces();

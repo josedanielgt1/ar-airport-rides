@@ -121,3 +121,14 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Cabeceras de seguridad y CSP en ercel.json. Los 2 scripts en línea de index.html están permitidos por hash: si se editan, corre 
 pm run build; npm run check:csp -- --print y actualiza script-src (
 pm run check:csp avisa si no coinciden).
+
+## Flujo de respuesta al pasajero (correo del chofer → /api/confirm)
+- El correo de reserva al chofer trae: botón dorado **Confirmar** (tarifa → vista previa → envío), botón **Rechazar y pedir reagendar** (vista previa → envío) y **Abrir ruta en Maps**. Sin QR: el chofer no paga.
+- `/api/confirm?t=<token>` (token cifrado, 14 días, sin base de datos) muestra el formulario con las dos opciones; `&a=decline` abre directo la vista previa del rechazo. Nada se envía hasta pulsar el botón final; el pasajero recibe el correo con copia (BCC) al chofer y Reply-To al chofer.
+- Correo de confirmación (es/en): sello, boleto con fecha y ruta, botones de mapa (Google Maps), tarifa y QR de Venmo/Cash App (+ Zelle). Correo de rechazo: nota cortés con botón a `SITE_URL` para reservar otra fecha.
+- Mapa dentro del correo: opcional con `GOOGLE_MAPS_API_KEY` (Static Maps, clave restringida). Sin clave solo hay botones. CSP permite `img-src https://maps.googleapis.com`.
+- Variables nuevas: `CONFIRM_SECRET`, `SITE_URL` (opcional), `GOOGLE_MAPS_API_KEY` (opcional).
+## Direcciones del formulario: sugerencias y mapa con pines
+- `src/places.js` + `src/lib/geo.js` + `src/styles/places.css`. En recogida y destino: sugerencias al escribir (Photon/OpenStreetMap, sesgadas a Austin, combobox accesible) y botón "Elegir en el mapa" con pin A (recogida) y B (destino): se toca el mapa o se arrastra el pin y la dirección se escribe sola (geocodificación inversa).
+- Leaflet se carga solo al abrir el mapa (chunk aparte); mosaicos de tile.openstreetmap.org (oscurecidos con CSS). CSP: `connect-src https://photon.komoot.io` e `img-src https://tile.openstreetmap.org`.
+- Photon y el mosaico público de OSM son de uso razonable: si el tráfico crece, cambiar el proveedor en `src/lib/geo.js` (Geoapify, MapTiler, Google Places…). Sin JS el formulario sigue siendo de texto.

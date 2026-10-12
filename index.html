@@ -344,14 +344,36 @@
               </div>
               <div class="field field--full">
                 <label class="field__label" for="f-origin" data-i18n="form.origin">Pickup address</label>
-                <input class="field__input" id="f-origin" name="origin" type="text" autocomplete="off" required maxlength="160" aria-describedby="f-origin-error" />
+                <div class="place">
+                  <input class="field__input" id="f-origin" name="origin" type="text" autocomplete="off" required maxlength="160" aria-describedby="f-origin-error" />
+                  <ul class="place__list" id="f-origin-list" role="listbox" hidden data-i18n-attr="aria-label:form.suggestLabel"></ul>
+                </div>
                 <p class="field__error" id="f-origin-error" hidden></p>
               </div>
               <div class="field field--full">
                 <label class="field__label" for="f-destination" data-i18n="form.destination">Destination</label>
-                <input class="field__input" id="f-destination" name="destination" type="text" autocomplete="off" required maxlength="160" aria-describedby="f-destination-error" />
+                <div class="place">
+                  <input class="field__input" id="f-destination" name="destination" type="text" autocomplete="off" required maxlength="160" aria-describedby="f-destination-error" />
+                  <ul class="place__list" id="f-destination-list" role="listbox" hidden data-i18n-attr="aria-label:form.suggestLabel"></ul>
+                </div>
                 <p class="field__error" id="f-destination-error" hidden></p>
               </div>
+              <div class="field field--full mapfield" id="mapfield" hidden>
+                <button class="mapfield__toggle" type="button" aria-expanded="false" aria-controls="mapbox">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+                  <span>Choose on the map</span>
+                </button>
+                <div class="mapbox" id="mapbox" hidden>
+                  <div class="mapbox__tabs" role="group" data-i18n-attr="aria-label:form.mapGroup">
+                    <button class="mapbox__tab" type="button" data-target="origin" aria-pressed="true"><span class="pinmark" aria-hidden="true">A</span><span data-i18n="form.mapPickupTab">Pickup pin</span></button>
+                    <button class="mapbox__tab" type="button" data-target="destination" aria-pressed="false"><span class="pinmark pinmark--b" aria-hidden="true">B</span><span data-i18n="form.mapDestTab">Destination pin</span></button>
+                  </div>
+                  <div class="mapbox__map" id="map"></div>
+                  <p class="mapbox__help" data-i18n="form.mapHelp">Tap the map to drop the selected pin. Drag a pin to adjust it. You can also type the address.</p>
+                  <p class="mapbox__status" id="map-status" role="status" aria-live="polite"></p>
+                </div>
+              </div>
+              <p class="place__sr" id="place-status" role="status" aria-live="polite"></p>
               <div class="field">
                 <!-- TODO(cliente): confirmar la capacidad máxima de pasajeros (provisional: 7). -->
                 <label class="field__label" for="f-passengers" data-i18n="form.passengers">Passengers</label>
