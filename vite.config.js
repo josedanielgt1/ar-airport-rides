@@ -3,6 +3,11 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { CONFIG } from './src/config.js';
 import { handleReservation, parseBody } from './src/lib/reservation.js';
+import { handleConfirm } from './src/lib/confirm.js';
+
+// Claves de EJEMPLO solo para la simulación local (los valores reales viven en las variables de entorno de Vercel).
+const DEV_ENV = { CONFIRM_SECRET: 'dev-only-secret-not-for-production', SITE_URL: 'http://localhost:5173', RESERVATION_TO_EMAIL: 'chofer@ejemplo.com' };
+const DEV_PAY = { venmo: 'https://venmo.com/u/ejemplo', cashapp: 'https://cash.app/$ejemplo', zelle: 'pagos@ejemplo.com' };
 
 const esc = (s) =>
   String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
@@ -184,8 +189,9 @@ function devReserveSimulation() {
           const result = await handleReservation(input, {
             ip: `dev-${Date.now()}-${Math.random()}`, // sin límite por IP en la simulación
             serviceIds,
+            env: DEV_ENV,
             // Datos de pago de EJEMPLO (los reales viven en variables de entorno de Vercel, nunca en el repo).
-            pay: { venmo: 'https://venmo.com/u/ejemplo', cashapp: 'https://cash.app/$ejemplo', zelle: 'pagos@ejemplo.com' },
+            pay: DEV_PAY,
             // No se envía nada: se imprime el correo para revisarlo aquí (son datos de prueba, solo en tu consola).
             send: async (_config, email) => {
               server.config.logger.info(`[simulación] Correo que recibiría el chofer:\n${email.text}\n(Reply-To: ${email.replyTo ?? 'sin correo del pasajero'})`);
@@ -207,8 +213,45 @@ function devReserveSimulation() {
   };
 }
 
+/**
+ * SOLO DESARROLLO — SIMULACIÓN de /api/confirm (la página donde el chofer escribe la tarifa). El enlace que
+ * imprime la simulación de /api/reserve abre esta página; al enviar NO se manda ningún correo.
+ */
+function devConfirmSimulation() {
+  return {
+    name: 'dev-confirm-simulation',
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use('/api/confirm', (req, res) => {
+        const chunks = [];
+        req.on('data', (c) => chunks.push(c));
+        req.on('end', async () => {
+          const method = req.method ?? 'GET';
+          const query = Object.fromEntries(new URL(req.url ?? '/', 'http://localhost').searchParams);
+          const body = method === 'POST' ? parseBody(Buffer.concat(chunks), String(req.headers['content-type'] ?? '')) : {};
+          const result = await handleConfirm({
+            method,
+            query,
+            body,
+            ip: `dev-${Date.now()}-${Math.random()}`,
+            env: { ...DEV_ENV, RESEND_API_KEY: 'dev', RESERVATION_FROM_EMAIL: 'dev@ejemplo.com' },
+            pay: DEV_PAY,
+            send: async (_config, email) => {
+              server.config.logger.info(`[simulación] Correo de confirmación para el pasajero (no se envía):\nAsunto: ${email.subject}\n${email.text}`);
+              return { simulated: true };
+            },
+          });
+          res.statusCode = result.status;
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          res.end(result.html);
+        });
+      });
+    },
+  };
+}
+
 // GitHub Pages sirve el sitio en /ar-airport-rides/; Vercel, en la raíz.
 export default defineConfig({
   base: process.env.GH_PAGES ? '/ar-airport-rides/' : '/',
-  plugins: [dataMarkup(), devReserveSimulation()],
+  plugins: [dataMarkup(), devReserveSimulation(), devConfirmSimulation()],
 });

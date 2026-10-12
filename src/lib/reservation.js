@@ -4,6 +4,21 @@
   Nunca registra datos personales: los logs solo llevan códigos de estado.
 */
 import { validateReservation, isSpam, todayIn, shiftDate, escapeHtml } from './validate.js';
+import { confirmUrl as buildConfirmUrl } from './token.js';
+import { payQrs, qrAttachments } from './qr.js';
+import {
+  C,
+  layout,
+  eyebrow,
+  heading,
+  highlight,
+  detailRows,
+  sectionTitle,
+  goldButton,
+  ghostButton,
+  muted,
+  paymentCards,
+} from './email-ui.js';
 
 const TZ = 'America/Chicago';
 const RATE = { windowMs: 10 * 60 * 1000, max: 5 };
@@ -68,7 +83,7 @@ const CONFIRM = {
     dropoff: 'Drop-off',
     fare: 'Fare',
     pay: 'Payment options:',
-    close: 'Please reply here once it’s done. Thank you!',
+    close: 'Questions? Just reply here. Thank you!',
   },
   es: {
     locale: 'es-US',
@@ -79,11 +94,11 @@ const CONFIRM = {
     dropoff: 'Destino',
     fare: 'Tarifa',
     pay: 'Formas de pago:',
-    close: 'Respóndenos por aquí cuando hayas pagado. ¡Gracias!',
+    close: '¿Dudas? Respóndenos por aquí. ¡Gracias!',
   },
 };
 
-const clock = (hhmm, lang) => {
+export const clock = (hhmm, lang) => {
   if (lang === 'es') return hhmm;
   const [h, m] = hhmm.split(':').map(Number);
   return `${h % 12 || 12}:${String(m).padStart(2, '0')} ${h < 12 ? 'AM' : 'PM'}`;
@@ -91,9 +106,10 @@ const clock = (hhmm, lang) => {
 
 /**
  * Mensaje de confirmación para el pasajero, en SU idioma, listo para que el chofer lo revise y lo envíe.
- * La tarifa queda como "[FARE]" para que la escriba él. Devuelve { subject, body } en texto plano.
+ * La tarifa queda como "[FARE]" para que la escriba él (o llega ya escrita en `fare`). Devuelve
+ * { subject, body } en texto plano.
  */
-export function confirmationMessage(data, pay = {}) {
+export function confirmationMessage(data, pay = {}, fare = '[FARE]') {
   const lang = data.lang === 'es' ? 'es' : 'en';
   const m = CONFIRM[lang];
   const first = String(data.name).split(' ')[0];
@@ -111,7 +127,7 @@ export function confirmationMessage(data, pay = {}) {
     `${m.when}: ${day}, ${clock(data.time, lang)}`,
     `${m.pickup}: ${data.origin}`,
     `${m.dropoff}: ${data.destination}`,
-    `${m.fare}: [FARE]`,
+    `${m.fare}: ${fare}`,
   ];
   if (options.length) lines.push('', m.pay, ...options);
   lines.push('', m.close, '— AR Airport Rides');
@@ -140,8 +156,6 @@ export const smsLink = (phone, { body }) => {
   return num ? `sms:${num}?&body=${enc(body)}` : null;
 };
 
-const BTN =
-  'display:inline-block;background:#C9A24B;color:#000;text-decoration:none;font-weight:bold;font-size:14px;padding:12px 18px;border-radius:6px;margin:0 8px 8px 0';
 const LANG_NAME = { en: 'English (en)', es: 'Spanish (es)' };
 const SOURCE = { card: 'QR card (ref=card)', direct: 'Direct visit' };
 
@@ -150,8 +164,18 @@ const longDate = (iso) =>
     new Date(`${iso}T12:00:00Z`),
   );
 
-/** Correo en formato fijo, siempre en inglés, con el idioma y el origen del visitante. */
-export function buildEmail(data, { serviceName = (id) => id, now = new Date(), pay = {} } = {}) {
+// Textos de las tarjetas de pago en el correo del chofer (siempre en inglés).
+const DRIVER_PAY_TEXT = { openVenmo: 'Open Venmo', openCashApp: 'Open Cash App', qrAlt: (n) => `${n} QR code` };
+
+/**
+ * Correo al chofer: formato fijo, siempre en inglés, con el idioma y el origen del visitante, diseño de la
+ * marca (negro y dorado) y los QR de pago como imágenes en línea.
+ * @param {object} [opts]
+ * @param {{venmo?:string,cashapp?:string,zelle?:string}} [opts.pay] opciones de pago configuradas
+ * @param {{venmo?:Buffer,cashapp?:Buffer}} [opts.qr] QR ya generados (PNG)
+ * @param {string|null} [opts.confirmUrl] enlace para enviar la confirmación con QR al pasajero
+ */
+export function buildEmail(data, { serviceName = (id) => id, now = new Date(), pay = {}, qr = {}, confirmUrl = null } = {}) {
   // dateStyle/timeStyle no se pueden combinar con timeZoneName: campos explícitos.
   const received = new Intl.DateTimeFormat('en-US', {
     timeZone: TZ,
@@ -182,8 +206,8 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
 
   const subject = headerSafe(`New ride request: ${service}, ${data.date} ${data.time}`);
 
-  // Respuesta al pasajero: mensaje de confirmación en su idioma + botones para enviarlo desde el teléfono del
-  // chofer (correo si lo dio; SMS siempre que el teléfono sea completo). La tarifa queda como [FARE].
+  // Respuesta al pasajero: (1) confirmación con tarifa y QR enviada desde el servidor (si dio correo),
+  // (2) mensaje listo para correo o SMS desde el teléfono del chofer. La tarifa queda como [FARE].
   const msg = confirmationMessage(data, pay);
   const mailto = data.email ? mailtoLink(data.email, msg) : null;
   const sms = smsLink(data.phone, msg);
@@ -195,6 +219,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     ...rows.map(([k, v]) => `${k}: ${v}`),
     '',
     '--- Reply to the passenger ---',
+    ...(confirmUrl ? ['Send the confirmation with the fare and payment QR codes (opens a page to enter the fare):', confirmUrl, ''] : []),
     data.email
       ? 'Reply to this email to answer them by email, or copy the message below. Replace [FARE] before sending.'
       : 'No email given: text them at the number above, or copy the message below. Replace [FARE] before sending.',
@@ -203,37 +228,55 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     `Subject: ${msg.subject}`,
     msg.body,
   ].join('\n');
-  // Todo valor variable pasa por escapeHtml (también el asunto en <title>).
-  const html = `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(subject)}</title></head><body style="font-family:Arial,Helvetica,sans-serif;color:#111">
-<p style="margin:0 0 12px">New ride request from the AR Airport Rides website.</p>
-<table cellpadding="6" cellspacing="0" style="border-collapse:collapse;font-size:14px">
-${rows
-  .map(
-    ([k, v]) =>
-      `<tr><th align="left" valign="top" style="border-bottom:1px solid #ddd;white-space:nowrap">${escapeHtml(k)}</th><td style="border-bottom:1px solid #ddd;white-space:pre-wrap">${escapeHtml(v)}</td></tr>`,
-  )
-  .join('\n')}
-</table>
-<h3 style="margin:20px 0 8px;font-size:15px">Reply to the passenger</h3>
-<p style="margin:0 0 10px;font-size:13px;color:#444">Opens a ready message in the passenger’s language. Replace <b>[FARE]</b> before sending.</p>
-${[
-  mailto && `<a href="${escapeHtml(mailto)}" style="${BTN}">Email payment details</a>`,
-  sms && `<a href="${escapeHtml(sms)}" style="${BTN}">Text payment details</a>`,
-]
-  .filter(Boolean)
-  .join('\n')}
-${noPay ? '<p style="margin:8px 0;font-size:13px;color:#a00">No payment options configured (PAY_VENMO_URL, PAY_CASHAPP_URL, PAY_ZELLE).</p>' : ''}
-<pre style="margin:12px 0 0;padding:10px;background:#f5f5f5;border-radius:6px;font:13px/1.45 Arial,Helvetica,sans-serif;white-space:pre-wrap">${escapeHtml(msg.body)}</pre>
-</body></html>`;
 
-  return { subject, text, html, replyTo: data.email || undefined };
+  const actions = [
+    confirmUrl && goldButton(confirmUrl, 'Send confirmation with QR'),
+    mailto && ghostButton(mailto, 'Email payment details'),
+    sms && ghostButton(sms, 'Text payment details'),
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const body = [
+    eyebrow('New ride request'),
+    heading(service),
+    highlight(longDate(data.date), data.time),
+    `<p style="margin:14px 0 6px;font:16px/1.5 Arial,Helvetica,sans-serif;color:${C.cream}">${escapeHtml(data.origin)} <span style="color:${C.gold}">&rarr;</span> ${escapeHtml(data.destination)}</p>`,
+    sectionTitle('Trip details'),
+    detailRows(rows),
+    sectionTitle('Reply to the passenger'),
+    muted(
+      confirmUrl
+        ? 'Send the confirmation in one tap: you enter the fare and the passenger receives a branded email with the payment QR codes. Or use a ready-made message.'
+        : 'Opens a ready message in the passenger’s language. Replace [FARE] before sending.',
+    ),
+    actions,
+    noPay
+      ? `<p style="margin:8px 0;font:13px Arial,Helvetica,sans-serif;color:#E07B6A">No payment options configured (PAY_VENMO_URL, PAY_CASHAPP_URL, PAY_ZELLE).</p>`
+      : sectionTitle('Payment QR codes') + muted('Also useful to show at pickup.') + paymentCards(pay, qr, DRIVER_PAY_TEXT),
+    sectionTitle('Message preview'),
+    `<pre style="margin:0;padding:14px;background:${C.panel};border:1px solid ${C.line};border-radius:12px;font:13px/1.5 Arial,Helvetica,sans-serif;color:${C.cream};white-space:pre-wrap">${escapeHtml(msg.body)}</pre>`,
+  ].join('\n');
+
+  // Todo valor variable pasa por escapeHtml (también el asunto en <title>).
+  const html = layout({
+    title: subject,
+    preheader: `${longDate(data.date)} ${data.time} · ${data.origin} → ${data.destination}`,
+    body,
+    footer: 'Sent automatically from the AR Airport Rides website.',
+  });
+
+  return { subject, text, html, replyTo: data.email || undefined, attachments: qrAttachments(qr) };
 }
 
 /** Envía por la API REST de Resend (sin paquete). Devuelve true si Resend aceptó el correo. */
-export async function sendWithResend({ apiKey, from, to }, { subject, text, html, replyTo }) {
+export async function sendWithResend({ apiKey, from, to, bcc }, { subject, text, html, replyTo, attachments }) {
   const payload = { from: headerSafe(from), to: [headerSafe(to)], subject: headerSafe(subject), text, html };
   // Responder al correo contesta directamente al pasajero (si dejó su correo).
   if (replyTo) payload.reply_to = headerSafe(replyTo);
+  if (bcc) payload.bcc = [headerSafe(bcc)];
+  // Imágenes en línea (QR de pago): { filename, content (base64), content_type, content_id }.
+  if (attachments?.length) payload.attachments = attachments;
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
@@ -276,7 +319,21 @@ export async function handleReservation(input, ctx) {
 
   try {
     const pay = ctx.pay ?? paymentOptions(env);
-    const delivered = await send(config, buildEmail(data, { serviceName: ctx.serviceName, now, pay }));
+    const qr = await payQrs(pay);
+    // Enlace para que el chofer envíe la confirmación con tarifa y QR (solo si el pasajero dejó correo y hay CONFIRM_SECRET).
+    const confirmUrl = data.email
+      ? buildConfirmUrl(env, {
+          name: data.name,
+          email: data.email,
+          lang: data.lang,
+          date: data.date,
+          time: data.time,
+          origin: data.origin,
+          destination: data.destination,
+          passengers: data.passengers,
+        })
+      : null;
+    const delivered = await send(config, buildEmail(data, { serviceName: ctx.serviceName, now, pay, qr, confirmUrl }));
     if (delivered === false) return fail(502, 'unavailable');
     return sent(delivered && typeof delivered === 'object' ? delivered : {});
   } catch (err) {

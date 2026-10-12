@@ -10,12 +10,14 @@
     "test": "node --test \"test/**/*.test.js\"",
     "check:i18n": "node scripts/check-i18n.mjs",
     "check:contrast": "node scripts/contrast.mjs",
-    "check:csp": "node scripts/check-csp.mjs"
+    "check:csp": "node scripts/check-csp.mjs",
+    "preview:emails": "node scripts/preview-emails.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.0"
   },
   "dependencies": {
-    "gsap": "^3.15.0"
+    "gsap": "^3.15.0",
+    "qrcode": "^1.5.4"
   }
 }
