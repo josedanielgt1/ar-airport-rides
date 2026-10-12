@@ -238,3 +238,90 @@ body {
 .wa-bar {
   grid-template-columns: minmax(0, 1fr);
 }
+
+/* ---------- Botones redondos de contacto (esquina) y CTA de reservar con m�s presencia ---------- */
+
+.hero__book {
+  min-height: 60px;
+  padding: 0 2.25rem;
+  font-size: var(--fs-lg, 1.125rem);
+  box-shadow: 0 0 0 1px rgb(235 203 130 / 0.5), 0 0 34px -6px rgb(235 203 130 / 0.6);
+  animation: book-pulse 2.8s ease-out infinite;
+}
+
+.wa-bar__btn {
+  min-height: 56px;
+  font-size: 1.0625rem;
+  box-shadow: 0 0 0 1px rgb(235 203 130 / 0.5), 0 0 28px -6px rgb(235 203 130 / 0.6);
+}
+
+@keyframes book-pulse {
+  0% { box-shadow: 0 0 0 0 rgb(201 162 75 / 0.55), 0 0 34px -6px rgb(235 203 130 / 0.6); }
+  70%, 100% { box-shadow: 0 0 0 16px rgb(201 162 75 / 0), 0 0 34px -6px rgb(235 203 130 / 0.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero__book { animation: none; }
+}
+
+.contact-fab {
+  position: fixed;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  z-index: var(--z-fab);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: bottom 200ms var(--ease-out, ease-out);
+}
+
+.contact-fab__btn {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #111;
+  color: var(--c-gold);
+  box-shadow: inset 0 0 0 1px var(--c-gold), 0 6px 20px -4px rgb(0 0 0 / 0.7);
+  transition: background-color var(--t-fast, 150ms) ease, color var(--t-fast, 150ms) ease;
+}
+
+.contact-fab__icon {
+  width: 26px;
+  height: 26px;
+}
+
+.contact-fab__btn:active {
+  background: rgb(201 162 75 / 0.18);
+}
+
+@media (hover: hover) {
+  .contact-fab__btn:hover {
+    background: var(--c-gold);
+    color: var(--c-night);
+  }
+}
+
+.contact-fab__btn:focus-visible {
+  outline: 2px solid var(--c-cream);
+  outline-offset: 3px;
+}
+
+/* Escritorio: el tel�fono ya est� en el hero, solo queda WhatsApp. */
+@media (hover: hover), (pointer: fine) {
+  .contact-fab__btn--sms {
+    display: none;
+  }
+}
+
+/* M�vil: suben por encima de la barra "Reservar ahora" mientras esta se ve. */
+@media (max-width: 63.99rem) {
+  html.is-past-hero:not(.bar-away) .contact-fab {
+    bottom: calc(52px + 1.5rem + env(safe-area-inset-bottom) + 1rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-fab { transition: none; }
+}

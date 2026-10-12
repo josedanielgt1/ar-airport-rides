@@ -38,6 +38,7 @@ export function initWhatsApp() {
   const io = new IntersectionObserver((entries) => {
     entries.forEach((e) => (e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)));
     bar.classList.toggle('is-away', visible.size > 0);
+    root.classList.toggle('bar-away', visible.size > 0);
   });
   avoid.forEach((el) => io.observe(el));
 }
