@@ -75,5 +75,16 @@
   "sms.message": "Hi! I’d like to book a ride with AR Airport Rides.",
   "wa.ctaShort": "WhatsApp",
   "form.continueSms": "Send as a text",
-  "credits.photo": "Photo:"
+  "credits.photo": "Photo:",
+  "form.mapToggle": "Choose on the map",
+  "form.mapToggleHide": "Hide the map",
+  "form.mapGroup": "Which pin to place",
+  "form.mapPickupTab": "Pickup pin",
+  "form.mapDestTab": "Destination pin",
+  "form.mapHelp": "Tap the map to drop the selected pin. Drag a pin to adjust it. You can also type the address.",
+  "form.mapLooking": "Finding the addressâ€¦",
+  "form.mapError": "The map couldnâ€™t load. You can type the address instead.",
+  "form.suggestLabel": "Address suggestions",
+  "form.suggestAvailable": "Suggestions available. Use the up and down arrow keys, then Enter.",
+  "form.suggestEmpty": "No suggestions. You can keep typing the address."
 }

@@ -128,3 +128,7 @@ pm run check:csp avisa si no coinciden).
 - Correo de confirmación (es/en): sello, boleto con fecha y ruta, botones de mapa (Google Maps), tarifa y QR de Venmo/Cash App (+ Zelle). Correo de rechazo: nota cortés con botón a `SITE_URL` para reservar otra fecha.
 - Mapa dentro del correo: opcional con `GOOGLE_MAPS_API_KEY` (Static Maps, clave restringida). Sin clave solo hay botones. CSP permite `img-src https://maps.googleapis.com`.
 - Variables nuevas: `CONFIRM_SECRET`, `SITE_URL` (opcional), `GOOGLE_MAPS_API_KEY` (opcional).
+## Direcciones del formulario: sugerencias y mapa con pines
+- `src/places.js` + `src/lib/geo.js` + `src/styles/places.css`. En recogida y destino: sugerencias al escribir (Photon/OpenStreetMap, sesgadas a Austin, combobox accesible) y botón "Elegir en el mapa" con pin A (recogida) y B (destino): se toca el mapa o se arrastra el pin y la dirección se escribe sola (geocodificación inversa).
+- Leaflet se carga solo al abrir el mapa (chunk aparte); mosaicos de tile.openstreetmap.org (oscurecidos con CSS). CSP: `connect-src https://photon.komoot.io` e `img-src https://tile.openstreetmap.org`.
+- Photon y el mosaico público de OSM son de uso razonable: si el tráfico crece, cambiar el proveedor en `src/lib/geo.js` (Geoapify, MapTiler, Google Places…). Sin JS el formulario sigue siendo de texto.

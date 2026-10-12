@@ -75,5 +75,16 @@
   "sms.message": "¡Hola! Quiero reservar un traslado con AR Airport Rides.",
   "wa.ctaShort": "WhatsApp",
   "form.continueSms": "Enviar por mensaje",
-  "credits.photo": "Foto:"
+  "credits.photo": "Foto:",
+  "form.mapToggle": "Elegir en el mapa",
+  "form.mapToggleHide": "Ocultar el mapa",
+  "form.mapGroup": "QuÃ© pin colocar",
+  "form.mapPickupTab": "Pin de recogida",
+  "form.mapDestTab": "Pin de destino",
+  "form.mapHelp": "Toca el mapa para colocar el pin seleccionado. Arrastra un pin para ajustarlo. TambiÃ©n puedes escribir la direcciÃ³n.",
+  "form.mapLooking": "Buscando la direcciÃ³nâ€¦",
+  "form.mapError": "No se pudo cargar el mapa. Puedes escribir la direcciÃ³n.",
+  "form.suggestLabel": "Sugerencias de direcciÃ³n",
+  "form.suggestAvailable": "Hay sugerencias. Usa las flechas arriba y abajo y Enter.",
+  "form.suggestEmpty": "Sin sugerencias. Puedes seguir escribiendo la direcciÃ³n."
 }
