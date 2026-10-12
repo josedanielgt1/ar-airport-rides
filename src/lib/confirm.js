@@ -8,7 +8,7 @@
 import { escapeHtml as e } from './validate.js';
 import { openToken, secretOk } from './token.js';
 import { payQrs, qrAttachments } from './qr.js';
-import { layout, eyebrow, heading, paragraph, muted, sectionTitle, detailRows, highlight, paymentCards } from './email-ui.js';
+import { layout, confirmedBadge, tripTicket, heading, paragraph, muted, sectionTitle, detailRows, highlight, paymentCards } from './email-ui.js';
 import { paymentOptions, confirmationMessage, sendWithResend, rateLimited, clock } from './reservation.js';
 
 /** Tarifa escrita por el chofer → "$85.00", o null si no es un monto válido (hasta 5 cifras, 2 decimales). */
@@ -74,15 +74,20 @@ export function buildConfirmationEmail(data, fare, pay = {}, qr = {}) {
   const hasPay = Boolean(pay.venmo || pay.cashapp || pay.zelle);
 
   const body = [
-    eyebrow(t.eyebrow),
+    confirmedBadge(t.eyebrow),
     heading(t.title(first)),
     paragraph(t.intro, 'margin-bottom:20px'),
-    detailRows([
-      [t.when, when],
-      [t.pickup, data.origin],
-      [t.dropoff, data.destination],
-      ...(data.passengers ? [[t.passengers, String(data.passengers)]] : []),
-    ]),
+    tripTicket({
+      day: String(Number(data.date.slice(8, 10))),
+      month: new Intl.DateTimeFormat(t.locale, { month: 'short', timeZone: 'UTC' }).format(new Date(`${data.date}T12:00:00Z`)).replace('.', ''),
+      weekday: new Intl.DateTimeFormat(t.locale, { weekday: 'long', timeZone: 'UTC' }).format(new Date(`${data.date}T12:00:00Z`)),
+      time: clock(data.time, lang),
+      from: data.origin,
+      to: data.destination,
+      fromLabel: t.pickup,
+      toLabel: t.dropoff,
+      extra: data.passengers ? `${t.passengers}: ${data.passengers}` : '',
+    }),
     '<div style="height:18px;line-height:18px;font-size:0">&nbsp;</div>',
     highlight(t.fare, fare),
     hasPay ? sectionTitle(t.payTitle) + muted(t.payNote) + paymentCards(pay, qr, t) : '',

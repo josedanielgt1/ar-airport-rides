@@ -43,6 +43,33 @@ export const detailRows = (rows) =>
 export const highlight = (label, value) =>
   `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 4px"><tr><td style="background:${C.panel};border:1px solid ${C.line};border-radius:14px;padding:18px 20px"><p style="margin:0 0 4px;font:11px ${SANS};letter-spacing:.18em;text-transform:uppercase;color:${C.muted}">${e(label)}</p><p style="margin:0;font:normal 30px/1.2 ${SERIF};color:${C.gold}">${e(value)}</p></td></tr></table>`;
 
+/** Sello de "confirmado": círculo dorado con visto + etiqueta. */
+export const confirmedBadge = (label) =>
+  `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 18px"><tr><td align="center" valign="middle" width="34" height="34" style="width:34px;height:34px;background:${C.gold};border-radius:50%;font:bold 18px/34px ${SANS};color:#000000;text-align:center">&#10003;</td><td valign="middle" style="padding-left:12px;font:bold 11px ${SANS};letter-spacing:.22em;text-transform:uppercase;color:${C.gold}">${e(label)}</td></tr></table>`;
+
+const dot = (filled) =>
+  `<table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td width="12" height="12" style="width:12px;height:12px;font-size:0;line-height:0;border-radius:50%;background:${filled ? C.gold : C.bg};border:2px solid ${C.gold}">&nbsp;</td></tr></table>`;
+
+/**
+ * "Boleto" del viaje: bloque dorado con el día, fecha y hora, y debajo la ruta (recogida → destino) como línea de tiempo.
+ * @param {{day:string, month:string, weekday:string, time:string, from:string, to:string, fromLabel:string, toLabel:string, extra?:string}} p
+ */
+export const tripTicket = (p) => {
+  const label = (text) => `<p style="margin:0 0 2px;font:11px ${SANS};letter-spacing:.14em;text-transform:uppercase;color:${C.muted}">${e(text)}</p>`;
+  const place = (text) => `<p style="margin:0;font:16px/1.4 ${SANS};color:${C.cream}">${e(text)}</p>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${C.panel};border:1px solid ${C.gold};border-radius:16px;border-collapse:separate"><tr>
+<td width="104" align="center" valign="middle" style="width:104px;background:${C.gold};border-radius:15px 0 0 0;padding:20px 8px"><p style="margin:0;font:normal 44px/1 ${SERIF};color:#000000">${e(p.day)}</p><p style="margin:4px 0 0;font:bold 12px ${SANS};letter-spacing:.2em;text-transform:uppercase;color:#000000">${e(p.month)}</p></td>
+<td valign="middle" style="padding:20px 22px;border-radius:0 15px 0 0"><p style="margin:0 0 4px;font:11px ${SANS};letter-spacing:.18em;text-transform:uppercase;color:${C.muted}">${e(p.weekday)}</p><p style="margin:0;font:normal 30px/1.1 ${SERIF};color:${C.cream}">${e(p.time)}</p></td></tr>
+<tr><td colspan="2" style="padding:22px 22px 6px;border-top:1px solid ${C.line}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><td width="28" valign="top" style="padding-top:4px">${dot(true)}</td><td valign="top">${label(p.fromLabel)}${place(p.from)}</td></tr>
+<tr><td width="28" align="center" style="height:26px"><table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td width="0" height="26" style="height:26px;border-left:2px dashed #6b5c33;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td></td></tr>
+<tr><td width="28" valign="top" style="padding-top:4px">${dot(false)}</td><td valign="top">${label(p.toLabel)}${place(p.to)}</td></tr>
+</table></td></tr>
+${p.extra ? `<tr><td colspan="2" style="padding:6px 22px 20px"><p style="margin:12px 0 0;padding-top:12px;border-top:1px solid ${C.line};font:13px ${SANS};color:${C.muted}">${e(p.extra)}</p></td></tr>` : '<tr><td colspan="2" style="padding:0 0 14px;font-size:0;line-height:0">&nbsp;</td></tr>'}
+</table>`;
+};
+
 /**
  * Tarjetas de pago: QR de Venmo y Cash App lado a lado (imagen en línea) + botón de respaldo con el enlace,
  * y Zelle como texto. `t` trae los textos en el idioma del lector.
