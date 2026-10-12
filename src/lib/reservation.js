@@ -221,20 +221,22 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     '',
     '--- Reply to the passenger ---',
     ...(confirmUrl ? ['Send the confirmation with the fare and payment QR codes (opens a page to enter the fare):', confirmUrl, '', 'Or decline and ask them to pick another time (they get a link to the site):', `${confirmUrl}&a=decline`, ''] : []),
-    data.email
-      ? 'Reply to this email to answer them by email, or copy the message below. Replace [FARE] before sending.'
-      : 'No email given: text them at the number above, or copy the message below. Replace [FARE] before sending.',
+    ...(confirmUrl
+      ? []
+      : [
+          data.email
+            ? 'Reply to this email to answer them by email, or copy the message below. Replace [FARE] before sending.'
+            : 'No email given: text them at the number above, or copy the message below. Replace [FARE] before sending.',
+        ]),
     ...(noPay ? ['(No payment options configured: set PAY_VENMO_URL, PAY_CASHAPP_URL, PAY_ZELLE.)'] : []),
-    '',
-    `Subject: ${msg.subject}`,
-    msg.body,
+    ...(confirmUrl ? [] : ['', `Subject: ${msg.subject}`, msg.body]),
   ].join('\n');
 
   const actions = [
     confirmUrl && goldButton(confirmUrl, 'Send confirmation with QR'),
     confirmUrl && ghostButton(`${confirmUrl}&a=decline`, 'Decline and ask to reschedule'),
-    mailto && ghostButton(mailto, 'Email payment details'),
-    sms && ghostButton(sms, 'Text payment details'),
+    !confirmUrl && mailto && ghostButton(mailto, 'Email payment details'),
+    !confirmUrl && sms && ghostButton(sms, 'Text payment details'),
   ]
     .filter(Boolean)
     .join('\n');
@@ -250,15 +252,19 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     sectionTitle('Reply to the passenger'),
     muted(
       confirmUrl
-        ? 'Confirm: enter the fare, preview exactly what the passenger will get (with the payment QR codes) and send it. Decline: they receive a polite note with a link to pick another time. Or use a ready-made message.'
+        ? 'Confirm: enter the fare, preview exactly what the passenger will get (with the payment QR codes) and send it. Decline: they receive a polite note with a link to pick another time.'
         : 'Opens a ready message in the passenger’s language. Replace [FARE] before sending.',
     ),
     actions,
     noPay
       ? `<p style="margin:8px 0;font:13px Arial,Helvetica,sans-serif;color:#E07B6A">No payment options configured (PAY_VENMO_URL, PAY_CASHAPP_URL, PAY_ZELLE).</p>`
       : '',
-    sectionTitle('Message preview'),
-    `<pre style="margin:0;padding:14px;background:${C.panel};border:1px solid ${C.line};border-radius:12px;font:13px/1.5 Arial,Helvetica,sans-serif;color:${C.cream};white-space:pre-wrap">${escapeHtml(msg.body)}</pre>`,
+    ...(confirmUrl
+      ? []
+      : [
+          sectionTitle('Message preview'),
+          `<pre style="margin:0;padding:14px;background:${C.panel};border:1px solid ${C.line};border-radius:12px;font:13px/1.5 Arial,Helvetica,sans-serif;color:${C.cream};white-space:pre-wrap">${escapeHtml(msg.body)}</pre>`,
+        ]),
   ].join('\n');
 
   // Todo valor variable pasa por escapeHtml (también el asunto en <title>).
