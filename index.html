@@ -81,9 +81,8 @@
       </a>
 
       <!-- Escritorio: aparece al salir del hero, a la izquierda de EN|ES (que no se mueve: oculto conserva su espacio). En móvil lo reemplaza la barra inferior. -->
-      <a class="btn-wa btn-wa--sm site-header__cta" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
-        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
-        <span data-i18n="wa.cta">Reserve on WhatsApp</span>
+      <a class="btn-wa btn-wa--sm site-header__cta" href="#reserve">
+        <span data-i18n="hero.book">Book my ride</span>
       </a>
 
       <div class="lang" role="group" aria-label="Language" data-i18n-attr="aria-label:lang.label">
@@ -128,12 +127,15 @@
               queda en el enlace tel: de abajo. TODO(cliente): confirmar números de SMS y WhatsApp.
             -->
             <div class="hero__actions" data-fab-avoid>
+              <a class="btn btn--primary hero__book hero__cta" href="#reserve">
+                <span data-i18n="hero.book">Book my ride</span>
+              </a>
               <a class="btn btn--sms hero__sms" data-sms href="sms:@@smsNumber@@">
                 <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-sms" /></svg>
                 <span class="sms__label" data-i18n="sms.cta">Text us</span>
                 <span class="sms__tel">@@phone@@</span>
               </a>
-              <a class="btn-wa hero__cta" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
+              <a class="btn-wa hero__wa" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
                 <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
                 <span data-i18n="wa.cta">Reserve on WhatsApp</span>
               </a>
@@ -453,14 +455,8 @@
 
     <!-- Móvil: barra inferior con el botón de WhatsApp; aparece al salir del hero. -->
     <div class="wa-bar">
-      <a class="btn btn--sms wa-bar__btn" data-sms href="sms:@@smsNumber@@">
-        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-sms" /></svg>
-        <span class="sms__label" data-i18n="sms.ctaShort">Text us</span>
-        <span class="sms__tel">@@phone@@</span>
-      </a>
-      <a class="btn-wa wa-bar__btn" data-wa href="@@waUrl@@" target="_blank" rel="noopener">
-        <svg class="btn-wa__icon" aria-hidden="true" focusable="false"><use href="#i-whatsapp" /></svg>
-        <span data-i18n="wa.ctaShort">WhatsApp</span>
+      <a class="btn btn--primary wa-bar__btn" href="#reserve">
+        <span data-i18n="hero.book">Book my ride</span>
       </a>
     </div>
 

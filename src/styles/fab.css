@@ -187,3 +187,54 @@ body {
   padding-inline: 0.75rem;
   font-size: 0.9375rem;
 }
+
+/* ---------- Jerarqu�a de contacto: 1) formulario (reservar), 2) mensaje de texto, 3) WhatsApp ---------- */
+
+.hero__book {
+  min-height: 56px;
+}
+
+@media (max-width: 40rem) {
+  .hero__book {
+    flex: 1 1 100%;
+  }
+}
+
+/* Mensaje de texto: secundario (contorno) tambi�n en t�ctil. */
+@media (hover: none) and (pointer: coarse) {
+  .hero__sms {
+    background: transparent;
+    color: var(--c-gold);
+    box-shadow: inset 0 0 0 1px var(--c-gold);
+  }
+
+  .hero__sms:active {
+    background: rgb(201 162 75 / 0.14);
+  }
+}
+
+/* WhatsApp: terciario, enlace de texto. */
+.btn-wa.hero__wa,
+.btn-wa.hero__wa:hover,
+.btn-wa.hero__wa:active {
+  min-height: 44px;
+  padding: 0 0.5rem;
+  background: transparent;
+  box-shadow: none;
+  color: var(--c-cream);
+  font-weight: 500;
+  font-size: var(--fs-sm);
+  text-decoration: underline;
+  text-decoration-color: rgb(201 162 75 / 0.6);
+  text-underline-offset: 0.3em;
+}
+
+.btn-wa.hero__wa:hover,
+.btn-wa.hero__wa:focus-visible {
+  color: var(--c-gold);
+}
+
+/* Barra inferior: un solo bot�n. */
+.wa-bar {
+  grid-template-columns: minmax(0, 1fr);
+}
