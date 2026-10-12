@@ -10,7 +10,7 @@
         { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'sha256-QSrScui6suYYSZ89ib6ERGj+B08CWLhVl7U/or9a8Cc=' 'sha256-E1r+2y+PZxri2Vx7+yds0JBVYwnnPpoHsyOYmsJ4hBo='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'sha256-QSrScui6suYYSZ89ib6ERGj+B08CWLhVl7U/or9a8Cc=' 'sha256-E1r+2y+PZxri2Vx7+yds0JBVYwnnPpoHsyOYmsJ4hBo='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://maps.googleapis.com; media-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         }
       ]
     },

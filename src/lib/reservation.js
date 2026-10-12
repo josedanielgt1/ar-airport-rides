@@ -5,6 +5,7 @@
 */
 import { validateReservation, isSpam, todayIn, shiftDate, escapeHtml } from './validate.js';
 import { confirmUrl as buildConfirmUrl } from './token.js';
+import { mapsRouteUrl } from './maps.js';
 import { payQrs, qrAttachments } from './qr.js';
 import {
   C,
@@ -219,7 +220,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     ...rows.map(([k, v]) => `${k}: ${v}`),
     '',
     '--- Reply to the passenger ---',
-    ...(confirmUrl ? ['Send the confirmation with the fare and payment QR codes (opens a page to enter the fare):', confirmUrl, ''] : []),
+    ...(confirmUrl ? ['Send the confirmation with the fare and payment QR codes (opens a page to enter the fare):', confirmUrl, '', 'Or decline and ask them to pick another time (they get a link to the site):', `${confirmUrl}&a=decline`, ''] : []),
     data.email
       ? 'Reply to this email to answer them by email, or copy the message below. Replace [FARE] before sending.'
       : 'No email given: text them at the number above, or copy the message below. Replace [FARE] before sending.',
@@ -231,6 +232,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
 
   const actions = [
     confirmUrl && goldButton(confirmUrl, 'Send confirmation with QR'),
+    confirmUrl && ghostButton(`${confirmUrl}&a=decline`, 'Decline and ask to reschedule'),
     mailto && ghostButton(mailto, 'Email payment details'),
     sms && ghostButton(sms, 'Text payment details'),
   ]
@@ -244,10 +246,11 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     `<p style="margin:14px 0 6px;font:16px/1.5 Arial,Helvetica,sans-serif;color:${C.cream}">${escapeHtml(data.origin)} <span style="color:${C.gold}">&rarr;</span> ${escapeHtml(data.destination)}</p>`,
     sectionTitle('Trip details'),
     detailRows(rows),
+    `<div style="margin-top:14px">${ghostButton(mapsRouteUrl(data.origin, data.destination), 'Open route in Maps')}</div>`,
     sectionTitle('Reply to the passenger'),
     muted(
       confirmUrl
-        ? 'Enter the fare, preview exactly what the passenger will get (with the payment QR codes) and send it. Or use a ready-made message.'
+        ? 'Confirm: enter the fare, preview exactly what the passenger will get (with the payment QR codes) and send it. Decline: they receive a polite note with a link to pick another time. Or use a ready-made message.'
         : 'Opens a ready message in the passenger’s language. Replace [FARE] before sending.',
     ),
     actions,

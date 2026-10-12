@@ -5,6 +5,7 @@
 */
 import { escapeHtml as e } from './validate.js';
 import { qrCid } from './qr.js';
+import { mapsSearchUrl, mapsRouteUrl, staticMapUrl } from './maps.js';
 
 export const C = { bg: '#000000', panel: '#111111', line: '#2B2417', gold: '#C9A24B', cream: '#F3EBDD', muted: '#9C9384' };
 const SERIF = "Georgia,'Times New Roman',serif";
@@ -69,6 +70,18 @@ export const tripTicket = (p) => {
 ${p.extra ? `<tr><td colspan="2" style="padding:6px 22px 20px"><p style="margin:12px 0 0;padding-top:12px;border-top:1px solid ${C.line};font:13px ${SANS};color:${C.muted}">${e(p.extra)}</p></td></tr>` : '<tr><td colspan="2" style="padding:0 0 14px;font-size:0;line-height:0">&nbsp;</td></tr>'}
 </table>`;
 };
+
+/**
+ * Mapa del viaje: imagen con las marcas A/B (solo si hay clave de Google Maps) y botones que abren la app de
+ * mapas: recogida, destino y ruta. `t` trae los textos en el idioma del lector.
+ */
+export function mapBlock({ from, to, key, t }) {
+  const img = staticMapUrl(from, to, key);
+  const image = img
+    ? `<a href="${e(mapsRouteUrl(from, to))}"><img src="${e(img)}" width="600" height="260" alt="${e(t.mapAlt)}" style="display:block;width:100%;max-width:600px;height:auto;border-radius:14px;border:1px solid ${C.line};background:${C.panel}"></a><div style="height:12px;line-height:12px;font-size:0">&nbsp;</div>`
+    : '';
+  return `${image}<div>${goldButton(mapsRouteUrl(from, to), t.mapRoute)}${ghostButton(mapsSearchUrl(from), t.mapPickup)}${ghostButton(mapsSearchUrl(to), t.mapDrop)}</div>`;
+}
 
 /**
  * Tarjetas de pago: QR de Venmo y Cash App lado a lado (imagen en línea) + botón de respaldo con el enlace,
