@@ -29,6 +29,12 @@ export function initWhatsApp() {
     root.classList.add('is-past-hero');
   }
 
+  // Los botones redondos de contacto se esconden mientras el formulario est� en pantalla (estorban al llenarlo).
+  const reserve = document.getElementById('reserve');
+  if (reserve) {
+    new IntersectionObserver(([e]) => root.classList.toggle('at-form', e.isIntersecting), { threshold: 0.08 }).observe(reserve);
+  }
+
   // La barra inferior se oculta mientras haya en pantalla una zona marcada con data-fab-avoid
   // (botón del hero, cierre de #why, formulario): ahí ya hay una acción visible.
   const bar = document.querySelector('.wa-bar');
