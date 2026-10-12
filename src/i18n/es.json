@@ -30,7 +30,7 @@
   "reserve.sub": "Envía los detalles y te confirmamos el traslado.",
   "form.name": "Nombre completo",
   "form.phone": "Teléfono",
-  "form.email": "Correo (opcional)",
+  "form.email": "Correo",
   "form.service": "Servicio",
   "form.servicePlaceholder": "Elige un servicio",
   "form.date": "Fecha",

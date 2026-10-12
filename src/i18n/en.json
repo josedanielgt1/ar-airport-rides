@@ -30,7 +30,7 @@
   "reserve.sub": "Send the details and we’ll confirm your ride.",
   "form.name": "Full name",
   "form.phone": "Phone",
-  "form.email": "Email (optional)",
+  "form.email": "Email",
   "form.service": "Service",
   "form.servicePlaceholder": "Choose a service",
   "form.date": "Date",
