@@ -9,7 +9,8 @@
     "preview": "vite preview --host",
     "test": "node --test \"test/**/*.test.js\"",
     "check:i18n": "node scripts/check-i18n.mjs",
-    "check:contrast": "node scripts/contrast.mjs"
+    "check:contrast": "node scripts/contrast.mjs",
+    "check:csp": "node scripts/check-csp.mjs"
   },
   "devDependencies": {
     "vite": "^7.1.0"

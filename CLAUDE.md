@@ -117,3 +117,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Dominio propio y correo con dominio (`reservas@...`).
 - El video se generó con el plan gratuito de Higgsfield, que no incluye uso comercial. Regenerarlo o descargarlo con un plan que lo permita antes de publicar.
 - Tarjeta física: QR en blanco o crema sobre fondo oscuro (el dorado escanea mal), mínimo 2 cm, margen libre y prueba de escaneo antes de imprimir.
+
+- Cabeceras de seguridad y CSP en ercel.json. Los 2 scripts en línea de index.html están permitidos por hash: si se editan, corre 
+pm run build; npm run check:csp -- --print y actualiza script-src (
+pm run check:csp avisa si no coinciden).
