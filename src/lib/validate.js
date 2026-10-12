@@ -7,6 +7,7 @@
 export const LIMITS = {
   name: 80,
   phone: 25,
+  email: 120,
   place: 160,
   notes: 1000,
   // TODO(cliente): confirmar la capacidad máxima de pasajeros (provisional: 7).
@@ -14,7 +15,9 @@ export const LIMITS = {
   passengersMax: 7,
 };
 
-export const FIELDS = ['name', 'phone', 'service', 'date', 'time', 'origin', 'destination', 'passengers', 'notes'];
+export const FIELDS = ['name', 'phone', 'email', 'service', 'date', 'time', 'origin', 'destination', 'passengers', 'notes'];
+
+const EMAIL_RE = /^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 
 const str = (v) => (typeof v === 'string' ? v : v == null ? '' : String(v));
 
@@ -70,6 +73,11 @@ export function validateReservation(input, { serviceIds, today } = {}) {
     const digits = data.phone.replace(/\D/g, '');
     if (!/^[+()\d\s.-]+$/.test(data.phone) || digits.length < 7 || digits.length > 15) errors.phone = 'phone';
   }
+
+  // Correo del pasajero: opcional. Con él, el chofer puede responderle por correo; sin él, por SMS.
+  // Formato prudente (sin espacios, comillas, comas ni símbolos de cabecera); el valor nunca lleva saltos de línea.
+  text('email', LIMITS.email, { required: false });
+  if (!errors.email && data.email && !EMAIL_RE.test(data.email)) errors.email = 'email';
 
   data.service = oneLine(src.service);
   if (!data.service) errors.service = 'service';

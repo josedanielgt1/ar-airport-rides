@@ -42,7 +42,7 @@ Cierre en Manrope + botón "Book a ride" → #reserve. Textos con TODO(cliente).
 Encabezado sticky en escritorio; formulario de hasta 46rem, 2 columnas desde 640 px. Etiquetas visibles, error bajo cada campo (color alerta), estado en aria-live, foco al primer error. Resultado con borde dorado a la izquierda y botón grande "Continue on WhatsApp".
 
 ## Footer
-Marca, "24/7 Reservations", teléfono, correo y WhatsApp (enlaces ≥ 44 px), pagos solo como texto, ©.
+Marca, "24/7 Reservations", teléfono, correo y WhatsApp (enlaces ≥ 44 px), ©. Sin pagos en el sitio (van en el correo de reserva).
 
 ## Botón de WhatsApp fuera del hero
 Escritorio: en el header fijo. Móvil/tablet: barra inferior a todo el ancho; el body reserva su alto. Aparece solo cuando el botón del hero sale de pantalla y se aparta mientras el formulario está visible. Respeta `safe-area-inset-bottom`; no tapa el botón de enviar del formulario (se oculta o se aparta cuando el formulario está en pantalla).

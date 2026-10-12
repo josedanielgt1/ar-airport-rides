@@ -104,3 +104,18 @@ test('fechas auxiliares', () => {
   assert.equal(todayIn('America/Chicago', new Date('2026-10-02T03:00:00Z')), '2026-10-01');
   assert.equal(shiftDate('2026-03-01', -1), '2026-02-28');
 });
+
+test('correo del pasajero: opcional, con formato prudente y sin inyección de cabeceras', () => {
+  const ok = validateReservation({ ...valid(), email: '  Ana.Lopez+rides@Example.com ' }, { serviceIds: IDS, today: TODAY });
+  assert.equal(ok.ok, true, JSON.stringify(ok.errors));
+  assert.equal(ok.data.email, 'Ana.Lopez+rides@Example.com');
+
+  const empty = validateReservation({ ...valid(), email: '' }, { serviceIds: IDS, today: TODAY });
+  assert.equal(empty.ok, true);
+  assert.equal(empty.data.email, '');
+
+  for (const email of ['x', 'a@b', 'a b@c.com', '<a@b.com>', 'a@b.com, c@d.com', 'ana@example.com\r\nBcc: v@x.com', `${'a'.repeat(130)}@example.com`]) {
+    const r = validateReservation({ ...valid(), email }, { serviceIds: IDS, today: TODAY });
+    assert.ok(r.errors.email, email);
+  }
+});

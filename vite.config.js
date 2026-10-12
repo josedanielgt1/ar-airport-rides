@@ -20,9 +20,6 @@ function configTokens() {
     smsNumber: CONFIG.smsNumber,
     email: CONFIG.email,
     waUrl: `https://wa.me/${CONFIG.whatsapp}?text=${encodeURIComponent(en['wa.message'])}`,
-    payments: CONFIG.payments.join(', '),
-    venmoUrl: CONFIG.payLinks.venmo,
-    cashappUrl: CONFIG.payLinks.cashapp,
     year: String(new Date().getFullYear()),
   };
 }
@@ -187,7 +184,13 @@ function devReserveSimulation() {
           const result = await handleReservation(input, {
             ip: `dev-${Date.now()}-${Math.random()}`, // sin límite por IP en la simulación
             serviceIds,
-            send: async () => ({ simulated: true }),
+            // Datos de pago de EJEMPLO (los reales viven en variables de entorno de Vercel, nunca en el repo).
+            pay: { venmo: 'https://venmo.com/u/ejemplo', cashapp: 'https://cash.app/$ejemplo', zelle: 'pagos@ejemplo.com' },
+            // No se envía nada: se imprime el correo para revisarlo aquí (son datos de prueba, solo en tu consola).
+            send: async (_config, email) => {
+              server.config.logger.info(`[simulación] Correo que recibiría el chofer:\n${email.text}\n(Reply-To: ${email.replyTo ?? 'sin correo del pasajero'})`);
+              return { simulated: true };
+            },
           });
           server.config.logger.info(`[simulación] POST /api/reserve → ${result.status} (no se envió ningún correo)`);
           if (!contentType.includes('application/json')) {

@@ -36,7 +36,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Teléfono: 737-529-1720
 - Correo: abrahandrojasm@gmail.com (puede cambiar a correo con dominio propio más adelante; dejarlo en config)
 - "24/7 Reservations"
-- Pagos aceptados: Venmo, Cash App, Zelle.
+- Pagos (Venmo, Cash App, Zelle): NO se muestran en el sitio. Viven en variables de entorno (`PAY_VENMO_URL`, `PAY_CASHAPP_URL`, `PAY_ZELLE`) y solo salen en el correo de la reserva al chofer, con botones "Email / Text payment details" que abren un mensaje de confirmación en el idioma del pasajero (la tarifa `[FARE]` la escribe el chofer). El correo del pasajero es opcional en el formulario; con él, el correo al chofer lleva `reply_to`.
 - Número de WhatsApp: **pendiente de confirmar** (puede ser el mismo teléfono). Guardarlo en config.
 
 ## Estructura de la página (una sola página, scroll cinematográfico)
@@ -46,10 +46,10 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 4. **Vehículo:** `public/media/vehicle-front.webp` + `.jpg` de respaldo (hoy: foto de referencia "23 Ford Expedition Limited", HJUdall, CC0, Wikimedia Commons; crédito en el footer desde `src/data/credits.json`; viñeta oscura porque el fondo no es negro; TODO(cliente): fotos propias) y texto "full-size luxury SUV with room for you and your luggage". Amenidades en `src/data/amenities.json` con `confirmed`: solo se muestran las `true` (hoy ninguna).
 5. **Por qué elegirnos:** 3 o 4 puntos cortos (puntualidad, privacidad, trato, experiencia).
 6. **Reserva:** formulario.
-7. **Footer:** teléfono, correo, WhatsApp, pagos aceptados.
+7. **Footer:** teléfono, correo, WhatsApp (los pagos ya no van aquí).
 
 ## Formulario de reserva
-- Campos: nombre, teléfono, tipo de servicio, fecha, hora, origen, destino, pasajeros, notas (opcional).
+- Campos: nombre, teléfono, correo (opcional), tipo de servicio, fecha, hora, origen, destino, pasajeros, notas (opcional).
 - Al enviar: (a) POST a `/api/reserve` que manda el correo al cliente, y (b) abre un enlace `https://wa.me/<numero>?text=<mensaje prellenado>` en el idioma actual del visitante. Sin API de WhatsApp.
 - El correo llega siempre en formato fijo en inglés e indica el idioma del visitante.
 - Validación en cliente y servidor, campo honeypot anti-spam y límite básico de envíos.
@@ -89,7 +89,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Respetar `prefers-reduced-motion`. Contraste AA, foco visible, botones táctiles ≥ 44 px, `alt` en imágenes.
 
 ## Seguridad
-- Claves en variables de entorno, nunca en el repo: `RESEND_API_KEY`, `RESERVATION_TO_EMAIL`, `RESERVATION_FROM_EMAIL`.
+- Claves en variables de entorno, nunca en el repo: `RESEND_API_KEY`, `RESERVATION_TO_EMAIL`, `RESERVATION_FROM_EMAIL`, `PAY_VENMO_URL`, `PAY_CASHAPP_URL`, `PAY_ZELLE`.
 - `.env` en `.gitignore`. Crear `.env.example` sin valores reales.
 - No registrar en logs los datos personales de los clientes.
 
@@ -100,7 +100,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Si algo del brief es ambiguo o está marcado como pendiente, dejar un `TODO(cliente)` visible en el código en vez de inventar el dato.
 
 ## Implementación (decisiones tomadas)
-- Datos editables: `src/config.js` (contacto y pagos), `src/data/services.json`, `src/data/service-area.json`, `src/data/amenities.json`. El HTML recibe estos datos en el build (plugin en `vite.config.js`, marcadores `@@clave@@` y comentarios `<!-- x:list -->`), así la página es legible sin JS; el JS solo traduce.
+- Datos editables: `src/config.js` (contacto; los pagos van en variables de entorno, ver `.env.example`), `src/data/services.json`, `src/data/service-area.json`, `src/data/amenities.json`. El HTML recibe estos datos en el build (plugin en `vite.config.js`, marcadores `@@clave@@` y comentarios `<!-- x:list -->`), así la página es legible sin JS; el JS solo traduce.
 - Formulario: validación compartida en `src/lib/validate.js` (cliente, servidor y simulación). Lógica de servidor en `src/lib/reservation.js`; función Vercel en `api/reserve.js` (Resend por REST con `fetch`, honeypot `company`, límite de 5 envíos / 10 min por IP en memoria, 503 si faltan variables). Correo fijo en inglés con idioma, origen (`ref`: card / direct) y hora de America/Chicago.
 - Cliente (`src/form.js`): el enlace de WhatsApp se arma antes de esperar al servidor; tras el envío se muestra "Continue on WhatsApp" (enlace normal, sin `window.open`). Si el correo falla, mismo botón + aviso. Sin JS, el servidor redirige a `#reserve-sent` / `#reserve-error`.
 - `npm run dev` incluye una SIMULACIÓN de `/api/reserve` que valida y responde `{ ok, simulated }` sin enviar correos. Para probar el envío real: `vercel dev` con `.env`.
