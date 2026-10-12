@@ -108,15 +108,15 @@ test('correo al pasajero: en su idioma, con tarifa, QR en línea y todo escapado
   assert.equal(sinPago.attachments.length, 0);
 });
 
-test('correo al chofer: botón de confirmación solo con enlace, QR y adjuntos', async () => {
+test('correo al chofer: botón de confirmación solo con enlace; sin QR (el chofer no paga)', async () => {
   const qr = await payQrs(PAY);
   const link = confirmUrl(ENV, TRIP);
   const full = buildEmail({ ...TRIP, phone: '737-529-1720', service: 'airport', ref: 'card' }, { pay: PAY, qr, confirmUrl: link, now: NOW });
   assert.ok(full.html.includes('Send confirmation with QR'));
   assert.ok(full.html.includes(link.replace(/&/g, '&amp;')));
-  assert.ok(full.html.includes('cid:venmo-qr'));
+  assert.ok(!full.html.includes('cid:'), 'el correo del chofer no lleva QR');
   assert.match(full.text, /api\/confirm\?t=/);
-  assert.equal(full.attachments.length, 2);
+  assert.equal(full.attachments.length, 0);
 
   const plain = buildEmail({ ...TRIP, phone: '737-529-1720', service: 'airport', ref: 'card' }, { pay: PAY, now: NOW });
   assert.ok(!plain.html.includes('Send confirmation with QR'));
@@ -124,7 +124,7 @@ test('correo al chofer: botón de confirmación solo con enlace, QR y adjuntos',
   assert.equal(plain.attachments.length, 0);
 });
 
-test('handleReservation: genera el enlace y los QR solo si hay correo, clave y sitio', async () => {
+test('handleReservation: genera el enlace (sin QR) solo si hay correo, clave y sitio', async () => {
   let email;
   const send = async (_c, e) => ((email = e), true);
   const base = { phone: '737-529-1720', service: 'airport', date: '2099-01-10', time: '07:30', origin: 'A', destination: 'B', passengers: '2', notes: '', lang: 'en', ref: 'direct' };
@@ -132,7 +132,7 @@ test('handleReservation: genera el enlace y los QR solo si hay correo, clave y s
 
   await handleReservation({ ...base, name: 'Ana', email: 'ana@example.com' }, ctx(ENV));
   assert.match(email.text, /\/api\/confirm\?t=/);
-  assert.equal(email.attachments.length, 2);
+  assert.equal(email.attachments.length, 0);
 
   await handleReservation({ ...base, name: 'Ana' }, ctx(ENV)); // sin correo del pasajero
   assert.ok(!/\/api\/confirm/.test(email.text));
@@ -168,7 +168,16 @@ test('handleConfirm POST: envía al pasajero con reply-to y BCC al chofer; tarif
   assert.ok(bad.html.includes('role="alert"'));
   assert.equal(sent.length, 0);
 
-  const ok = await handleConfirm({ method: 'POST', body: { t, fare: '85' }, env: ENV, now: NOW, ip: ip(), send, pay: PAY });
+  // Paso 1: vista previa con QR incrustados; todavía no se envía nada.
+  const prev = await handleConfirm({ method: 'POST', body: { t, fare: '85' }, env: ENV, now: NOW, ip: ip(), send, pay: PAY });
+  assert.equal(prev.status, 200);
+  assert.equal(sent.length, 0, 'la vista previa no envía');
+  assert.ok(prev.html.includes('<iframe') && prev.html.includes('srcdoc='));
+  assert.ok(prev.html.includes('data:image/png;base64,') && !prev.html.includes('cid:'), 'QR visibles en la vista previa');
+  assert.ok(prev.html.includes('$85.00') && prev.html.includes('name="send"'));
+
+  // Paso 2: confirmar el envío.
+  const ok = await handleConfirm({ method: 'POST', body: { t, fare: '85', send: '1' }, env: ENV, now: NOW, ip: ip(), send, pay: PAY });
   assert.equal(ok.status, 200);
   assert.equal(sent.length, 1);
   assert.equal(sent[0].cfg.to, 'ana@example.com');
@@ -177,9 +186,9 @@ test('handleConfirm POST: envía al pasajero con reply-to y BCC al chofer; tarif
   assert.ok(sent[0].e.html.includes('$85.00'));
   assert.equal(sent[0].e.attachments.length, 2);
 
-  const falla = await handleConfirm({ method: 'POST', body: { t, fare: '85' }, env: ENV, now: NOW, ip: ip(), send: async () => false, pay: PAY });
+  const falla = await handleConfirm({ method: 'POST', body: { t, fare: '85', send: '1' }, env: ENV, now: NOW, ip: ip(), send: async () => false, pay: PAY });
   assert.equal(falla.status, 502);
-  const lanza = await handleConfirm({ method: 'POST', body: { t, fare: '85' }, env: ENV, now: NOW, ip: ip(), send: async () => { throw new Error('secreto interno'); }, pay: PAY });
+  const lanza = await handleConfirm({ method: 'POST', body: { t, fare: '85', send: '1' }, env: ENV, now: NOW, ip: ip(), send: async () => { throw new Error('secreto interno'); }, pay: PAY });
   assert.equal(lanza.status, 502);
   assert.ok(!lanza.html.includes('secreto'));
 });

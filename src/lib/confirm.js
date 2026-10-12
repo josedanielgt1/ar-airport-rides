@@ -115,6 +115,22 @@ const notice = (status, title, text) => ({
   html: shell(title, `<p class="eyebrow">AR Airport Rides</p><h1>${e(title)}</h1><p class="muted">${e(text)}</p>`),
 });
 
+const inlineCids = (html, qr) =>
+  html.replace(/cid:(venmo|cashapp)-qr/g, (m, k) => (qr[k] ? `data:image/png;base64,${qr[k].toString('base64')}` : m));
+
+function previewView(data, token, fare, emailHtml) {
+  return shell(
+    'Preview',
+    `<p class="eyebrow">Preview</p><h1>This is what ${e(String(data.name).split(' ')[0])} will receive</h1>
+<p class="muted">To: ${e(data.email)} Â· Fare: ${e(fare)}</p>
+<iframe title="Email preview" sandbox srcdoc="${e(emailHtml)}" style="width:100%;height:760px;border:1px solid #2B2417;border-radius:12px;background:#000;margin-top:12px"></iframe>
+<form method="post" action="/api/confirm"><input type="hidden" name="t" value="${e(token)}"><input type="hidden" name="fare" value="${e(fare.replace('$', ''))}"><input type="hidden" name="send" value="1">
+<button type="submit">Send to passenger</button></form>
+<p style="text-align:center;margin:16px 0 0"><a href="/api/confirm?t=${encodeURIComponent(token)}" style="color:#C9A24B">Change the fare</a></p>
+<p class="muted" style="margin-top:12px">You get a copy (BCC) and their replies come to you.</p>`,
+  );
+}
+
 function formView(data, token, error = '') {
   const when = `${data.date} · ${data.time}`;
   const lang = data.lang === 'es' ? 'Spanish' : 'English';
@@ -125,8 +141,8 @@ function formView(data, token, error = '') {
 <form method="post" action="/api/confirm"><input type="hidden" name="t" value="${e(token)}">
 <label for="fare">Fare (USD)</label><input id="fare" name="fare" inputmode="decimal" autocomplete="off" placeholder="85.00" required autofocus>
 ${error ? `<p class="err" role="alert">${e(error)}</p>` : ''}
-<button type="submit">Send confirmation with QR</button></form>
-<p class="muted" style="margin-top:16px">The passenger receives a branded email in ${e(lang)} with the payment QR codes. You get a copy (BCC) and their replies come to you.</p>`,
+<button type="submit">Preview confirmation</button></form>
+<p class="muted" style="margin-top:16px">Next you see the exact email the passenger will get, in ${e(lang)}, with the payment QR codes. Nothing is sent until you confirm.</p>`,
   );
 }
 
@@ -151,6 +167,17 @@ export async function handleConfirm({ method = 'GET', query = {}, body = {}, ip,
 
   const config = { apiKey: env.RESEND_API_KEY, from: env.RESERVATION_FROM_EMAIL, to: data.email, bcc: env.RESERVATION_TO_EMAIL };
   if (!config.apiKey || !config.from) return notice(503, 'Not available', 'Email sending is not set up yet.');
+
+  if (!body.send) {
+    try {
+      const options = pay ?? paymentOptions(env);
+      const qr = await payQrs(options);
+      return { status: 200, html: previewView(data, token, fare, inlineCids(buildConfirmationEmail(data, fare, options, qr).html, qr)) };
+    } catch (err) {
+      console.error(`confirm: error en la vista previa (${err?.name ?? 'Error'})`);
+      return notice(500, 'Something went wrong', 'Could not build the preview. Try again.');
+    }
+  }
 
   let delivered = false;
   try {

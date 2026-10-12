@@ -247,13 +247,13 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     sectionTitle('Reply to the passenger'),
     muted(
       confirmUrl
-        ? 'Send the confirmation in one tap: you enter the fare and the passenger receives a branded email with the payment QR codes. Or use a ready-made message.'
+        ? 'Enter the fare, preview exactly what the passenger will get (with the payment QR codes) and send it. Or use a ready-made message.'
         : 'Opens a ready message in the passenger’s language. Replace [FARE] before sending.',
     ),
     actions,
     noPay
       ? `<p style="margin:8px 0;font:13px Arial,Helvetica,sans-serif;color:#E07B6A">No payment options configured (PAY_VENMO_URL, PAY_CASHAPP_URL, PAY_ZELLE).</p>`
-      : sectionTitle('Payment QR codes') + muted('Also useful to show at pickup.') + paymentCards(pay, qr, DRIVER_PAY_TEXT),
+      : '',
     sectionTitle('Message preview'),
     `<pre style="margin:0;padding:14px;background:${C.panel};border:1px solid ${C.line};border-radius:12px;font:13px/1.5 Arial,Helvetica,sans-serif;color:${C.cream};white-space:pre-wrap">${escapeHtml(msg.body)}</pre>`,
   ].join('\n');
@@ -266,7 +266,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     footer: 'Sent automatically from the AR Airport Rides website.',
   });
 
-  return { subject, text, html, replyTo: data.email || undefined, attachments: qrAttachments(qr) };
+  return { subject, text, html, replyTo: data.email || undefined, attachments: [] };
 }
 
 /** Envía por la API REST de Resend (sin paquete). Devuelve true si Resend aceptó el correo. */
@@ -319,8 +319,7 @@ export async function handleReservation(input, ctx) {
 
   try {
     const pay = ctx.pay ?? paymentOptions(env);
-    const qr = await payQrs(pay);
-    // Enlace para que el chofer envíe la confirmación con tarifa y QR (solo si el pasajero dejó correo y hay CONFIRM_SECRET).
+      // Enlace para que el chofer envíe la confirmación con tarifa y QR (solo si el pasajero dejó correo y hay CONFIRM_SECRET).
     const confirmUrl = data.email
       ? buildConfirmUrl(env, {
           name: data.name,
@@ -333,7 +332,7 @@ export async function handleReservation(input, ctx) {
           passengers: data.passengers,
         })
       : null;
-    const delivered = await send(config, buildEmail(data, { serviceName: ctx.serviceName, now, pay, qr, confirmUrl }));
+    const delivered = await send(config, buildEmail(data, { serviceName: ctx.serviceName, now, pay, confirmUrl }));
     if (delivered === false) return fail(502, 'unavailable');
     return sent(delivered && typeof delivered === 'object' ? delivered : {});
   } catch (err) {
