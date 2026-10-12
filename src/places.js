@@ -243,6 +243,35 @@ export function initPlaces() {
   };
 
   toggle.addEventListener('click', () => setOpen(!open));
+
+  // Mi ubicaci�n: coloca el pin de recogida (A) donde est� el visitante. Solo si el navegador lo permite;
+  // el permiso lo pide el navegador al tocar el bot�n (nunca al cargar la p�gina).
+  const locate = document.getElementById('locate');
+  if (locate && 'geolocation' in navigator) {
+    locate.hidden = false;
+    locate.addEventListener('click', async () => {
+      if (locate.getAttribute('aria-busy') === 'true') return;
+      locate.setAttribute('aria-busy', 'true');
+      if (!open) await setOpen(true);
+      mapStatus.textContent = t('form.locating');
+      navigator.geolocation.getCurrentPosition(
+        async ({ coords }) => {
+          setActive('origin');
+          if (state) {
+            await pinMoved('origin', coords.latitude, coords.longitude);
+            state.map.setView([coords.latitude, coords.longitude], 15, { animate: !reducedMotion() });
+            if (!picked.destination) setActive('destination');
+          }
+          locate.removeAttribute('aria-busy');
+        },
+        (err) => {
+          mapStatus.textContent = t(err.code === 1 ? 'form.locateDenied' : 'form.locateError');
+          locate.removeAttribute('aria-busy');
+        },
+        { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
+      );
+    });
+  }
   tabs.forEach((tab) => tab.addEventListener('click', () => setActive(tab.dataset.target)));
 
   TARGETS.forEach((target) =>
