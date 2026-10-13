@@ -131,6 +131,7 @@ export function confirmationMessage(data, pay = {}, fare = '[FARE]', vehicle = n
     `${m.pickup}: ${data.origin}`,
     `${m.dropoff}: ${data.destination}`,
     ...(ride ? [`${VEHICLE_COPY[lang].label}: ${ride}`] : []),
+    ...(vehicle?.driver ? [`${VEHICLE_COPY[lang].driver}: ${vehicle.driver}`] : []),
     `${m.fare}: ${fare}`,
   ];
   if (options.length) lines.push('', m.pay, ...options);
@@ -178,11 +179,14 @@ const DRIVER_PAY_TEXT = { openVenmo: 'Open Venmo', openCashApp: 'Open Cash App',
  * @param {{venmo?:string,cashapp?:string,zelle?:string}} [opts.pay] opciones de pago configuradas
  * @param {{venmo?:Buffer,cashapp?:Buffer}} [opts.qr] QR ya generados (PNG)
  * @param {string|null} [opts.confirmUrl] enlace para enviar la confirmación con QR al pasajero
- * @param {{description?:string, plate?:string}|null} [opts.vehicle] vehículo por defecto que irá en la confirmación
+ * @param {{description?:string, plate?:string, driver?:string}|null} [opts.vehicle] vehículo y conductor por defecto de la confirmación
  *   (solo se muestra junto al botón de confirmar, en una línea discreta; nunca en el asunto)
  */
 export function buildEmail(data, { serviceName = (id) => id, now = new Date(), pay = {}, qr = {}, confirmUrl = null, vehicle = null } = {}) {
-  const onFile = confirmUrl && vehicle ? vehicleText(vehicle, data.lang) : '';
+  const carOnFile = confirmUrl && vehicle ? vehicleText(vehicle, data.lang) : '';
+  const driverOnFile = confirmUrl && vehicle?.driver ? vehicle.driver : '';
+  // "Vehicle on file: … · Driver on file: …" (lo que exista). Solo con botón Confirmar; nunca en el asunto.
+  const onFile = [carOnFile && `Vehicle on file: ${carOnFile}`, driverOnFile && `Driver on file: ${driverOnFile}`].filter(Boolean).join(' · ');
   // dateStyle/timeStyle no se pueden combinar con timeZoneName: campos explícitos.
   const received = new Intl.DateTimeFormat('en-US', {
     timeZone: TZ,
@@ -226,7 +230,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     ...rows.map(([k, v]) => `${k}: ${v}`),
     '',
     '--- Reply to the passenger ---',
-    ...(onFile ? [`Vehicle on file: ${onFile} (you can change it before sending)`, ''] : []),
+    ...(onFile ? [`${onFile} (you can change it before sending)`, ''] : []),
     ...(confirmUrl ? ['Send the confirmation with the fare and payment QR codes (opens a page to enter the fare):', confirmUrl, '', 'Or decline and ask them to pick another time (they get a link to the site):', `${confirmUrl}&a=decline`, ''] : []),
     ...(confirmUrl
       ? []
@@ -250,7 +254,12 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
 
   const body = [
     onFile
-      ? `<p style="margin:0 0 18px;font:12px/1.5 Arial,Helvetica,sans-serif;color:${C.muted}">Vehicle on file: <span style="color:${C.cream}">${escapeHtml(onFile)}</span> &middot; editable when you confirm</p>`
+      ? `<p style="margin:0 0 18px;font:12px/1.5 Arial,Helvetica,sans-serif;color:${C.muted}">${[
+          carOnFile && `Vehicle on file: <span style="color:${C.cream}">${escapeHtml(carOnFile)}</span>`,
+          driverOnFile && `Driver on file: <span style="color:${C.cream}">${escapeHtml(driverOnFile)}</span>`,
+        ]
+          .filter(Boolean)
+          .join(' &middot; ')} &middot; editable when you confirm</p>`
       : '',
     eyebrow('New ride request'),
     heading(service),

@@ -53,23 +53,37 @@ const dot = (filled) =>
 
 /**
  * Fila del vehículo dentro del boleto: etiqueta pequeña ("Your ride") y debajo la descripción en serif crema con la
- * placa en dorado espaciado. Sin descripción ni placa no hay fila.
- * @param {{label:string, description?:string, plateLabel?:string, plate?:string}} [v]
+ * placa en dorado espaciado; luego, si hay conductor, "Your chauffeur" con su nombre. Con `photo` (solo el vehículo
+ * predeterminado) se agrega a la derecha una miniatura discreta de 120 px. Sin nada que mostrar no hay fila.
+ * Tablas y estilos en línea (sin flex) para los clientes de correo.
+ * @param {{label:string, description?:string, plateLabel?:string, plate?:string, driverLabel?:string, driver?:string,
+ *          photo?:{src:string, width:number, height:number, alt:string}|null}} [v]
  */
 const vehicleRow = (v) => {
-  if (!v || (!v.description && !v.plate)) return '';
+  if (!v || (!v.description && !v.plate && !v.driver)) return '';
+  const small = (text, top) =>
+    `<p style="margin:${top}px 0 0;font:11px ${SANS};letter-spacing:.14em;text-transform:uppercase;color:${C.muted}">${e(text)}</p>`;
   const desc = v.description ? `<span style="font:normal 19px/1.35 ${SERIF};color:${C.cream}">${e(v.description)}</span>` : '';
   const sep = v.description && v.plate ? `<span style="color:${C.gold};padding:0 8px">&middot;</span>` : '';
   const plate = v.plate
-    ? `<span style="white-space:nowrap;font:12px ${SANS};letter-spacing:.08em;color:${C.muted}">${e(v.plateLabel)}&nbsp;<span style="font:bold 13px ${SANS};letter-spacing:.18em;color:${C.gold}">${e(v.plate)}</span></span>`
+    ? `<span style="font:12px ${SANS};letter-spacing:.08em;color:${C.muted}">${e(v.plateLabel)}&nbsp;<span style="white-space:nowrap;font:bold 13px ${SANS};letter-spacing:.18em;color:${C.gold}">${e(v.plate)}</span></span>`
     : '';
-  return `<tr><td colspan="2" style="padding:6px 22px 4px"><p style="margin:10px 0 0;padding-top:14px;border-top:1px solid ${C.line};font:11px ${SANS};letter-spacing:.14em;text-transform:uppercase;color:${C.muted}">${e(v.label)}</p><p style="margin:4px 0 0;line-height:1.5">${desc}${sep}${plate}</p></td></tr>`;
+  const ride = v.description || v.plate ? `${small(v.label, 0)}<p style="margin:4px 0 0;line-height:1.5">${desc}${sep}${plate}</p>` : '';
+  const driver = v.driver
+    ? `${small(v.driverLabel, ride ? 12 : 0)}<p style="margin:3px 0 0;font:normal 17px/1.35 ${SERIF};color:${C.cream}">${e(v.driver)}</p>`
+    : '';
+  const cell = `border-top:1px solid ${C.line};padding-top:14px`;
+  const photo = v.photo
+    ? `<td width="${Number(v.photo.width) + 14}" align="right" valign="middle" style="width:${Number(v.photo.width) + 14}px;padding-left:14px;${cell}"><img src="${e(v.photo.src)}" width="${Number(v.photo.width)}" height="${Number(v.photo.height)}" alt="${e(v.photo.alt)}" style="display:block;width:${Number(v.photo.width)}px;height:${Number(v.photo.height)}px;border:0;border-radius:6px;background:#000000"></td>`
+    : '';
+  return `<tr><td colspan="2" style="padding:16px 22px 4px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td valign="middle" style="${cell}">${ride}${driver}</td>${photo}</tr></table></td></tr>`;
 };
 
 /**
  * "Boleto" del viaje: bloque dorado con el día, fecha y hora, y debajo la ruta (recogida → destino) como línea de tiempo.
  * @param {{day:string, month:string, weekday:string, time:string, from:string, to:string, fromLabel:string, toLabel:string, extra?:string,
- *          vehicle?:{label:string, description?:string, plateLabel?:string, plate?:string}}} p
+ *          vehicle?:{label:string, description?:string, plateLabel?:string, plate?:string, driverLabel?:string,
+ *                    driver?:string, photo?:{src:string, width:number, height:number, alt:string}|null}}} p
  */
 export const tripTicket = (p) => {
   const label = (text) => `<p style="margin:0 0 2px;font:11px ${SANS};letter-spacing:.14em;text-transform:uppercase;color:${C.muted}">${e(text)}</p>`;

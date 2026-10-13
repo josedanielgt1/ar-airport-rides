@@ -10,8 +10,8 @@
     recuerda la clave 24 h: el mismo envío repetido no sale dos veces, y otro distinto (otra tarifa, o
     rechazar después de confirmar) responde 409 → la página dice "Already sent".
   - El enlace vence a las 24 h (TOKEN_TTL_MS), así que mientras es válido la clave sigue recordada.
-  - La clave depende SOLO del enlace (no de la tarifa ni del vehículo/placa que escribe el chofer): reenviar lo
-    mismo no duplica, y cambiar el vehículo o la placa después de enviar da 409 → "Already sent". Para corregir
+  - La clave depende SOLO del enlace (no de la tarifa ni del vehículo/placa/conductor que escribe el chofer): reenviar
+    lo mismo no duplica, y cambiar el vehículo, la placa o el conductor después de enviar da 409 → "Already sent". Para corregir
     algo ya enviado, el chofer responde al pasajero desde su correo.
   - Límite real: depende de que Resend respete la clave. Una garantía fuerte de uso único necesita estado
     propio (p. ej. Vercel KV / Upstash: SET used:<id> NX al enviar). Ver CLAUDE.md.
@@ -21,7 +21,8 @@ import { openToken, secretStatus, secretsOf, siteUrl, tokenId, warnWeakSecret } 
 import { payQrs, qrAttachments } from './qr.js';
 import { layout, eyebrow, goldButton, mapBlock, confirmedBadge, tripTicket, heading, paragraph, muted, sectionTitle, detailRows, highlight, paymentCards } from './email-ui.js';
 import { paymentOptions, confirmationMessage, headerSafe, rateLimited, clock } from './reservation.js';
-import { VEHICLE_COPY, VEHICLE_MAX, vehicleDefaults, vehicleFromForm, vehicleText } from './vehicle.js';
+import { VEHICLE_COPY, VEHICLE_MAX, vehicleDefaults, vehicleFromForm, vehiclePhoto, vehicleText } from './vehicle.js';
+import { EMAIL_VEHICLE_PHOTO } from '../config.js';
 
 /** Idempotency-Key para Resend: igual para todos los envíos del mismo enlace (≤ 256 caracteres). */
 export const idempotencyKeyFor = (token) => {
@@ -146,15 +147,24 @@ const COPY = {
 
 /**
  * Correo de confirmación para el pasajero: { subject, text, html, attachments }.
- * `vehicle` ({ description, plate }, ya validado) agrega la línea "Your ride" al boleto y al texto plano;
- * lo vacío se omite.
+ * `vehicle` ({ description, plate, driver }, ya validado) agrega al boleto y al texto plano las líneas "Your ride" y
+ * "Your chauffeur"; lo vacío se omite. `photo` (de vehiclePhoto: solo con el vehículo predeterminado) agrega la
+ * miniatura junto a esas líneas.
  */
-export function buildConfirmationEmail(data, fare, pay = {}, qr = {}, { mapKey, vehicle } = {}) {
+export function buildConfirmationEmail(data, fare, pay = {}, qr = {}, { mapKey, vehicle, photo } = {}) {
   const lang = data.lang === 'es' ? 'es' : 'en';
   const t = COPY[lang];
   const vc = VEHICLE_COPY[lang];
-  const ride = vehicle && (vehicle.description || vehicle.plate)
-    ? { label: vc.label, description: vehicle.description || '', plateLabel: vc.plate, plate: vehicle.plate || '' }
+  const ride = vehicle && (vehicle.description || vehicle.plate || vehicle.driver)
+    ? {
+        label: vc.label,
+        description: vehicle.description || '',
+        plateLabel: vc.plate,
+        plate: vehicle.plate || '',
+        driverLabel: vc.driver,
+        driver: vehicle.driver || '',
+        photo: vehicle.description && photo ? photo : null,
+      }
     : null;
   const first = String(data.name).split(' ')[0];
   const day = new Intl.DateTimeFormat(t.locale, { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(
@@ -267,6 +277,13 @@ const notice = (status, title, text, headers) => ({
 const inlineCids = (html, qr) =>
   html.replace(/cid:(venmo|cashapp)-qr/g, (m, k) => (qr[k] ? `data:image/png;base64,${qr[k].toString('base64')}` : m));
 
+/**
+ * Solo para la vista previa: la miniatura del vehículo se pide al mismo origen de esta página (ruta relativa), así
+ * se ve también en despliegues de Preview cuyo SITE_URL apunta a otro dominio y cumple la CSP (img-src 'self').
+ * El correo enviado lleva la URL absoluta.
+ */
+const localPhoto = (html, photo) => (photo ? html.split(e(photo.src)).join(EMAIL_VEHICLE_PHOTO.path) : html);
+
 function previewView(data, token, { heading: title, summary, fields, sendLabel, emailHtml, backFields = '' }) {
   // "Back to edit" vuelve al formulario con lo que el chofer ya escribió (POST, sin enviar nada); sin
   // campos que conservar basta el enlace.
@@ -288,14 +305,14 @@ ${back}
 
 const firstName = (data) => String(data.name).split(' ')[0];
 
-/** Campos ocultos con la tarifa y el vehículo (ya validados) para el paso siguiente. */
+/** Campos ocultos con la tarifa, el vehículo y el conductor (ya validados) para el paso siguiente. */
 const carriedFields = (fare, vehicle) =>
-  `<input type="hidden" name="fare" value="${e(String(fare).replace('$', ''))}"><input type="hidden" name="vehicle" value="${e(vehicle.description)}"><input type="hidden" name="plate" value="${e(vehicle.plate)}">`;
+  `<input type="hidden" name="fare" value="${e(String(fare).replace('$', ''))}"><input type="hidden" name="vehicle" value="${e(vehicle.description)}"><input type="hidden" name="plate" value="${e(vehicle.plate)}"><input type="hidden" name="driver" value="${e(vehicle.driver ?? '')}">`;
 
 const confirmPreview = (data, token, fare, vehicle, emailHtml) =>
   previewView(data, token, {
     heading: `This is what ${firstName(data)} will receive`,
-    summary: `To: ${data.email} · Fare: ${fare} · Vehicle: ${vehicleText(vehicle, data.lang) || 'not shown'}`,
+    summary: `To: ${data.email} · Fare: ${fare} · Vehicle: ${vehicleText(vehicle, data.lang) || 'not shown'} · Driver: ${vehicle.driver || 'not shown'}`,
     fields: carriedFields(fare, vehicle),
     backFields: carriedFields(fare, vehicle),
     sendLabel: 'Send to passenger',
@@ -318,7 +335,7 @@ const declinePreview = (data, token, emailHtml) =>
 function formView(data, token, error = '', { fare = '', vehicle } = {}) {
   const when = `${data.date} · ${data.time}`;
   const lang = data.lang === 'es' ? 'Spanish' : 'English';
-  const v = vehicle ?? { description: '', plate: '' };
+  const v = vehicle ?? { description: '', plate: '', driver: '' };
   return shell(
     'Respond to request',
     `<p class="eyebrow">Respond to request</p><h1>${e(data.name)}</h1>
@@ -327,7 +344,8 @@ function formView(data, token, error = '', { fare = '', vehicle } = {}) {
 <label for="fare">Fare (USD)</label><input id="fare" name="fare" inputmode="decimal" autocomplete="off" placeholder="85.00" value="${e(fare)}" required autofocus>
 <label for="vehicle">Vehicle (shown to the passenger)</label><input id="vehicle" name="vehicle" class="small" maxlength="${VEHICLE_MAX.description}" autocomplete="off" value="${e(v.description)}">
 <label for="plate">License plate</label><input id="plate" name="plate" class="small plate" maxlength="${VEHICLE_MAX.plate}" autocomplete="off" autocapitalize="characters" spellcheck="false" value="${e(v.plate)}">
-<p class="muted" style="margin:8px 0 0">Driving a different car today? Change it here. Leave a field empty to leave it out of the email.</p>
+<label for="driver">Driver (shown to the passenger)</label><input id="driver" name="driver" class="small" maxlength="${VEHICLE_MAX.driver}" autocomplete="off" autocapitalize="words" value="${e(v.driver ?? '')}">
+<p class="muted" style="margin:8px 0 0">Different car or driver today? Change it here. Leave a field empty to leave it out of the email.</p>
 ${error ? `<p class="err" role="alert">${e(error)}</p>` : ''}
 <button type="submit">Preview confirmation</button>
 <button type="submit" name="action" value="decline" class="ghost" formnovalidate>Can’t take it: ask to reschedule</button></form>
@@ -370,11 +388,15 @@ export async function handleConfirm({ method = 'GET', query = {}, body = {}, ip,
     };
   }
 
-  // Vehículo y placa: los escribe el chofer (prellenados). No van en el token; se validan en cada paso.
+  // Vehículo, placa y conductor: los escribe el chofer (prellenados). No van en el token; se validan en cada paso.
   const { vehicle, error: vehicleError } = vehicleFromForm(body, env, data.lang);
   const keep = {
     fare: String(body.fare ?? '').slice(0, 12),
-    vehicle: { description: vehicle.description.slice(0, VEHICLE_MAX.description), plate: vehicle.plate.slice(0, VEHICLE_MAX.plate) },
+    vehicle: {
+      description: vehicle.description.slice(0, VEHICLE_MAX.description),
+      plate: vehicle.plate.slice(0, VEHICLE_MAX.plate),
+      driver: vehicle.driver.slice(0, VEHICLE_MAX.driver),
+    },
   };
   // "Back to edit" desde la vista previa: solo vuelve a mostrar el formulario (no envía ni cuenta intentos).
   if (!decline && body.edit) return { status: 200, html: formView(data, token, '', keep) };
@@ -429,15 +451,17 @@ export async function handleConfirm({ method = 'GET', query = {}, body = {}, ip,
   let options;
   let qr;
   let email;
+  // Miniatura solo si el vehículo final es el predeterminado (si el chofer lo cambió, no hay foto).
+  const photo = vehiclePhoto(vehicle, env, data.lang);
   try {
     options = pay ?? paymentOptions(env);
     qr = await payQrs(options);
-    email = buildConfirmationEmail(data, fare, options, qr, { mapKey: env.GOOGLE_MAPS_API_KEY, vehicle });
+    email = buildConfirmationEmail(data, fare, options, qr, { mapKey: env.GOOGLE_MAPS_API_KEY, vehicle, photo });
   } catch (err) {
     console.error(`confirm: error al preparar el correo (${err?.name ?? 'Error'})`);
     return notice(500, 'Something went wrong', 'Could not build the email. Try again.');
   }
 
-  if (!body.send) return { status: 200, html: confirmPreview(data, token, fare, vehicle, inlineCids(email.html, qr)) };
+  if (!body.send) return { status: 200, html: confirmPreview(data, token, fare, vehicle, localPhoto(inlineCids(email.html, qr), photo)) };
   return after(await deliver(email), 'Confirmation sent', `${fare} · sent to ${data.email}. You received a copy.`);
 }
