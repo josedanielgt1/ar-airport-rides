@@ -244,8 +244,8 @@ export function initPlaces() {
 
   toggle.addEventListener('click', () => setOpen(!open));
 
-  // Mi ubicaci�n: coloca el pin de recogida (A) donde est� el visitante. Solo si el navegador lo permite;
-  // el permiso lo pide el navegador al tocar el bot�n (nunca al cargar la p�gina).
+  // Mi ubicación: coloca el pin de recogida (A) donde está el visitante. Solo si el navegador lo permite;
+  // el permiso lo pide el navegador al tocar el botón (nunca al cargar la página).
   const locate = document.getElementById('locate');
   if (locate && 'geolocation' in navigator) {
     locate.hidden = false;

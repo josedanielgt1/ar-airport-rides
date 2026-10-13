@@ -188,7 +188,7 @@ body {
   font-size: 0.9375rem;
 }
 
-/* ---------- Jerarqu�a de contacto: 1) formulario (reservar), 2) mensaje de texto, 3) WhatsApp ---------- */
+/* ---------- Jerarquía de contacto: 1) formulario (reservar), 2) mensaje de texto, 3) WhatsApp ---------- */
 
 .hero__book {
   min-height: 56px;
@@ -200,7 +200,7 @@ body {
   }
 }
 
-/* Mensaje de texto: secundario (contorno) tambi�n en t�ctil. */
+/* Mensaje de texto: secundario (contorno) también en táctil. */
 @media (hover: none) and (pointer: coarse) {
   .hero__sms {
     background: transparent;
@@ -234,12 +234,12 @@ body {
   color: var(--c-gold);
 }
 
-/* Barra inferior: un solo bot�n. */
+/* Barra inferior: un solo botón. */
 .wa-bar {
   grid-template-columns: minmax(0, 1fr);
 }
 
-/* ---------- Botones redondos de contacto (esquina) y CTA de reservar con m�s presencia ---------- */
+/* ---------- Botones redondos de contacto (esquina) y CTA de reservar con más presencia ---------- */
 
 .hero__book {
   min-height: 54px;
@@ -309,14 +309,14 @@ body {
   outline-offset: 3px;
 }
 
-/* Escritorio: el tel�fono ya est� en el hero, solo queda WhatsApp. */
+/* Escritorio: el teléfono ya está en el hero, solo queda WhatsApp. */
 @media (hover: hover), (pointer: fine) {
   .contact-fab__btn--sms {
     display: none;
   }
 }
 
-/* M�vil: suben por encima de la barra "Reservar ahora" mientras esta se ve. */
+/* Móvil: suben por encima de la barra "Reservar ahora" mientras esta se ve. */
 @media (max-width: 63.99rem) {
   html.is-past-hero:not(.bar-away) .contact-fab {
     bottom: calc(52px + 1.5rem + env(safe-area-inset-bottom) + 1rem);
