@@ -1,0 +1,251 @@
+/*
+  Páginas /privacy y /terms: mismos tokens, tipografías y header que la página principal, en una
+  columna de lectura sobria. Cada página trae el texto en inglés y en español (<article lang>); src/legal.js
+  muestra solo el del idioma activo. Sin JS se ven los dos (primero inglés).
+*/
+@import './tokens.css';
+@import './base.css';
+@import './header.css';
+@import './sections.css';
+@import './legal.css';
+
+/* Aquí no hay hero ni video: el header es sólido desde el principio. */
+.legal-page .site-header {
+  background: rgb(0 0 0 / 0.94);
+  border-bottom-color: rgb(201 162 75 / 0.12);
+}
+
+.legal {
+  padding: calc(4.5rem + var(--s-6)) var(--gutter) var(--s-7);
+}
+
+.legal__inner {
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+.legal__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-size: var(--fs-sm);
+  color: var(--c-mist);
+  text-decoration: none;
+  transition: color var(--t-fast) ease;
+}
+
+.legal__back::before {
+  content: '';
+  width: 1.25rem;
+  height: 1px;
+  background: var(--c-gold);
+}
+
+@media (hover: hover) {
+  .legal__back:hover {
+    color: var(--c-cream);
+  }
+}
+
+.legal__eyebrow {
+  margin-top: var(--s-5);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--c-gold);
+}
+
+.legal__title {
+  margin-top: var(--s-2);
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: clamp(2.369rem, 1.8rem + 2.4vw, 3.157rem);
+  line-height: 1.05;
+  letter-spacing: -0.005em;
+  color: var(--c-cream);
+}
+
+/* Línea dorada fina bajo el título, como la carretera del hero. */
+.legal__title::after {
+  content: '';
+  display: block;
+  width: 4rem;
+  height: 1px;
+  margin-top: var(--s-4);
+  background: var(--c-gold);
+}
+
+/* Solo sin JS se ven las dos versiones: separarlas. (Con JS la otra está [hidden] pero sigue siendo hermana.) */
+html:not(.js) .legal__doc + .legal__doc {
+  margin-top: var(--s-7);
+  padding-top: var(--s-5);
+  border-top: 1px solid rgb(201 162 75 / 0.14);
+}
+
+.legal__doc[hidden] {
+  display: none;
+}
+
+.legal__meta {
+  margin-top: var(--s-4);
+  font-size: var(--fs-sm);
+  color: var(--c-mist);
+}
+
+.legal__lead {
+  margin-top: var(--s-3);
+  font-size: 1.0625rem;
+  color: var(--c-cream);
+}
+
+/* Índice del documento */
+.legal__toc {
+  margin-top: var(--s-5);
+  padding: var(--s-3) 0;
+  border-block: 1px solid rgb(201 162 75 / 0.14);
+}
+
+.legal__toc-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-mist);
+}
+
+.legal__toc ol {
+  column-gap: var(--s-4);
+  margin: var(--s-1) 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: toc;
+}
+
+.legal__toc li {
+  counter-increment: toc;
+  break-inside: avoid;
+}
+
+.legal__toc a {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  min-height: 44px;
+  padding-block: 0.6rem;
+  color: var(--c-cream);
+  text-decoration: none;
+  font-size: 0.9375rem;
+}
+
+.legal__toc a::before {
+  content: counter(toc, decimal-leading-zero);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--c-gold);
+}
+
+@media (hover: hover) {
+  .legal__toc a:hover {
+    color: var(--c-beam);
+  }
+}
+
+@media (min-width: 40rem) {
+  /* Dos columnas que se leen hacia abajo (01–06 | 07–11). */
+  .legal__toc ol {
+    columns: 2;
+  }
+}
+
+/* Secciones */
+.legal__section {
+  margin-top: var(--s-6);
+  scroll-margin-top: 6rem;
+}
+
+.legal__section h2 {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-lg);
+  line-height: 1.15;
+  color: var(--c-cream);
+}
+
+.legal__section h3 {
+  margin-top: var(--s-3);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+.legal__section p,
+.legal__section ul {
+  margin-top: var(--s-2);
+  color: rgb(243 235 221 / 0.88);
+}
+
+.legal__section ul {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.legal__section li {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.legal__section li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.8em;
+  width: 0.75rem;
+  height: 1px;
+  background: var(--c-gold);
+}
+
+.legal__section strong {
+  font-weight: 600;
+  color: var(--c-cream);
+}
+
+.legal__section a,
+.legal__contact a {
+  color: var(--c-cream);
+  text-decoration: underline;
+  text-decoration-color: rgb(201 162 75 / 0.6);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  overflow-wrap: anywhere;
+}
+
+@media (hover: hover) {
+  .legal__section a:hover,
+  .legal__contact a:hover {
+    color: var(--c-beam);
+    text-decoration-color: var(--c-beam);
+  }
+}
+
+/* Bloque de contacto al final de cada documento */
+.legal__contact {
+  margin-top: var(--s-6);
+  padding: var(--s-3) var(--s-3) var(--s-3) var(--s-3);
+  border-left: 2px solid var(--c-gold);
+  background: var(--c-asphalt);
+}
+
+.legal__contact p + p {
+  margin-top: 0.35rem;
+}
+
+.legal__contact-title {
+  font-family: var(--ff-display);
+  font-weight: 500;
+  font-size: var(--fs-md);
+  color: var(--c-cream);
+}

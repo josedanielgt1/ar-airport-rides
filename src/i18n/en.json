@@ -91,5 +91,16 @@
   "form.mapError": "The map couldn’t load. You can type the address instead.",
   "form.suggestLabel": "Address suggestions",
   "form.suggestAvailable": "Suggestions available. Use the up and down arrow keys, then Enter.",
-  "form.suggestEmpty": "No suggestions. You can keep typing the address."
+  "form.suggestEmpty": "No suggestions. You can keep typing the address.",
+  "legal.privacy": "Privacy Policy",
+  "legal.terms": "Terms of Service",
+  "legal.privacyShort": "Privacy",
+  "legal.termsShort": "Terms",
+  "legal.navLabel": "Legal",
+  "legal.back": "Back to AR Airport Rides",
+  "legal.skip": "Skip to content",
+  "form.consentPre": "By sending, you agree to our",
+  "form.consentAnd": "and",
+  "form.mapsNotice": "Address suggestions and the map use third-party services (Photon and OpenStreetMap). If you tap “Use my location”, your browser asks for permission and your location is used only to place the pickup pin.",
+  "form.mapsNoticeLink": "How we use your data"
 }

@@ -91,5 +91,16 @@
   "form.mapError": "No se pudo cargar el mapa. Puedes escribir la dirección.",
   "form.suggestLabel": "Sugerencias de dirección",
   "form.suggestAvailable": "Hay sugerencias. Usa las flechas arriba y abajo y Enter.",
-  "form.suggestEmpty": "Sin sugerencias. Puedes seguir escribiendo la dirección."
+  "form.suggestEmpty": "Sin sugerencias. Puedes seguir escribiendo la dirección.",
+  "legal.privacy": "Política de privacidad",
+  "legal.terms": "Términos del servicio",
+  "legal.privacyShort": "Privacidad",
+  "legal.termsShort": "Términos",
+  "legal.navLabel": "Avisos legales",
+  "legal.back": "Volver a AR Airport Rides",
+  "legal.skip": "Saltar al contenido",
+  "form.consentPre": "Al enviar, aceptas nuestros",
+  "form.consentAnd": "y la",
+  "form.mapsNotice": "Las sugerencias de dirección y el mapa usan servicios de terceros (Photon y OpenStreetMap). Si tocas «Usar mi ubicación», tu navegador te pedirá permiso y la ubicación solo se usa para colocar el pin de recogida.",
+  "form.mapsNoticeLink": "Cómo usamos tus datos"
 }

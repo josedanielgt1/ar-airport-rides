@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="How AR Airport Rides collects, uses and protects your information." />
+    <title>Privacy Policy · AR Airport Rides</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/cormorant-garamond-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/src/styles/legal-page.css" />
+  </head>
+  <!--
+    POLÍTICA DE PRIVACIDAD — BORRADOR PARA REVISIÓN LEGAL (auditoría SEC-04).
+    TODO(legal): un abogado de Texas debe revisar TODO este texto (en y es) antes de publicarlo como definitivo:
+      - si aplica la TDPSA (Texas) y cómo se ejerce el derecho de apelación; CCPA/CPRA (probablemente no aplica);
+      - la redacción sobre geolocalización precisa (dato sensible en la TDPSA) y el consentimiento;
+      - plazos de respuesta (45 días), retención, transferencias internacionales y acceso del desarrollador;
+      - divulgaciones exigidas por ley y aviso de brechas de seguridad.
+    TODO(cliente): nombre legal del negocio y dirección postal (no se muestran hasta tenerlos), plazo de borrado
+      de correos de reservas, y si el correo de contacto pasa a un dominio propio (src/config.js).
+    Verificado en el código (oct. 2026): el sitio NO usa cookies ni analítica; solo localStorage (idioma) y
+    sessionStorage (ref=card). Si se agrega analítica o cookies, actualizar la sección "Cookies".
+    El texto visible no lleva marcas de "borrador" a propósito (presentación premium).
+  -->
+  <body class="legal-page" data-title-key="legal.privacy">
+    <a class="skip-link" href="#content" data-i18n="legal.skip">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href="../" aria-label="AR Airport Rides">
+        <span class="brand__mark" aria-hidden="true">AR</span>
+        <span class="brand__name" aria-hidden="true">Airport Rides</span>
+      </a>
+      <div class="lang" role="group" aria-label="Language" data-i18n-attr="aria-label:lang.label">
+        <button class="lang__btn" type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <span class="lang__sep" aria-hidden="true"></span>
+        <button class="lang__btn" type="button" data-lang="es" aria-pressed="false" lang="es">ES</button>
+      </div>
+    </header>
+
+    <main class="legal" id="content" tabindex="-1">
+      <div class="legal__inner">
+        <a class="legal__back" href="../" data-i18n="legal.back">Back to AR Airport Rides</a>
+        <p class="legal__eyebrow">AR Airport Rides</p>
+        <h1 class="legal__title" data-i18n="legal.privacy">Privacy Policy</h1>
+
+        <!-- ===================== ENGLISH ===================== -->
+        <article class="legal__doc" lang="en" data-legal-lang="en">
+          <!-- TODO(legal): confirmar la fecha de vigencia al publicar la versión revisada. -->
+          <p class="legal__meta">Effective date: October 13, 2026</p>
+          <p class="legal__lead">We collect only what we need to arrange your ride, and we never sell it.</p>
+
+          <nav class="legal__toc" aria-label="On this page">
+            <p class="legal__toc-title">On this page</p>
+            <ol>
+              <li><a href="#collect">What we collect</a></li>
+              <li><a href="#use">How we use it</a></li>
+              <li><a href="#share">Who we share it with</a></li>
+              <li><a href="#retention">How long we keep it</a></li>
+              <li><a href="#location">Location and maps</a></li>
+              <li><a href="#sms">Text messages</a></li>
+              <li><a href="#cookies">Cookies</a></li>
+              <li><a href="#rights">Your rights</a></li>
+              <li><a href="#security">Security</a></li>
+              <li><a href="#children">Children</a></li>
+              <li><a href="#changes">Changes</a></li>
+            </ol>
+          </nav>
+
+          <section class="legal__section" id="collect">
+            <h2>What we collect</h2>
+            <p>When you request a ride, you share with us:</p>
+            <ul>
+              <li>Your name, phone number and email address.</li>
+              <li>Pickup and drop-off addresses, date, time and number of passengers.</li>
+              <li>The service you choose and any notes you add.</li>
+              <li>Your location, only if you tap “Use my location” (see <a href="#location">Location and maps</a>).</li>
+            </ul>
+            <p>
+              Like any website, our hosting provider also receives basic technical data, such as your IP address and
+              browser type, to deliver the site and protect the booking form from abuse. If you contact us by phone, text
+              message or WhatsApp, we receive what you send us there.
+            </p>
+          </section>
+
+          <section class="legal__section" id="use">
+            <h2>How we use it</h2>
+            <ul>
+              <li>To answer your request, confirm your ride and fare, and coordinate your pickup.</li>
+              <li>To arrange payment for your ride.</li>
+              <li>To keep the booking form safe from spam and abuse.</li>
+            </ul>
+            <p>
+              <strong>We do not sell your personal data, including your location,</strong> and we do not use it for
+              advertising or profiling.
+            </p>
+          </section>
+
+          <section class="legal__section" id="share">
+            <h2>Who we share it with</h2>
+            <p>Only with the providers that make the service work, and only what each one needs:</p>
+            <ul>
+              <li><strong>Vercel</strong> hosts the website and processes the booking form.</li>
+              <li><strong>Resend</strong> delivers our booking and confirmation emails.</li>
+              <li>
+                <strong>Google</strong> hosts our email inbox. If a confirmation email includes a map image, the pickup and
+                drop-off addresses are sent to Google Maps to draw it.
+              </li>
+              <li>
+                <strong>Photon (komoot) and OpenStreetMap</strong> provide address suggestions and the map. They receive
+                what you type in the address fields or the position on the map, along with your IP address.
+              </li>
+              <li><strong>Cloudflare</strong> manages our domain name (DNS).</li>
+            </ul>
+            <p>
+              If you choose to contact us by WhatsApp or text message, your messages travel through WhatsApp (Meta) or your
+              mobile carrier. Payments are made in Venmo, Cash App or Zelle. Each of these services applies its own terms
+              and privacy policy.
+            </p>
+            <!-- TODO(legal): revisar la mención de transferencias internacionales y del acceso del desarrollador del sitio. -->
+            <p>
+              Some providers process data outside Texas or the United States (for example, komoot in Germany and the
+              OpenStreetMap Foundation in the United Kingdom). We may also disclose information when the law requires it or
+              to protect someone’s safety.
+            </p>
+          </section>
+
+          <section class="legal__section" id="retention">
+            <h2>How long we keep it</h2>
+            <!-- TODO(cliente): fijar cuántos meses se guardan los correos de reservas y borrarlos después. -->
+            <p>
+              This website has no customer database. Your request reaches us by email and stays in our inbox. The secure
+              link we use to confirm your ride works only for a limited time, and our email provider keeps delivery records
+              for a limited time. We delete booking emails once we no longer need them for your ride, payment, or our legal
+              and accounting obligations.
+            </p>
+          </section>
+
+          <section class="legal__section" id="location">
+            <h2>Location and maps</h2>
+            <ul>
+              <li>“Use my location” is optional. When you tap it, your browser asks for your permission first.</li>
+              <li>
+                Your location is used only to place the pickup pin. To show it as an address, the coordinates are sent to
+                Photon (komoot). Only the address that ends up in the form reaches us.
+              </li>
+              <li>Map images come from OpenStreetMap, which receives your IP address and the area you are viewing.</li>
+              <li>You can always type the address instead.</li>
+            </ul>
+            <!-- TODO(legal): la geolocalización precisa es dato sensible en la TDPSA; confirmar que el permiso del navegador + este aviso bastan como consentimiento. -->
+            <p>We use your precise location only with your permission and only for this purpose, and we never sell it.</p>
+          </section>
+
+          <section class="legal__section" id="sms">
+            <h2>Text messages</h2>
+            <ul>
+              <li>Tapping “Text us” opens your own messaging app with a prefilled message. Nothing is sent until you press send.</li>
+              <li>
+                This website does not send text messages, and we do not send automated or marketing texts. We reply
+                personally, only about your request and your ride.
+              </li>
+              <li>Your carrier’s message and data rates may apply.</li>
+              <li>If you’d rather not receive texts from us, reply STOP or just tell us, and we’ll stop.</li>
+            </ul>
+            <!--
+              TODO(legal): si algún día se envían avisos automáticos por SMS (plataforma A2P 10DLC), hace falta
+              consentimiento previo expreso (casilla sin marcar en el formulario) y este texto revisado:
+              EN: "By checking this box, you agree to receive ride updates from AR Airport Rides at the number provided.
+                   Message frequency varies. Message and data rates may apply. Reply HELP for help or STOP to cancel.
+                   Consent is not a condition of booking."
+              ES: "Al marcar esta casilla, aceptas recibir avisos de tu traslado de AR Airport Rides en el número indicado.
+                   La frecuencia de los mensajes varía. Pueden aplicar tarifas de mensajes y datos. Responde AYUDA (HELP)
+                   para ayuda o STOP para cancelar. El consentimiento no es condición para reservar."
+              TODO(cliente): el chofer debe dejar de escribir a quien responda STOP.
+            -->
+          </section>
+
+          <section class="legal__section" id="cookies">
+            <h2>Cookies</h2>
+            <p>
+              We don’t use cookies, analytics or advertising trackers. Your browser stores only your language choice, so the
+              site opens in your language next time, and, during your visit, whether you arrived from our card. You can
+              clear this at any time in your browser settings.
+            </p>
+          </section>
+
+          <section class="legal__section" id="rights">
+            <h2>Your rights</h2>
+            <p>You can ask us to:</p>
+            <ul>
+              <li>Confirm whether we hold your personal data and give you a copy.</li>
+              <li>Correct it.</li>
+              <li>Delete it.</li>
+            </ul>
+            <!-- TODO(legal): confirmar si aplica la TDPSA (exención de pequeña empresa) y el proceso de apelación. -->
+            <p>
+              Depending on where you live, for example in Texas or California, these may be legal rights; we honor them for
+              everyone. Write to us at <a href="mailto:@@email@@">@@email@@</a>. We’ll check that the request comes from the
+              contact details used for the booking and reply within 45 days. If we decline a request, you can ask us to
+              reconsider by replying to our answer, and you can also contact the Texas Attorney General.
+            </p>
+          </section>
+
+          <section class="legal__section" id="security">
+            <h2>Security</h2>
+            <p>
+              Your request travels over an encrypted connection (HTTPS), and the link we use to confirm your ride is
+              encrypted and expires. No system is perfectly secure; if we learn of a problem that affects your data, we will
+              let you know as the law requires.
+            </p>
+          </section>
+
+          <section class="legal__section" id="children">
+            <h2>Children</h2>
+            <p>
+              Our service is not directed to children under 13, and we don’t knowingly collect their information. Rides for
+              minors should be requested by a parent or guardian.
+            </p>
+          </section>
+
+          <section class="legal__section" id="changes">
+            <h2>Changes</h2>
+            <p>If we change this policy, we’ll post the new version on this page with a new effective date.</p>
+          </section>
+
+          <!-- TODO(cliente): agregar nombre legal del negocio y dirección postal cuando estén confirmados. -->
+          <div class="legal__contact">
+            <p class="legal__contact-title">Questions or requests</p>
+            <p>AR Airport Rides · Austin, Texas</p>
+            <p><a href="mailto:@@email@@">@@email@@</a></p>
+            <p><a href="tel:@@phoneTel@@">@@phone@@</a></p>
+          </div>
+        </article>
+
+        <!-- ===================== ESPAÑOL ===================== -->
+        <article class="legal__doc" lang="es" data-legal-lang="es">
+          <p class="legal__meta">Fecha de vigencia: 13 de octubre de 2026</p>
+          <p class="legal__lead">Solo recogemos lo necesario para organizar tu traslado, y nunca lo vendemos.</p>
+
+          <nav class="legal__toc" aria-label="En esta página">
+            <p class="legal__toc-title">En esta página</p>
+            <ol>
+              <li><a href="#es-collect">Qué datos recogemos</a></li>
+              <li><a href="#es-use">Para qué los usamos</a></li>
+              <li><a href="#es-share">Con quién los compartimos</a></li>
+              <li><a href="#es-retention">Cuánto tiempo los guardamos</a></li>
+              <li><a href="#es-location">Ubicación y mapas</a></li>
+              <li><a href="#es-sms">Mensajes de texto</a></li>
+              <li><a href="#es-cookies">Cookies</a></li>
+              <li><a href="#es-rights">Tus derechos</a></li>
+              <li><a href="#es-security">Seguridad</a></li>
+              <li><a href="#es-children">Menores</a></li>
+              <li><a href="#es-changes">Cambios</a></li>
+            </ol>
+          </nav>
+
+          <section class="legal__section" id="es-collect">
+            <h2>Qué datos recogemos</h2>
+            <p>Cuando pides un traslado, nos compartes:</p>
+            <ul>
+              <li>Tu nombre, teléfono y correo electrónico.</li>
+              <li>Las direcciones de recogida y destino, la fecha, la hora y el número de pasajeros.</li>
+              <li>El servicio que eliges y las notas que agregues.</li>
+              <li>Tu ubicación, solo si tocas «Usar mi ubicación» (ver <a href="#es-location">Ubicación y mapas</a>).</li>
+            </ul>
+            <p>
+              Como cualquier sitio web, nuestro proveedor de alojamiento también recibe datos técnicos básicos, como tu
+              dirección IP y el tipo de navegador, para mostrar el sitio y proteger el formulario contra abusos. Si nos
+              contactas por teléfono, mensaje de texto o WhatsApp, recibimos lo que nos envíes por ese medio.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-use">
+            <h2>Para qué los usamos</h2>
+            <ul>
+              <li>Para responder tu solicitud, confirmar el traslado y la tarifa, y coordinar la recogida.</li>
+              <li>Para gestionar el pago de tu traslado.</li>
+              <li>Para proteger el formulario de reservas contra spam y abusos.</li>
+            </ul>
+            <p>
+              <strong>No vendemos tus datos personales, incluida tu ubicación,</strong> ni los usamos para publicidad o
+              para elaborar perfiles.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-share">
+            <h2>Con quién los compartimos</h2>
+            <p>Solo con los proveedores que hacen funcionar el servicio, y solo lo que cada uno necesita:</p>
+            <ul>
+              <li><strong>Vercel</strong> aloja el sitio web y procesa el formulario de reservas.</li>
+              <li><strong>Resend</strong> entrega nuestros correos de reserva y de confirmación.</li>
+              <li>
+                <strong>Google</strong> aloja nuestro buzón de correo. Si un correo de confirmación incluye una imagen de
+                mapa, las direcciones de recogida y destino se envían a Google Maps para dibujarla.
+              </li>
+              <li>
+                <strong>Photon (komoot) y OpenStreetMap</strong> ofrecen las sugerencias de dirección y el mapa. Reciben lo
+                que escribes en los campos de dirección o la posición en el mapa, junto con tu dirección IP.
+              </li>
+              <li><strong>Cloudflare</strong> gestiona nuestro nombre de dominio (DNS).</li>
+            </ul>
+            <p>
+              Si decides escribirnos por WhatsApp o por mensaje de texto, tus mensajes pasan por WhatsApp (Meta) o por tu
+              operador móvil. Los pagos se hacen en Venmo, Cash App o Zelle. Cada uno de estos servicios aplica sus propios
+              términos y su propia política de privacidad.
+            </p>
+            <p>
+              Algunos proveedores tratan datos fuera de Texas o de los Estados Unidos (por ejemplo, komoot en Alemania y la
+              Fundación OpenStreetMap en el Reino Unido). También podemos divulgar información cuando la ley lo exija o para
+              proteger la seguridad de alguien.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-retention">
+            <h2>Cuánto tiempo los guardamos</h2>
+            <p>
+              Este sitio no tiene una base de datos de clientes. Tu solicitud nos llega por correo y queda en nuestro buzón.
+              El enlace seguro con el que confirmamos tu traslado funciona solo por un tiempo limitado, y nuestro proveedor
+              de correo guarda los registros de envío por un tiempo limitado. Borramos los correos de reservas cuando ya no
+              los necesitamos para tu traslado, el pago o nuestras obligaciones legales y contables.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-location">
+            <h2>Ubicación y mapas</h2>
+            <ul>
+              <li>«Usar mi ubicación» es opcional. Al tocarlo, tu navegador te pide permiso primero.</li>
+              <li>
+                Tu ubicación solo se usa para colocar el pin de recogida. Para mostrarla como dirección, las coordenadas se
+                envían a Photon (komoot). A nosotros solo nos llega la dirección que queda escrita en el formulario.
+              </li>
+              <li>Las imágenes del mapa vienen de OpenStreetMap, que recibe tu dirección IP y la zona que estás viendo.</li>
+              <li>Siempre puedes escribir la dirección en su lugar.</li>
+            </ul>
+            <p>Usamos tu ubicación precisa solo con tu permiso y solo para este fin, y nunca la vendemos.</p>
+          </section>
+
+          <section class="legal__section" id="es-sms">
+            <h2>Mensajes de texto</h2>
+            <ul>
+              <li>
+                Al tocar «Escríbenos por mensaje» se abre tu propia app de mensajes con un texto listo. No se envía nada
+                hasta que tú lo envíes.
+              </li>
+              <li>
+                Este sitio no envía mensajes de texto, y no enviamos mensajes automáticos ni promocionales. Respondemos
+                personalmente, solo sobre tu solicitud y tu traslado.
+              </li>
+              <li>Pueden aplicar las tarifas de mensajes y datos de tu operador.</li>
+              <li>Si prefieres no recibir mensajes nuestros, responde STOP o simplemente avísanos, y dejaremos de escribirte.</li>
+            </ul>
+          </section>
+
+          <section class="legal__section" id="es-cookies">
+            <h2>Cookies</h2>
+            <p>
+              No usamos cookies, analítica ni rastreadores publicitarios. Tu navegador solo guarda el idioma que elegiste,
+              para que el sitio se abra en tu idioma la próxima vez, y, durante tu visita, si llegaste desde nuestra
+              tarjeta. Puedes borrarlo cuando quieras desde la configuración de tu navegador.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-rights">
+            <h2>Tus derechos</h2>
+            <p>Puedes pedirnos que:</p>
+            <ul>
+              <li>Te confirmemos si tenemos tus datos personales y te demos una copia.</li>
+              <li>Los corrijamos.</li>
+              <li>Los eliminemos.</li>
+            </ul>
+            <p>
+              Según dónde vivas, por ejemplo en Texas o California, estos pueden ser derechos legales; los respetamos para
+              todos. Escríbenos a <a href="mailto:@@email@@">@@email@@</a>. Comprobaremos que la solicitud viene de los
+              datos de contacto usados en la reserva y responderemos en un plazo de 45 días. Si rechazamos una solicitud,
+              puedes pedirnos que la reconsideremos respondiendo a nuestra respuesta, y también puedes acudir a la Fiscalía
+              General de Texas.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-security">
+            <h2>Seguridad</h2>
+            <p>
+              Tu solicitud viaja por una conexión cifrada (HTTPS), y el enlace con el que confirmamos tu traslado está
+              cifrado y caduca. Ningún sistema es perfectamente seguro; si supiéramos de un problema que afecte tus datos, te
+              avisaremos según lo exija la ley.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-children">
+            <h2>Menores</h2>
+            <p>
+              Nuestro servicio no está dirigido a menores de 13 años, y no recogemos sus datos a sabiendas. Los traslados de
+              menores deben solicitarlos su madre, su padre o su tutor.
+            </p>
+          </section>
+
+          <section class="legal__section" id="es-changes">
+            <h2>Cambios</h2>
+            <p>Si cambiamos esta política, publicaremos la nueva versión en esta página con una nueva fecha de vigencia.</p>
+          </section>
+
+          <div class="legal__contact">
+            <p class="legal__contact-title">Preguntas o solicitudes</p>
+            <p>AR Airport Rides · Austin, Texas</p>
+            <p><a href="mailto:@@email@@">@@email@@</a></p>
+            <p><a href="tel:@@phoneTel@@">@@phone@@</a></p>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="site-footer__inner">
+        <nav class="site-footer__links" aria-label="Legal" data-i18n-attr="aria-label:legal.navLabel">
+          <a href="../privacy/" aria-current="page" data-i18n="legal.privacyShort">Privacy</a>
+          <a href="../terms/" data-i18n="legal.termsShort">Terms</a>
+        </nav>
+        <p class="site-footer__legal">&copy; <span data-year>@@year@@</span> AR Airport Rides</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/legal.js"></script>
+  </body>
+</html>
