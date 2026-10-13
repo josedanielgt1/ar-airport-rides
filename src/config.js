@@ -14,3 +14,13 @@ export const CONFIG = {
   // Los datos de pago NO van en el sitio: viven en variables de entorno (PAY_*) y solo salen en el
   // correo al chofer (ver .env.example y src/lib/reservation.js).
 };
+
+// Vehículo que aparece en el correo de confirmación al pasajero ("Your ride: …"). Es el valor por defecto
+// que el chofer ve prellenado en /api/confirm y puede cambiar antes de enviar. Va en el idioma del
+// pasajero. La PLACA no va aquí (repo público): variable de entorno VEHICLE_PLATE. VEHICLE_DESCRIPTION,
+// si existe, reemplaza esta descripción en ambos idiomas. Ver src/lib/vehicle.js.
+export const VEHICLE_DEFAULT = {
+  en: 'Black Ford Expedition XLT',
+  es: 'Ford Expedition XLT negra',
+  plateState: 'Texas',
+};
