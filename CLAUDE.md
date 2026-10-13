@@ -132,3 +132,9 @@ pm run check:csp avisa si no coinciden).
 - `src/places.js` + `src/lib/geo.js` + `src/styles/places.css`. En recogida y destino: sugerencias al escribir (Photon/OpenStreetMap, sesgadas a Austin, combobox accesible) y botón "Elegir en el mapa" con pin A (recogida) y B (destino): se toca el mapa o se arrastra el pin y la dirección se escribe sola (geocodificación inversa).
 - Leaflet se carga solo al abrir el mapa (chunk aparte); mosaicos de tile.openstreetmap.org (oscurecidos con CSS). CSP: `connect-src https://photon.komoot.io` e `img-src https://tile.openstreetmap.org`.
 - Photon y el mosaico público de OSM son de uso razonable: si el tráfico crece, cambiar el proveedor en `src/lib/geo.js` (Geoapify, MapTiler, Google Places…). Sin JS el formulario sigue siendo de texto.
+- Aviso bajo los botones del mapa (`#maps-notice`) con enlace a `privacy/#location`.
+
+## Páginas legales (auditoría SEC-04)
+- `privacy/index.html` y `terms/index.html` (entradas multi-página en `vite.config.js` → `/privacy/` y `/terms/`; sin reglas en `vercel.json`). Cada página trae el texto en/es (`<article data-legal-lang>`); `src/legal.js` muestra el del idioma activo y traduce `#ancla` ↔ `#es-ancla`. Estilos: `src/styles/legal-page.css` (páginas) y `src/styles/legal.css` (avisos del formulario y enlaces del footer). Sin scripts en línea: la CSP no cambia.
+- **TODO(legal): los textos de privacidad, términos, SMS y avisos son BORRADORES sin revisión de un abogado; no se marcan como borrador en pantalla. Ver los comentarios `TODO(legal)` / `TODO(cliente)` en esas páginas antes de publicar.**
+- Si se agregan cookies, analítica o SMS automáticos, actualizar `privacy/index.html` (secciones Cookies y Text messages).

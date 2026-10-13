@@ -362,6 +362,11 @@
                   <span data-i18n="form.locate">Use my location</span>
                 </button>
                 </div>
+                <!-- Aviso de ubicación y mapas (auditoría SEC-04). TODO(legal): revisar el texto con un abogado. -->
+                <p class="legal-note" id="maps-notice">
+                  <span data-i18n="form.mapsNotice">Address suggestions and the map use third-party services (Photon and OpenStreetMap). If you tap “Use my location”, your browser asks for permission and your location is used only to place the pickup pin.</span>
+                  <a href="privacy/#location" data-i18n="form.mapsNoticeLink">How we use your data</a>
+                </p>
                 <div class="mapbox" id="mapbox" hidden>
                   <div class="mapbox__tabs" role="group" data-i18n-attr="aria-label:form.mapGroup">
                     <button class="mapbox__tab" type="button" data-target="origin" aria-pressed="true"><span class="pinmark" aria-hidden="true">A</span><span data-i18n="form.mapPickupTab">Pickup pin</span></button>
@@ -400,6 +405,13 @@
               </button>
               <p class="form__status" role="status" aria-live="polite"></p>
             </div>
+            <!-- Consentimiento breve (auditoría SEC-04). TODO(legal): confirmar redacción con un abogado. -->
+            <p class="legal-note form__consent">
+              <span data-i18n="form.consentPre">By sending, you agree to our</span>
+              <a href="terms/" data-i18n="legal.terms">Terms of Service</a>
+              <span data-i18n="form.consentAnd">and</span>
+              <a href="privacy/" data-i18n="legal.privacy">Privacy Policy</a>.
+            </p>
 
             <div class="form__result" hidden tabindex="-1">
               <p class="form__result-title"></p>
@@ -444,6 +456,10 @@
           <li><a href="mailto:@@email@@">@@email@@</a></li>
           <li><a data-wa href="@@waUrl@@" target="_blank" rel="noopener">WhatsApp</a></li>
         </ul>
+        <nav class="site-footer__links" aria-label="Legal" data-i18n-attr="aria-label:legal.navLabel">
+          <a href="privacy/" data-i18n="legal.privacyShort">Privacy</a>
+          <a href="terms/" data-i18n="legal.termsShort">Terms</a>
+        </nav>
         <p class="site-footer__legal">&copy; <span data-year>@@year@@</span> AR Airport Rides</p>
         <!-- Créditos de fotos de terceros (src/data/credits.json). TODO(cliente): quitar al usar fotos propias. -->
         <!-- credits:list -->

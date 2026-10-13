@@ -251,7 +251,18 @@ function devConfirmSimulation() {
 }
 
 // GitHub Pages sirve el sitio en /ar-airport-rides/; Vercel, en la raíz.
+// Multi-página: privacy/index.html y terms/index.html salen como dist/privacy/ y dist/terms/
+// (Vercel y Pages los sirven en /privacy y /terms sin reglas extra).
 export default defineConfig({
   base: process.env.GH_PAGES ? '/ar-airport-rides/' : '/',
   plugins: [dataMarkup(), devReserveSimulation(), devConfirmSimulation()],
+  build: {
+    rollupOptions: {
+      input: {
+        main: fileURLToPath(new URL('./index.html', import.meta.url)),
+        privacy: fileURLToPath(new URL('./privacy/index.html', import.meta.url)),
+        terms: fileURLToPath(new URL('./terms/index.html', import.meta.url)),
+      },
+    },
+  },
 });
