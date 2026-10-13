@@ -34,7 +34,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 
 ## Datos de contacto (visibles, así lo quiere el cliente)
 - Teléfono: 737-529-1720
-- Correo: abrahandrojasm@gmail.com (puede cambiar a correo con dominio propio más adelante; dejarlo en config)
+- Correo público: reservas@arairportrides.com (en config). El Gmail del chofer (abrahandrojasm@gmail.com) va solo en la variable `RESERVATION_TO_EMAIL` de Vercel, no en el sitio.
 - "24/7 Reservations"
 - Pagos (Venmo, Cash App, Zelle): NO se muestran en el sitio. Viven en variables de entorno (`PAY_VENMO_URL`, `PAY_CASHAPP_URL`, `PAY_ZELLE`) y solo salen en el correo de la reserva al chofer, con botones "Email / Text payment details" que abren un mensaje de confirmación en el idioma del pasajero (la tarifa `[FARE]` la escribe el chofer). El correo del pasajero es opcional en el formulario; con él, el correo al chofer lleva `reply_to`.
 - Número de WhatsApp: **pendiente de confirmar** (puede ser el mismo teléfono). Guardarlo en config.
