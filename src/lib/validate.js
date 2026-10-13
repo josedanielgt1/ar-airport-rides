@@ -17,13 +17,60 @@ export const LIMITS = {
 
 export const FIELDS = ['name', 'phone', 'email', 'service', 'date', 'time', 'origin', 'destination', 'passengers', 'notes'];
 
-const EMAIL_RE = /^[A-Za-z0-9._%+-]{1,64}@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
+// Un solo destinatario y nada que pueda romper una cabecera: sin espacios, comillas, comas, punto y coma,
+// ángulos ni saltos de línea. Parte local sin puntos al inicio/fin ni dobles; etiquetas del dominio sin
+// guion al inicio/fin; dominio de nivel superior solo letras.
+const EMAIL_RE =
+  /^(?!\.)(?!.*\.\.)[A-Za-z0-9._%+-]{1,64}(?<!\.)@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,24}$/;
+
+/**
+ * Dominios de correo desechable comunes (lista corta a propósito: solo los más usados por bots; un
+ * pasajero real que use uno ve "correo no válido" y puede escribir otro o reservar por WhatsApp/SMS).
+ * Para ajustar la lista, edítala aquí o pasa `blockedEmailDomains` a validateReservation. Se bloquean
+ * también sus subdominios.
+ */
+export const DISPOSABLE_EMAIL_DOMAINS = [
+  'mailinator.com',
+  'guerrillamail.com',
+  'guerrillamail.net',
+  'guerrillamailblock.com',
+  'sharklasers.com',
+  'grr.la',
+  '10minutemail.com',
+  'temp-mail.org',
+  'tempmail.com',
+  'tempmailo.com',
+  'yopmail.com',
+  'trashmail.com',
+  'getnada.com',
+  'dispostable.com',
+  'maildrop.cc',
+  'throwawaymail.com',
+  'fakeinbox.com',
+  'mintemail.com',
+  'emailondeck.com',
+  'moakt.com',
+  'mailnesia.com',
+  'mohmal.com',
+];
+
+/** true si el dominio del correo (o un dominio padre) está en la lista. */
+export function isBlockedEmailDomain(email, list = DISPOSABLE_EMAIL_DOMAINS) {
+  const domain = str(email).split('@').pop().toLowerCase();
+  return list.some((d) => domain === d || domain.endsWith(`.${d}`));
+}
 
 const str = (v) => (typeof v === 'string' ? v : v == null ? '' : String(v));
 
-// Quita caracteres de control (excepto salto de línea y tabulador) y espacios de los extremos.
-// eslint-disable-next-line no-control-regex
-const clean = (v) => str(v).replace(/\r\n?/g, '\n').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '').trim();
+// Quita caracteres de control (excepto salto de línea y tabulador), caracteres invisibles de ancho cero y
+// de control bidireccional (sirven para disfrazar texto, SEC-11) y espacios de los extremos.
+const clean = (v) =>
+  str(v)
+    .replace(/\r\n?/g, '\n')
+    // eslint-disable-next-line no-control-regex
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, '')
+    .replace(/[\u200B-\u200F\u202A-\u202E\u2060-\u2064\u2066-\u2069\uFEFF]/g, '')
+    .trim();
 const oneLine = (v) => clean(v).replace(/\s+/g, ' ');
 
 /** Fecha de hoy (AAAA-MM-DD) en una zona horaria. */
@@ -46,11 +93,12 @@ const isRealDate = (s) => {
 
 /**
  * @param {Record<string, unknown>} input  campos tal como llegan (FormData → objeto o JSON)
- * @param {{ serviceIds?: string[], today?: string }} [opts]
- *   serviceIds: ids válidos de src/data/services.json; today: fecha mínima permitida (AAAA-MM-DD)
+ * @param {{ serviceIds?: string[], today?: string, blockedEmailDomains?: string[] }} [opts]
+ *   serviceIds: ids válidos de src/data/services.json; today: fecha mínima permitida (AAAA-MM-DD);
+ *   blockedEmailDomains: dominios de correo rechazados (por defecto DISPOSABLE_EMAIL_DOMAINS)
  * @returns {{ ok: boolean, errors: Record<string, string>, data: Record<string, string|number> }}
  */
-export function validateReservation(input, { serviceIds, today } = {}) {
+export function validateReservation(input, { serviceIds, today, blockedEmailDomains = DISPOSABLE_EMAIL_DOMAINS } = {}) {
   const src = input && typeof input === 'object' ? input : {};
   const errors = {};
   const data = {};
@@ -77,7 +125,9 @@ export function validateReservation(input, { serviceIds, today } = {}) {
   // Correo del pasajero: opcional. Con él, el chofer puede responderle por correo; sin él, por SMS.
   // Formato prudente (sin espacios, comillas, comas ni símbolos de cabecera); el valor nunca lleva saltos de línea.
   text('email', LIMITS.email);
-  if (!errors.email && data.email && !EMAIL_RE.test(data.email)) errors.email = 'email';
+  if (!errors.email && data.email && (!EMAIL_RE.test(data.email) || isBlockedEmailDomain(data.email, blockedEmailDomains))) {
+    errors.email = 'email';
+  }
 
   data.service = oneLine(src.service);
   if (!data.service) errors.service = 'service';
@@ -113,6 +163,44 @@ export function validateReservation(input, { serviceIds, today } = {}) {
 
 /** Honeypot: el campo "company" está oculto para personas; si trae texto, es un bot. */
 export const isSpam = (input) => oneLine(input?.company).length > 0;
+
+/**
+ * Tiempo mínimo de llenado. El formulario con JS manda en la cabecera X-Form-Elapsed los milisegundos
+ * desde que se preparó el formulario. Si llega y es menor que el mínimo, es un bot (una persona, aun con
+ * autocompletar, tiene que elegir servicio, fecha, hora y direcciones). Si NO llega (formulario sin JS o
+ * una pestaña abierta con una versión anterior del sitio), no se juzga: así nunca se descarta en silencio
+ * una reserva real.
+ */
+export const MIN_FILL_MS = 2500;
+export function filledTooFast(elapsedHeader, min = MIN_FILL_MS) {
+  const v = str(elapsedHeader).trim();
+  if (!v) return false;
+  return !/^\d{1,10}$/.test(v) || Number(v) < min;
+}
+
+/**
+ * Comprueba la forma del cuerpo ANTES de validar: objeto plano con pocas claves y valores simples (texto,
+ * número o booleano) de tamaño acotado. Objetos o arreglos anidados → null (petición inválida). Las claves
+ * desconocidas se descartan (no se rechazan: así un campo nuevo del formulario no rompe las reservas).
+ * @returns {Record<string, string> | null}
+ */
+export function plainInput(raw, { maxKeys = 30, maxValue = 2000 } = {}) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const proto = Object.getPrototypeOf(raw);
+  if (proto !== Object.prototype && proto !== null) return null;
+  const keys = Object.keys(raw);
+  if (keys.length > maxKeys) return null;
+  const out = {};
+  for (const k of keys) {
+    const v = raw[k];
+    if (v == null) continue;
+    if (!['string', 'number', 'boolean'].includes(typeof v)) return null;
+    const s = String(v);
+    if (s.length > maxValue) return null;
+    if (k.length <= 40 && k !== '__proto__') out[k] = s;
+  }
+  return out;
+}
 
 /** Escapa texto para insertarlo en HTML. */
 export const escapeHtml = (s) =>
