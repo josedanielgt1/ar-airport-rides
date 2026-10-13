@@ -89,7 +89,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Respetar `prefers-reduced-motion`. Contraste AA, foco visible, botones táctiles ≥ 44 px, `alt` en imágenes.
 
 ## Seguridad
-- Claves en variables de entorno, nunca en el repo: `RESEND_API_KEY`, `RESERVATION_TO_EMAIL`, `RESERVATION_FROM_EMAIL`, `PAY_VENMO_URL`, `PAY_CASHAPP_URL`, `PAY_ZELLE`.
+- Claves en variables de entorno, nunca en el repo: `RESEND_API_KEY`, `RESERVATION_TO_EMAIL`, `RESERVATION_FROM_EMAIL`, `PAY_VENMO_URL`, `PAY_CASHAPP_URL`, `PAY_ZELLE`. La placa del vehículo tampoco va en el repo: `VEHICLE_PLATE`.
 - `.env` en `.gitignore`. Crear `.env.example` sin valores reales.
 - No registrar en logs los datos personales de los clientes.
 
@@ -127,7 +127,15 @@ pm run check:csp avisa si no coinciden).
 - `/api/confirm?t=<token>` (token cifrado, 24 h, sin base de datos) muestra el formulario con las dos opciones; `&a=decline` abre directo la vista previa del rechazo. Nada se envía hasta pulsar el botón final; el pasajero recibe el correo con copia (BCC) al chofer y Reply-To al chofer.
 - Correo de confirmación (es/en): sello, boleto con fecha y ruta, botones de mapa (Google Maps), tarifa y QR de Venmo/Cash App (+ Zelle). Correo de rechazo: nota cortés con botón a `SITE_URL` para reservar otra fecha.
 - Mapa dentro del correo: opcional con `GOOGLE_MAPS_API_KEY` (Static Maps, clave restringida). Sin clave solo hay botones. CSP permite `img-src https://maps.googleapis.com`.
-- Variables nuevas: `CONFIRM_SECRET`, `CONFIRM_SECRET_PREVIOUS` (opcional, rotación), `SITE_URL` (opcional), `GOOGLE_MAPS_API_KEY` (opcional).
+- Variables nuevas: `CONFIRM_SECRET`, `CONFIRM_SECRET_PREVIOUS` (opcional, rotación), `SITE_URL` (opcional), `GOOGLE_MAPS_API_KEY` (opcional), `VEHICLE_PLATE` y `VEHICLE_DESCRIPTION` (opcionales, ver abajo).
+
+### Vehículo y placa en la confirmación (`src/lib/vehicle.js`)
+- El correo de confirmación al pasajero muestra en el boleto (y en el texto plano) "Your ride: Black Ford Expedition XLT · Texas plate ABC 1234" / "Tu vehículo: Ford Expedition XLT negra · placa de Texas ABC 1234".
+- Por defecto: descripción de `VEHICLE_DEFAULT` en `src/config.js` (en el idioma del pasajero) o `VEHICLE_DESCRIPTION` si existe; placa **solo** de `VEHICLE_PLATE` (nunca en el repo; sin ella el campo sale vacío). Variables inválidas se ignoran.
+- En `/api/confirm` el chofer ve los campos **Vehicle** y **License plate** prellenados y editables (si cambia de carro); lo que deje es lo que sale en la vista previa y en el correo. Campo vacío = esa parte se omite (ambos vacíos = sin línea). "Back to edit" en la vista previa conserva lo escrito.
+- Validación en servidor: una línea, descripción ≤ 60 (letras, números, `. , ' & ( ) / # + -`), placa ≤ 12 (letras, números, espacio, guion; se pasa a mayúsculas y "ABC1234" → "ABC 1234"). Si no cumple: 422 con el formulario y nada se envía. Siempre escapado en la página y en el correo. No viaja en el token.
+- Idempotencia: la `Idempotency-Key` sigue siendo solo la del enlace. Reenviar lo mismo no duplica; cambiar vehículo/placa (o la tarifa) después de enviar da 409 → "Already sent". Rechazar ignora estos campos.
+- El correo de reserva al chofer muestra arriba, discreto, "Vehicle on file: …" (solo si hay botón Confirmar; nunca en el asunto).
 
 ### Seguridad del enlace de confirmar (`src/lib/token.js`, `src/lib/confirm.js`, `api/confirm.js`)
 - Token v1: `0x01 | iv | tag | AES-256-GCM`, clave = HKDF-SHA256(`CONFIRM_SECRET`, info `ar-confirm-v1`). Solo se acepta base64url canónico. Los tokens del formato anterior (sin versión) se abren, pero solo 24 h desde que se emitieron.

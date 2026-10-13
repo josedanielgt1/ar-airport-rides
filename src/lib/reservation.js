@@ -7,6 +7,7 @@ import { validateReservation, isSpam, todayIn, shiftDate, escapeHtml } from './v
 import { confirmUrl as buildConfirmUrl } from './token.js';
 import { mapsRouteUrl } from './maps.js';
 import { payQrs, qrAttachments } from './qr.js';
+import { vehicleDefaults, vehicleText, VEHICLE_COPY } from './vehicle.js';
 import {
   C,
   layout,
@@ -110,8 +111,9 @@ export const clock = (hhmm, lang) => {
  * La tarifa queda como "[FARE]" para que la escriba él (o llega ya escrita en `fare`). Devuelve
  * { subject, body } en texto plano.
  */
-export function confirmationMessage(data, pay = {}, fare = '[FARE]') {
+export function confirmationMessage(data, pay = {}, fare = '[FARE]', vehicle = null) {
   const lang = data.lang === 'es' ? 'es' : 'en';
+  const ride = vehicle ? vehicleText(vehicle, lang) : '';
   const m = CONFIRM[lang];
   const first = String(data.name).split(' ')[0];
   const day = new Intl.DateTimeFormat(m.locale, { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(
@@ -128,6 +130,7 @@ export function confirmationMessage(data, pay = {}, fare = '[FARE]') {
     `${m.when}: ${day}, ${clock(data.time, lang)}`,
     `${m.pickup}: ${data.origin}`,
     `${m.dropoff}: ${data.destination}`,
+    ...(ride ? [`${VEHICLE_COPY[lang].label}: ${ride}`] : []),
     `${m.fare}: ${fare}`,
   ];
   if (options.length) lines.push('', m.pay, ...options);
@@ -175,8 +178,11 @@ const DRIVER_PAY_TEXT = { openVenmo: 'Open Venmo', openCashApp: 'Open Cash App',
  * @param {{venmo?:string,cashapp?:string,zelle?:string}} [opts.pay] opciones de pago configuradas
  * @param {{venmo?:Buffer,cashapp?:Buffer}} [opts.qr] QR ya generados (PNG)
  * @param {string|null} [opts.confirmUrl] enlace para enviar la confirmación con QR al pasajero
+ * @param {{description?:string, plate?:string}|null} [opts.vehicle] vehículo por defecto que irá en la confirmación
+ *   (solo se muestra junto al botón de confirmar, en una línea discreta; nunca en el asunto)
  */
-export function buildEmail(data, { serviceName = (id) => id, now = new Date(), pay = {}, qr = {}, confirmUrl = null } = {}) {
+export function buildEmail(data, { serviceName = (id) => id, now = new Date(), pay = {}, qr = {}, confirmUrl = null, vehicle = null } = {}) {
+  const onFile = confirmUrl && vehicle ? vehicleText(vehicle, data.lang) : '';
   // dateStyle/timeStyle no se pueden combinar con timeZoneName: campos explícitos.
   const received = new Intl.DateTimeFormat('en-US', {
     timeZone: TZ,
@@ -220,6 +226,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     ...rows.map(([k, v]) => `${k}: ${v}`),
     '',
     '--- Reply to the passenger ---',
+    ...(onFile ? [`Vehicle on file: ${onFile} (you can change it before sending)`, ''] : []),
     ...(confirmUrl ? ['Send the confirmation with the fare and payment QR codes (opens a page to enter the fare):', confirmUrl, '', 'Or decline and ask them to pick another time (they get a link to the site):', `${confirmUrl}&a=decline`, ''] : []),
     ...(confirmUrl
       ? []
@@ -242,6 +249,9 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     .join('\n');
 
   const body = [
+    onFile
+      ? `<p style="margin:0 0 18px;font:12px/1.5 Arial,Helvetica,sans-serif;color:${C.muted}">Vehicle on file: <span style="color:${C.cream}">${escapeHtml(onFile)}</span> &middot; editable when you confirm</p>`
+      : '',
     eyebrow('New ride request'),
     heading(service),
     highlight(longDate(data.date), data.time),
@@ -341,7 +351,7 @@ export async function handleReservation(input, ctx) {
           passengers: data.passengers,
         })
       : null;
-    const delivered = await send(config, buildEmail(data, { serviceName: ctx.serviceName, now, pay, confirmUrl }));
+    const delivered = await send(config, buildEmail(data, { serviceName: ctx.serviceName, now, pay, confirmUrl, vehicle: vehicleDefaults(env, data.lang) }));
     if (delivered === false) return fail(502, 'unavailable');
     return sent(delivered && typeof delivered === 'object' ? delivered : {});
   } catch (err) {
