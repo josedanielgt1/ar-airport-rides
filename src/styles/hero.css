@@ -20,7 +20,14 @@
     Móvil: la camioneta ocupa ~94 % del ancho útil (12 px a cada lado); el video es más ancho que la
     pantalla y se centra (lo que sobra a los lados es negro y queda fuera por overflow: hidden).
   */
-  --mw: calc((100vw - 24px) * 0.94 / var(--car-w));
+  /*
+    En tablet vertical (768×1024) el ancho dejaba el botón y el teléfono fuera del hero: el video también
+    se limita por alto (mínimo 3.5rem arriba + 2rem abajo + bloque de texto).
+  */
+  --mw: min(
+    calc((100vw - 24px) * 0.94 / var(--car-w)),
+    calc((var(--hh) - 5.5rem - var(--copy-gap) - var(--copy-h)) / var(--copy-at) * 4 / 3)
+  );
   --mh: calc(var(--mw) * 0.75);
   --mr: calc((100vw - var(--mw)) / 2);
   --mt: max(
@@ -120,7 +127,8 @@
 /* Con movimiento: el texto espera al video. Respaldo por si el JS no llega: visible a los 6 s. */
 .motion .hero__title,
 .motion .hero__meta,
-.motion .hero__glow {
+.motion .hero__glow,
+.motion .hero__ground {
   visibility: hidden;
   animation: hero-failsafe 0s linear 6s forwards;
 }
@@ -146,8 +154,12 @@
     --mh: min(63vw, calc((var(--hh) - 8rem - var(--copy-h)) / (var(--copy-at) - 0.25)));
     --mw: calc(var(--mh) * 4 / 3);
     --mr: calc(var(--gutter) + 0.75rem - var(--mw) * (1 - var(--car-l) - var(--car-w)));
-    /* --copy-drop baja todo el conjunto (titular, camioneta, suelo, botones) para no dejar aire bajo el botón. */
-    --copy-drop: 4rem;
+    /*
+      --copy-drop baja todo el conjunto (titular, camioneta, suelo, botones) para no dejar aire bajo el botón.
+      Entre 64rem y 80rem el bloque de texto llega casi al borde inferior: con 4rem el subtítulo y el botón
+      se cortaban a 1100×800. Aquí 1rem; el escritorio ancho (≥ 80rem) usa 4rem.
+    */
+    --copy-drop: 1rem;
     --mt: calc(var(--hh) - 2.5rem - var(--copy-h) - var(--mh) * var(--copy-at) + var(--copy-drop));
   }
 
@@ -205,6 +217,7 @@
     --mw: calc(var(--cw) / var(--car-w));
     --mh: calc(var(--mw) * 0.75);
     --copy-h: calc(var(--fs-hero) * 3.12 + 4.75rem);
+    --copy-drop: 4rem;
     --copy-top: calc((var(--hh) - var(--copy-h)) / 2 + 2rem + var(--copy-drop));
     --ground: calc(var(--copy-top) + var(--fs-hero) * 2.913);
     --mt: calc(var(--ground) - var(--mh) * 0.7135);
@@ -232,6 +245,8 @@
     width: calc(var(--cw) * 1.35);
     height: 1px;
     pointer-events: none;
+    /* Con movimiento se dibuja desde debajo de la camioneta hacia los extremos (GSAP, scaleX). */
+    transform-origin: 58% 50%;
     background: linear-gradient(
       90deg,
       transparent,
