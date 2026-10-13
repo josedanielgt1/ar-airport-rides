@@ -7,11 +7,16 @@ gsap.registerPlugin(SplitText);
 const VIDEO_SRC = `${import.meta.env.BASE_URL}media/hero.mp4`;
 const STILL_POSTER = `${import.meta.env.BASE_URL}media/hero-last.jpg`;
 
-// Tiempos en segundos del video (el clip dura 7 s; la cámara se detiene a los 5,6 s).
-const LINE_AT = 2.0; // primera línea del titular
-const LINE_GAP = 0.45; // escalonado entre líneas
-const META_AT = 3.4; // subtítulo + botón y reflejo; todo termina hacia 4,2 s
-const FALLBACK_MS = 4500; // respaldo si el video no avanza
+// Tiempos en segundos del video. El clip dura 8 s en tres planos: faro (0–2,4 s), emblema (2,4–4,45 s)
+// y camioneta completa (desde 4,45 s; la cámara se detiene a los 7,2 s). El titular entra con el tercer plano.
+const LINE_AT = 4.7; // primera línea del titular
+const LINE_GAP = 0.4; // escalonado entre líneas
+const META_AT = 5.85; // subtítulo, luego botón y teléfono (escalonados); todo termina hacia 6,9 s
+const META_GAP = 0.18;
+const GROUND_AT = 5.6; // línea de carretera dorada (≥ 1280 px) y reflejo
+const REVEAL_AT = 6.5; // si el video llega aquí sin terminar el revelado, se acelera
+const NOT_STARTED_MS = 4500; // el video no arrancó en 4,5 s: se muestra el texto sin esperarlo
+const HARD_CAP_MS = 7500; // tope absoluto: con el video lento o atascado, el texto sale igual
 
 /** Titular como texto + <br>. El espacio antes de cada <br> mantiene el aria-label legible. */
 function setTitle(el, lines) {
@@ -27,6 +32,8 @@ export function initHero({ still }) {
   const title = document.querySelector('.hero__title');
   const meta = document.querySelector('.hero__meta');
   const glow = document.querySelector('.hero__glow');
+  const ground = document.querySelector('.hero__ground');
+  const metaItems = meta ? [...meta.children] : [];
   const video = document.querySelector('.hero__video');
   if (!title || !meta || !video) return;
 
@@ -52,19 +59,29 @@ export function initHero({ still }) {
     });
     tl = gsap
       .timeline({ paused: true, onComplete: finish })
+      // Titular por líneas: sube desde su máscara con un leve fundido (sin letra por letra).
       .fromTo(
         split.lines,
-        { yPercent: 110 },
-        { yPercent: 0, duration: 1.1, ease: 'power3.out', stagger: LINE_GAP },
+        { yPercent: 105, autoAlpha: 0 },
+        { yPercent: 0, autoAlpha: 1, duration: 1.15, ease: 'power3.out', stagger: LINE_GAP },
         LINE_AT,
       )
+      .set(meta, { autoAlpha: 1 }, META_AT)
+      // Subtítulo, luego botón, luego teléfono.
       .fromTo(
-        meta,
-        { autoAlpha: 0, y: 8 },
-        { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power2.out' },
+        metaItems,
+        { autoAlpha: 0, y: 10 },
+        { autoAlpha: 1, y: 0, duration: 0.75, ease: 'power2.out', stagger: META_GAP },
         META_AT,
       )
-      .fromTo(glow, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.8, ease: 'none' }, META_AT);
+      .fromTo(glow, { autoAlpha: 0 }, { autoAlpha: 1, duration: 1.0, ease: 'none' }, GROUND_AT)
+      // Línea de carretera: se dibuja desde las ruedas hacia los extremos.
+      .fromTo(
+        ground,
+        { autoAlpha: 0, scaleX: 0.15 },
+        { autoAlpha: 1, scaleX: 1, duration: 1.4, ease: 'power2.inOut' },
+        GROUND_AT,
+      );
   };
 
   // Al terminar se deshace la separación: el H1 vuelve a ser texto plano (sin máscaras que recalcular).
@@ -75,7 +92,8 @@ export function initHero({ still }) {
     tl = null;
   }
 
-  // Revelado inmediato (ended, 4,5 s, fallo de play() o error): salta al primer verso y acelera.
+  // Revelado inmediato (ended, video en 6,5 s, sin arrancar a los 4,5 s, tope de 7,5 s, fallo de play()
+  // o error): salta al primer verso y acelera.
   const hurry = () => {
     if (done || hurried || !tl) return;
     hurried = true;
@@ -101,7 +119,7 @@ export function initHero({ still }) {
   const pending = new Promise((resolve) => {
     fontsReady.then(() => {
       build();
-      gsap.set([title, meta, glow], { animation: 'none' });
+      gsap.set([title, meta, glow, ground].filter(Boolean), { animation: 'none' });
       gsap.set(title, { visibility: 'visible' });
       resolve();
     });
@@ -119,14 +137,18 @@ export function initHero({ still }) {
 
   video.addEventListener('playing', sync, { once: true });
   video.addEventListener('timeupdate', () => {
-    if (video.currentTime >= FALLBACK_MS / 1000) hurryWhenReady();
+    if (video.currentTime >= REVEAL_AT) hurryWhenReady();
   });
   video.addEventListener('ended', hurryWhenReady);
   video.addEventListener('error', () => {
     toStill();
     hurryWhenReady();
   });
-  setTimeout(hurryWhenReady, FALLBACK_MS);
+  // Respaldo: si el video no arrancó a los 4,5 s, el texto no lo espera; y nunca más de 7,5 s en total.
+  setTimeout(() => {
+    if (!started) hurryWhenReady();
+  }, NOT_STARTED_MS);
+  setTimeout(hurryWhenReady, HARD_CAP_MS);
 
   // Cargar el video solo aquí (modo con movimiento). Sin loop: se queda en el último frame.
   const source = document.createElement('source');
