@@ -309,8 +309,8 @@ export async function handleReservation(input, ctx) {
   // Los errores solo llevan un código público; nunca detalles internos (configuración, proveedor, pila).
   const fail = (status, error, extra = {}) => ({ status, body: { ok: false, error, ...extra }, anchor: 'reserve-error' });
 
-  // Bots: exactamente la misma respuesta que un envío correcto, sin enviar nada.
-  if (isSpam(input)) return sent();
+  // Bots (honeypot): no se envía nada y se responde con un error visible (nunca éxito falso).
+  if (isSpam(input)) return fail(400, 'verify');
   if (rateLimited(ctx.ip, now.getTime())) return fail(429, 'rate_limited');
 
   // Un día de margen por zona horaria: la fecha mínima es "ayer" en Austin.

@@ -175,6 +175,12 @@ export function initForm() {
         return;
       } else {
         outcome = 'error';
+        // Verificación anti-bot fallida (p. ej. un autorrelleno tocó el campo oculto): se limpia para
+        // que el reintento pase. El error se ve en rojo con las vías de contacto alternas.
+        if (body.error === 'verify') {
+          const hp = form.querySelector('input[name="hp_trap"]');
+          if (hp) hp.value = '';
+        }
       }
     } catch {
       outcome = 'error';

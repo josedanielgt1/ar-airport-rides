@@ -8,8 +8,9 @@ export const CONFIG = {
   smsNumber: '+17375291720',
   // TODO(cliente): confirmar número de WhatsApp. Provisional: el mismo teléfono.
   whatsapp: '17375291720',
-  // TODO(cliente): cambiar a correo con dominio propio cuando exista.
-  email: 'abrahandrojasm@gmail.com',
+  // Correo público de la empresa (reenvía por Cloudflare Email Routing). El Gmail personal del
+  // chofer NO va en el sitio: se configura solo como RESERVATION_TO_EMAIL en Vercel.
+  email: 'reservas@arairportrides.com',
   // Los datos de pago NO van en el sitio: viven en variables de entorno (PAY_*) y solo salen en el
   // correo al chofer (ver .env.example y src/lib/reservation.js).
 };
