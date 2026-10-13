@@ -1,10 +1,8 @@
 {
-  "_todo": "TODO(cliente): confirmar cada amenidad del vehículo. Solo se muestran las que tengan confirmed: true.",
+  "_todo": "Solo se muestran las que tengan confirmed: true. Las tres de abajo las confirmó el dueño (oct. 2026). No agregar otras sin su confirmación. Cada una necesita un ícono (icon) definido en src/lib/vehicle-gallery.js.",
   "items": [
-    { "id": "water", "confirmed": false, "en": "Bottled water", "es": "Agua embotellada" },
-    { "id": "charger", "confirmed": false, "en": "Phone chargers", "es": "Cargadores de teléfono" },
-    { "id": "wifi", "confirmed": false, "en": "Wi-Fi", "es": "Wi-Fi" },
-    { "id": "climate", "confirmed": false, "en": "Climate control", "es": "Climatización" },
-    { "id": "luggage", "confirmed": false, "en": "Room for luggage", "es": "Espacio para equipaje" }
+    { "id": "water", "confirmed": true, "icon": "water", "en": "Bottled water", "es": "Agua embotellada" },
+    { "id": "charging", "confirmed": true, "icon": "charging", "en": "Phone charging point", "es": "Punto de carga para el teléfono" },
+    { "id": "candy", "confirmed": true, "icon": "candy", "en": "Candy for kids", "es": "Caramelos para los niños" }
   ]
 }

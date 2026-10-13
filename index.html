@@ -215,59 +215,38 @@
       <!-- Vehículo: fotos reales de la camioneta del cliente (Ford Expedition XLT negra). Nunca publicar la placa. -->
       <section class="vehicle" id="vehicle" aria-labelledby="vehicle-title">
         <div class="vehicle__inner">
-          <figure class="vehicle__media">
-            <!--
-              Fotos propias del cliente (autoriza mostrar marca y modelo). Fondo recortado y pasado a negro
-              (se funde con la página). El detalle del emblema está recortado por encima de la placa.
-            -->
-            <picture>
-              <source type="image/webp" srcset="/media/vehicle-front.webp" />
-              <img
-                class="vehicle__img"
-                src="/media/vehicle-front.jpg"
-                width="1560"
-                height="900"
-                loading="lazy"
-                decoding="async"
-                alt="Black Ford Expedition, front three-quarter view."
-                data-i18n-attr="alt:vehicle.alt"
-              />
-            </picture>
-            <div class="vehicle__thumbs">
+          <div class="vehicle__lead">
+            <figure class="vehicle__media">
+              <!--
+                Foto principal propia del cliente (autoriza mostrar marca y modelo), sola y grande. Fondo recortado
+                y pasado a negro (se funde con la página). Los detalles van aparte, en la galería de abajo.
+              -->
               <picture>
-                <source type="image/webp" srcset="/media/vehicle-rear.webp" />
+                <source type="image/webp" srcset="/media/vehicle-front.webp" />
                 <img
-                  class="vehicle__thumb"
-                  src="/media/vehicle-rear.jpg"
-                  width="960"
-                  height="720"
+                  class="vehicle__img"
+                  src="/media/vehicle-front.jpg"
+                  width="1560"
+                  height="900"
                   loading="lazy"
                   decoding="async"
-                  alt="Black Ford Expedition XLT, rear three-quarter view."
-                  data-i18n-attr="alt:vehicle.altRear"
+                  alt="Black Ford Expedition, front three-quarter view."
+                  data-i18n-attr="alt:vehicle.alt"
                 />
               </picture>
-              <picture>
-                <source type="image/webp" srcset="/media/vehicle-badge.webp" />
-                <img
-                  class="vehicle__thumb"
-                  src="/media/vehicle-badge.jpg"
-                  width="720"
-                  height="540"
-                  loading="lazy"
-                  decoding="async"
-                  alt="Ford emblem and Expedition lettering on the tailgate."
-                  data-i18n-attr="alt:vehicle.altBadge"
-                />
-              </picture>
+            </figure>
+            <div class="vehicle__copy">
+              <h2 class="section-title" id="vehicle-title" data-i18n="vehicle.title">The vehicle.</h2>
+              <p class="section-sub" data-i18n="vehicle.text">Ford Expedition — a full-size luxury SUV with room for you and your luggage.</p>
             </div>
-          </figure>
-          <div class="vehicle__copy">
-            <h2 class="section-title" id="vehicle-title" data-i18n="vehicle.title">The vehicle.</h2>
-            <p class="section-sub" data-i18n="vehicle.text">Ford Expedition — a full-size luxury SUV with room for you and your luggage.</p>
-            <!-- Amenidades desde src/data/amenities.json: solo las confirmed: true. -->
-            <!-- amenities:list -->
           </div>
+          <!--
+            Detalles desde src/data/vehicle-photos.json (solo enabled + confirmed, en orden). Sin fotos, no se
+            genera nada. Para sumar fotos (p. ej. interior) basta el archivo en public/media/ + su entrada.
+          -->
+          <!-- vehicle:gallery -->
+          <!-- Amenidades desde src/data/amenities.json: solo las confirmed: true, con su ícono. -->
+          <!-- amenities:list -->
         </div>
       </section>
 
