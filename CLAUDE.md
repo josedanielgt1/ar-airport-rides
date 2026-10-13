@@ -40,10 +40,16 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Número de WhatsApp: **pendiente de confirmar** (puede ser el mismo teléfono). Guardarlo en config.
 
 ## Estructura de la página (una sola página, scroll cinematográfico)
-1. **Hero:** video de fondo + título + subtítulo con botón "Reserve on WhatsApp" y el teléfono "737-529-1720 · 24/7" (enlace tel:) al lado. Al salir del hero, el botón de WhatsApp pasa al header fijo (escritorio ≥ 1024 px) o a una barra inferior (móvil/tablet, con safe-area; se aparta mientras el formulario está en pantalla). Escritorio ≥ 1280 px: titular a la izquierda, camioneta a la derecha (~50 % del ancho) con la línea de las ruedas en la línea base del último renglón, línea de carretera dorada de 1 px y resplandor radial estático; alto máximo del hero 860 px.
+1. **Hero:** video de fondo + título + subtítulo con botón "Reserve on WhatsApp" y el teléfono "737-529-1720 · 24/7" (enlace tel:) al lado. Al salir del hero, el botón de WhatsApp pasa al header fijo (escritorio ≥ 1024 px) o a una barra inferior (móvil/tablet, con safe-area; se aparta mientras el formulario está en pantalla). Escritorio ≥ 1280 px: titular a la izquierda, camioneta a la derecha (~50 % del ancho) con la línea de las ruedas en la línea base del último renglón, línea de carretera dorada de 1 px y resplandor radial estático; alto máximo del hero 860 px. Tablet vertical: el video se limita también por alto para que botón y teléfono quepan en el hero (768×1024). Entre 1024 y 1279 px `--copy-drop` es 1rem (con 4rem se cortaban subtítulo y botón a 1100×800); en ≥ 1280 px sigue en 4rem.
 2. **Servicios:** lista (no tarjetas) que se "enciende" al pasar el barrido de luz de la transición "carretera de noche". Un solo revelado de grupo, sin hover por fila.
 3. **Área de servicio:** diagrama esquemático (no a escala) de la I-35 con US 183, SH 130, US 290 y SH 71, ciudades que se encienden con el scroll y lista en texto. En escritorio, título y lista quedan sticky. Etiquetas del mapa ≥ 12 px reales en móvil.
-4. **Vehículo:** `public/media/vehicle-front.webp` + `.jpg` de respaldo (hoy: foto de referencia "23 Ford Expedition Limited", HJUdall, CC0, Wikimedia Commons; crédito en el footer desde `src/data/credits.json`; viñeta oscura porque el fondo no es negro; TODO(cliente): fotos propias) y texto "full-size luxury SUV with room for you and your luggage". Amenidades en `src/data/amenities.json` con `confirmed`: solo se muestran las `true` (hoy ninguna).
+4. **Vehículo:** fotos reales de la camioneta del cliente, **Ford Expedition XLT negra** (el dueño autoriza mostrar marca y modelo). Tres bloques con mucho aire (`--v-gap`, clamp 4–8 rem): (1) foto principal `public/media/vehicle-front.webp` + `.jpg` sola y grande (frente 3/4, recortada sobre `#000`, fija en `index.html`) con el texto "Ford Expedition — a full-size luxury SUV with room for you and your luggage"; (2) galería de detalles desde `src/data/vehicle-photos.json` (hoy `vehicle-rear` y `vehicle-badge`, sin placa): marcos 4:3 iguales con filete dorado muy tenue, 2–3 columnas con gap amplio en tablet/escritorio y carrusel horizontal con snap en móvil (< 640 px; el desplazamiento queda dentro de la galería, que solo recibe `tabindex` si de verdad se desplaza); (3) fila "On board / A bordo" con las amenidades **confirmadas por el dueño (oct. 2026): agua embotellada, punto de carga para el teléfono y caramelos para los niños**, con íconos SVG dorados de trazo fino (`aria-hidden`). Sin animación de entrada. No agregar amenidades ni afirmaciones (wifi, licencias, seguro…) sin confirmación del dueño.
+
+### Fotos del vehículo: cómo añadir las del interior
+- **No hay fotos del interior todavía.** No se muestra nada que lo sugiera (ni placeholder, ni hueco, ni texto). Se pidieron al cliente: asientos de atrás, tablero y espacio para maletas; de día, **sin placa y sin personas**.
+- Al recibirlas: (1) revisar con zoom que no se vea ninguna placa (tampoco reflejada) ni personas; los originales se quedan fuera del repo (`demo-video/fotos-cliente/`). (2) Exportar `.webp` + `.jpg` en 4:3 (p. ej. 960×720, sobre ~100 KB) a `public/media/`, p. ej. `vehicle-interior-rear-seats.webp/.jpg`. (3) Añadir una entrada en `src/data/vehicle-photos.json`: `id`, `enabled: true`, `confirmed: true` (= revisada), `order` (10, 20… define la posición), `src.webp`/`src.jpg` (rutas `/media/...`), `width`/`height` y `alt.en`/`alt.es` descriptivos, sin afirmar nada no confirmado. Con `enabled` o `confirmed` en `false` la foto no se publica.
+- El build valida los datos (`src/lib/vehicle-gallery.js`): si falta un archivo, un `alt` o la ruta no es `/media/...`, `npm run build` falla con el motivo. `npm test` también lo comprueba (`test/vehicle-gallery.test.js`; el test que fija la lista actual `['rear', 'badge']` hay que actualizarlo al añadir fotos).
+- Amenidades: `src/data/amenities.json` (`id`, `confirmed`, `icon`, `en`, `es`); el ícono de cada una vive en `AMENITY_ICONS` de `src/lib/vehicle-gallery.js`.
 5. **Por qué elegirnos:** 3 o 4 puntos cortos (puntualidad, privacidad, trato, experiencia).
 6. **Reserva:** formulario.
 7. **Footer:** teléfono, correo, WhatsApp (los pagos ya no van aquí).
@@ -76,10 +82,17 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 ## Video y medios
 - Carpeta: `public/media/`.
 - Solo `hero.mp4` (H.264, 4:3), sin audio. Objetivo: ≤ 3 MB en móvil. Sin webm (pesaba más que el mp4).
-- `poster.jpg` = **primer frame del video** (solo se ve mientras carga) y `hero-last.jpg` = último frame.
-- Vehículo: `public/media/vehicle-front.webp` + `.jpg`. Fotos de terceros solo CC0, dominio público o CC BY (nunca BY-SA/NC/ND, concesionarios, Ford ni bancos de pago) y siempre con crédito en `src/data/credits.json`.
-- El clip es un arco de cámara de frente a perfil (camioneta quieta, con lluvia) que termina sobre negro puro: el hero usa fondo `#000`. **No usar `loop`**: se vería el salto. Reproducir una vez y dejar el último frame. Con `prefers-reduced-motion` o modo ahorro de datos (`navigator.connection.saveData`) no cargar el video: mostrar `hero-last.jpg` con título y CTA visibles.
-- Título y CTA aparecen en `ended`, a los 4.5 s, si `play()` falla o si hay error (lo que ocurra primero). Sin JS, todo visible.
+- `poster.jpg` = **primer frame del video** (detalle del faro; se ve mientras carga y sin JS) y `hero-last.jpg` = último frame (camioneta completa).
+- Vehículo: `vehicle-front` (fija en el HTML), `vehicle-rear` y `vehicle-badge` (galería, desde `src/data/vehicle-photos.json`) (`.webp` + `.jpg`), fotos del cliente. Si algún día se usan fotos de terceros: solo CC0, dominio público o CC BY (nunca BY-SA/NC/ND, concesionarios, Ford ni bancos de pago) y siempre con crédito en `src/data/credits.json` (hoy vacío; el footer no muestra nada).
+- **PLACA: nunca debe verse en ninguna imagen ni frame publicado.** Las fotos originales del cliente (`demo-video/fotos-cliente/`, fuera del repo) nunca van a `public/` ni al repo. Fotos con placa visible solo se usan recortadas por encima/al lado de la placa (sin sus píxeles) y verificando con zoom. Scripts de edición en `demo-video/fotos-reales/scripts/` (fuera del repo).
+- El clip (8 s, 1280×960, 24 fps, H.264 High, ~0,87 MB, sin audio, sin IA generativa) es una secuencia de 3 planos con fotos reales del cliente, unidos por fundidos breves a negro:
+  1. **0–2,4 s** detalle del faro (frente 3/4, `exp2`): paneo lento con leve push-in, "encendido" de las luces LED con brillo discreto y un barrido de luz dorada.
+  2. **2,4–4,45 s** emblema Ford + letras EXPEDITION (`exp4`, **solo la franja y ≤ 378 px de la foto**; el marco de la placa empieza en y ≈ 405, el script tiene un `assert`): franja horizontal fundida a negro, paneo lateral y destello dorado sobre las letras cromadas.
+  3. **4,45–8 s** camioneta completa (`exp2`): push-in suave hasta la composición final (cámara quieta desde 7,2 s), reflejo tenue en el piso (espejo respecto de la recta de apoyo de las ruedas) y barrido dorado.
+  Ambiente: lluvia fina en dos capas con parallax (solo en la zona central, se apaga entre 6,2 y 7,2 s), viñeta. **Sin grano.** Los planos 1–2 llenan el cuadro (el enmascarado de `.hero__media` los funde con la página); el último frame tiene bordes `#000` exactos. Composición final idéntica a la anterior: camioneta en x 18,0 %–81,95 %, y 24 %–71,35 % (rueda delantera = punto más bajo); `hero.css` usa esas cifras (`--car-l`, `--car-w`). Recorte: rembg `isnet-general-use` (se comparó con `u2net`, peor; BiRefNet no cabe en memoria) + filtro guiado por la foto, estrechamiento de 1–2 px y descontaminación del color del borde (`estimate_foreground_ml`) para quitar el halo claro del asfalto. Scripts (fuera del repo): `demo-video/hero-cine/scripts/` (`masks.py`, `refine.py`, `cine.py`); el intento anterior de un solo plano está en `demo-video/fotos-reales/scripts/hero.py`. Los medios publicados llevan el manifiesto C2PA (Content Credentials) que agrega la herramienta de archivos; no tienen EXIF ni GPS.
+- El hero usa fondo `#000`. **No usar `loop`**: se vería el salto. Reproducir una vez y dejar el último frame. Con `prefers-reduced-motion` o modo ahorro de datos (`navigator.connection.saveData`) no cargar el video: mostrar `hero-last.jpg` con título y CTA visibles.
+- Animación del texto (`src/hero.js`, sincronizada con el tiempo del video): titular por **líneas** (SplitText con máscara, sube con fundido; nunca letra por letra) a los 4,7 s, cuando entra el tercer plano; a los 5,85 s subtítulo → botón → teléfono escalonados; a los 5,6 s el reflejo dorado (móvil/tablet) y, en ≥ 1280 px, la línea de carretera se dibuja desde debajo de la camioneta (`scaleX`). Todo termina hacia 6,9 s.
+- Respaldos: se acelera el revelado en `ended`, cuando el video pasa de 6,5 s, si el video **no arrancó** a los 4,5 s, con un tope absoluto de 7,5 s, si `play()` falla o si hay error. Sin JS, todo visible (CSS tiene además un respaldo de 6 s si el JS no llega). Si cambia la duración o los planos del video, mover estas constantes juntas (`LINE_AT`, `META_AT`, `GROUND_AT`, `REVEAL_AT`, `NOT_STARTED_MS`, `HARD_CAP_MS`).
 - Etiqueta: `<video muted playsinline poster="/media/poster.jpg">`; la fuente `mp4` y el autoplay los agrega JS solo si procede.
 - Un solo video en toda la página. El resto, animaciones ligeras con CSS/GSAP.
 
@@ -89,7 +102,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Respetar `prefers-reduced-motion`. Contraste AA, foco visible, botones táctiles ≥ 44 px, `alt` en imágenes.
 
 ## Seguridad
-- Claves en variables de entorno, nunca en el repo: `RESEND_API_KEY`, `RESERVATION_TO_EMAIL`, `RESERVATION_FROM_EMAIL`, `PAY_VENMO_URL`, `PAY_CASHAPP_URL`, `PAY_ZELLE`.
+- Claves en variables de entorno, nunca en el repo: `RESEND_API_KEY`, `RESERVATION_TO_EMAIL`, `RESERVATION_FROM_EMAIL`, `PAY_VENMO_URL`, `PAY_CASHAPP_URL`, `PAY_ZELLE`. La placa del vehículo tampoco va en el repo: `VEHICLE_PLATE`.
 - `.env` en `.gitignore`. Crear `.env.example` sin valores reales.
 - No registrar en logs los datos personales de los clientes.
 
@@ -100,7 +113,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Si algo del brief es ambiguo o está marcado como pendiente, dejar un `TODO(cliente)` visible en el código en vez de inventar el dato.
 
 ## Implementación (decisiones tomadas)
-- Datos editables: `src/config.js` (contacto; los pagos van en variables de entorno, ver `.env.example`), `src/data/services.json`, `src/data/service-area.json`, `src/data/amenities.json`. El HTML recibe estos datos en el build (plugin en `vite.config.js`, marcadores `@@clave@@` y comentarios `<!-- x:list -->`), así la página es legible sin JS; el JS solo traduce.
+- Datos editables: `src/config.js` (contacto; los pagos van en variables de entorno, ver `.env.example`), `src/data/services.json`, `src/data/service-area.json`, `src/data/amenities.json`, `src/data/vehicle-photos.json`. El HTML recibe estos datos en el build (plugin en `vite.config.js`, marcadores `@@clave@@` y comentarios `<!-- x:list -->`), así la página es legible sin JS; el JS solo traduce.
 - Formulario: validación compartida en `src/lib/validate.js` (cliente, servidor y simulación). Lógica de servidor en `src/lib/reservation.js`; función Vercel en `api/reserve.js` (Resend por REST con `fetch`, honeypot `company`, límite de 5 envíos / 10 min por IP en memoria, 503 si faltan variables). Correo fijo en inglés con idioma, origen (`ref`: card / direct) y hora de America/Chicago.
 - Cliente (`src/form.js`): el enlace de WhatsApp se arma antes de esperar al servidor; tras el envío se muestra "Continue on WhatsApp" (enlace normal, sin `window.open`). Si el correo falla, mismo botón + aviso. Sin JS, el servidor redirige a `#reserve-sent` / `#reserve-error`.
 - `npm run dev` incluye una SIMULACIÓN de `/api/reserve` que valida y responde `{ ok, simulated }` sin enviar correos. Para probar el envío real: `vercel dev` con `.env`.
@@ -111,23 +124,28 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Se quitó el grano de película (aclaraba el negro puro del video).
 
 ## Pendientes (fuera del código)
-- Confirmar con el cliente: ciudades finales, servicios reales, amenidades del vehículo, número de WhatsApp y si mantiene larga distancia.
-- Fotos reales de la camioneta del cliente (las imágenes actuales del proyecto parecen de catálogo y son solo de referencia). Reemplazarlas antes de publicar.
+- Confirmar con el cliente: ciudades finales, servicios reales, número de WhatsApp y si mantiene larga distancia. (Amenidades: confirmadas agua, punto de carga y caramelos.)
+- Fotos del interior pedidas al cliente (asientos de atrás, tablero, espacio para maletas; de día, sin placa ni personas): ver "Fotos del vehículo: cómo añadir las del interior". Más fotos exteriores, si quiere (ideal: perfil lateral limpio, sin placa visible) para el hero.
 - Archivo del logo AR en SVG.
 - Dominio propio y correo con dominio (`reservas@...`).
-- El video se generó con el plan gratuito de Higgsfield, que no incluye uso comercial. Regenerarlo o descargarlo con un plan que lo permita antes de publicar.
 - Tarjeta física: QR en blanco o crema sobre fondo oscuro (el dorado escanea mal), mínimo 2 cm, margen libre y prueba de escaneo antes de imprimir.
 
-- Cabeceras de seguridad y CSP en ercel.json. Los 2 scripts en línea de index.html están permitidos por hash: si se editan, corre 
-pm run build; npm run check:csp -- --print y actualiza script-src (
-pm run check:csp avisa si no coinciden).
+- Cabeceras de seguridad y CSP en `vercel.json`. Los 2 scripts en línea de `index.html` están permitidos por hash: si se editan, corre `npm run build; npm run check:csp -- --print` y actualiza `script-src` (`npm run check:csp` avisa si no coinciden).
 
 ## Flujo de respuesta al pasajero (correo del chofer → /api/confirm)
 - El correo de reserva al chofer trae: botón dorado **Confirmar** (tarifa → vista previa → envío), botón **Rechazar y pedir reagendar** (vista previa → envío) y **Abrir ruta en Maps**. Sin QR: el chofer no paga.
 - `/api/confirm?t=<token>` (token cifrado, 24 h, sin base de datos) muestra el formulario con las dos opciones; `&a=decline` abre directo la vista previa del rechazo. Nada se envía hasta pulsar el botón final; el pasajero recibe el correo con copia (BCC) al chofer y Reply-To al chofer.
 - Correo de confirmación (es/en): sello, boleto con fecha y ruta, botones de mapa (Google Maps), tarifa y QR de Venmo/Cash App (+ Zelle). Correo de rechazo: nota cortés con botón a `SITE_URL` para reservar otra fecha.
 - Mapa dentro del correo: opcional con `GOOGLE_MAPS_API_KEY` (Static Maps, clave restringida). Sin clave solo hay botones. CSP permite `img-src https://maps.googleapis.com`.
-- Variables nuevas: `CONFIRM_SECRET`, `CONFIRM_SECRET_PREVIOUS` (opcional, rotación), `SITE_URL` (opcional), `GOOGLE_MAPS_API_KEY` (opcional).
+- Variables nuevas: `CONFIRM_SECRET`, `CONFIRM_SECRET_PREVIOUS` (opcional, rotación), `SITE_URL` (opcional), `GOOGLE_MAPS_API_KEY` (opcional), `VEHICLE_PLATE` y `VEHICLE_DESCRIPTION` (opcionales, ver abajo).
+
+### Vehículo y placa en la confirmación (`src/lib/vehicle.js`)
+- El correo de confirmación al pasajero muestra en el boleto (y en el texto plano) "Your ride: Black Ford Expedition XLT · Texas plate ABC 1234" / "Tu vehículo: Ford Expedition XLT negra · placa de Texas ABC 1234".
+- Por defecto: descripción de `VEHICLE_DEFAULT` en `src/config.js` (en el idioma del pasajero) o `VEHICLE_DESCRIPTION` si existe; placa **solo** de `VEHICLE_PLATE` (nunca en el repo; sin ella el campo sale vacío). Variables inválidas se ignoran.
+- En `/api/confirm` el chofer ve los campos **Vehicle** y **License plate** prellenados y editables (si cambia de carro); lo que deje es lo que sale en la vista previa y en el correo. Campo vacío = esa parte se omite (ambos vacíos = sin línea). "Back to edit" en la vista previa conserva lo escrito.
+- Validación en servidor: una línea, descripción ≤ 60 (letras, números, `. , ' & ( ) / # + -`), placa ≤ 12 (letras, números, espacio, guion; se pasa a mayúsculas y "ABC1234" → "ABC 1234"). Si no cumple: 422 con el formulario y nada se envía. Siempre escapado en la página y en el correo. No viaja en el token.
+- Idempotencia: la `Idempotency-Key` sigue siendo solo la del enlace. Reenviar lo mismo no duplica; cambiar vehículo/placa (o la tarifa) después de enviar da 409 → "Already sent". Rechazar ignora estos campos.
+- El correo de reserva al chofer muestra arriba, discreto, "Vehicle on file: …" (solo si hay botón Confirmar; nunca en el asunto).
 
 ### Seguridad del enlace de confirmar (`src/lib/token.js`, `src/lib/confirm.js`, `api/confirm.js`)
 - Token v1: `0x01 | iv | tag | AES-256-GCM`, clave = HKDF-SHA256(`CONFIRM_SECRET`, info `ar-confirm-v1`). Solo se acepta base64url canónico. Los tokens del formato anterior (sin versión) se abren, pero solo 24 h desde que se emitieron.

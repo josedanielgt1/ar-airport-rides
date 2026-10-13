@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { CONFIG } from './src/config.js';
 import { handleReservation, parseBody } from './src/lib/reservation.js';
 import { handleConfirm } from './src/lib/confirm.js';
+import { amenitiesMarkup, checkVehicleData, galleryMarkup } from './src/lib/vehicle-gallery.js';
 
 // Claves de EJEMPLO solo para la simulación local (los valores reales viven en las variables de entorno de Vercel).
 const DEV_ENV = { CONFIRM_SECRET: 'dev-only-secret-not-for-production', SITE_URL: 'http://localhost:5173', RESERVATION_TO_EMAIL: 'chofer@ejemplo.com' };
@@ -64,17 +65,16 @@ function creditsMarkup() {
     .join('\n        ');
 }
 
-/** Amenidades: solo las confirmadas. Si no hay ninguna, no se genera nada. */
-function amenitiesMarkup() {
-  const items = readData('amenities.json').items.filter((a) => a.confirmed === true);
-  if (!items.length) return '';
-  const li = items
-    .map((a) => `<li class="vehicle__amenity" data-amenity="${esc(a.id)}">${esc(a.en)}</li>`)
-    .join('\n              ');
-  return `<p class="vehicle__amenities-label" data-i18n="vehicle.amenitiesLabel">Included</p>
-            <ul class="vehicle__amenities" role="list">
-              ${li}
-            </ul>`;
+/**
+ * Vehículo: galería de detalles (vehicle-photos.json) y amenidades confirmadas (amenities.json), con sus
+ * validaciones (src/lib/vehicle-gallery.js). Si los datos tienen errores, el build falla con el motivo.
+ */
+function vehicleMarkup(base) {
+  const photos = readData('vehicle-photos.json');
+  const amenities = readData('amenities.json');
+  const errors = checkVehicleData(photos, amenities, (src) => existsSync(new URL(`./public${src}`, import.meta.url)));
+  if (errors.length) throw new Error(`Datos del vehículo con errores:\n- ${errors.join('\n- ')}`);
+  return { gallery: galleryMarkup(photos, { base }), amenities: amenitiesMarkup(amenities) };
 }
 
 // Posición de la etiqueta de cada ciudad respecto a su punto (unidades del viewBox).
@@ -144,19 +144,25 @@ function areaMarkup() {
 
 /** Inserta en el HTML el contenido generado desde src/data/*.json (legible sin JS). */
 function dataMarkup() {
+  let base = '/';
   return {
     name: 'data-markup',
+    configResolved(config) {
+      base = config.base;
+    },
     configureServer(server) {
-      for (const f of ['services.json', 'service-area.json', 'amenities.json', 'credits.json']) server.watcher.add(fileURLToPath(dataFile(f)));
+      for (const f of ['services.json', 'service-area.json', 'amenities.json', 'vehicle-photos.json', 'credits.json']) server.watcher.add(fileURLToPath(dataFile(f)));
     },
     transformIndexHtml(html) {
       const area = areaMarkup();
+      const vehicle = vehicleMarkup(base);
       const tokens = configTokens();
       html = html.replace(/@@(\w+)@@/g, (m, k) => (k in tokens ? esc(tokens[k]) : m));
       return html
         .replace('<!-- services:list -->', servicesMarkup())
         .replace('<!-- form:services -->', serviceOptionsMarkup())
-        .replace('<!-- amenities:list -->', amenitiesMarkup())
+        .replace('<!-- vehicle:gallery -->', vehicle.gallery)
+        .replace('<!-- amenities:list -->', vehicle.amenities)
         .replace('<!-- credits:list -->', creditsMarkup())
         .replace('<!-- area:map -->', area.map)
         .replace('<!-- area:list -->', area.list)

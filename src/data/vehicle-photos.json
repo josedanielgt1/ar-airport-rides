@@ -1,0 +1,31 @@
+{
+  "_doc": "Galería de detalles bajo la foto principal del vehículo (la principal, vehicle-front, va fija en index.html). Solo se publican las fotos con enabled: true y confirmed: true (confirmed = revisada con zoom: sin placa ni personas). Para añadir una: copia los archivos a public/media/ (.webp + .jpg) y agrega una entrada aquí; ver CLAUDE.md, sección Vehículo.",
+  "items": [
+    {
+      "id": "rear",
+      "enabled": true,
+      "confirmed": true,
+      "order": 10,
+      "src": { "webp": "/media/vehicle-rear.webp", "jpg": "/media/vehicle-rear.jpg" },
+      "width": 960,
+      "height": 720,
+      "alt": {
+        "en": "Black Ford Expedition XLT, rear three-quarter view.",
+        "es": "Ford Expedition XLT negra, vista trasera de tres cuartos."
+      }
+    },
+    {
+      "id": "badge",
+      "enabled": true,
+      "confirmed": true,
+      "order": 20,
+      "src": { "webp": "/media/vehicle-badge.webp", "jpg": "/media/vehicle-badge.jpg" },
+      "width": 720,
+      "height": 540,
+      "alt": {
+        "en": "Ford emblem and Expedition lettering on the tailgate.",
+        "es": "Emblema de Ford y letras Expedition en la compuerta trasera."
+      }
+    }
+  ]
+}

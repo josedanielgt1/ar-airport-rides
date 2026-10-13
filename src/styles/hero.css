@@ -1,22 +1,35 @@
 /*
-  Geometría del hero. El video es 4:3; en el último frame la camioneta ocupa
-  x 2,34 %–97,42 % e y 25 %–71,35 % (medido en hero-last.jpg). La máscara lateral (2 %) no llega a la nariz.
-  A mitad del clip hay reflejos en el piso mojado: la máscara inferior los apaga desde el 70 %.
+  Geometría del hero. El video es 4:3 (fotos reales de la camioneta del cliente, recortada sobre negro);
+  en el último frame la camioneta (frente 3/4) ocupa x 18,09 %–81,92 % e y 24 %–71,35 % (rueda delantera
+  = punto más bajo; medido en hero-last.jpg). Rueda delantera al ~42 % del ancho del video.
+  --car-l / --car-w  borde izquierdo / ancho de la camioneta (fracción del ancho del video)
   --hh  alto del hero         --mh / --mw  alto / ancho del video
   --mt  top del video         --mr         margen derecho del video
   --copy-at  dónde empieza el texto (fracción del alto del video)
   --copy-h   alto reservado para titular + subtítulo + botón
 */
 .hero {
+  --car-l: 0.1809;
+  --car-w: 0.6383;
   --hh: max(100svh, 42rem);
   --copy-at: 0.76;
   /* titular + subtítulo + botones (dos en táctil) + teléfono */
   --copy-h: calc(var(--fs-hero) * 3.3 + 12.5rem);
   --copy-gap: 1rem; /* aire extra entre la camioneta y el titular (móvil) */
-  /* Móvil: 12 px a cada lado para que no se corte la nariz de la camioneta. */
-  --mw: calc(100vw - 24px);
+  /*
+    Móvil: la camioneta ocupa ~94 % del ancho útil (12 px a cada lado); el video es más ancho que la
+    pantalla y se centra (lo que sobra a los lados es negro y queda fuera por overflow: hidden).
+  */
+  /*
+    En tablet vertical (768×1024) el ancho dejaba el botón y el teléfono fuera del hero: el video también
+    se limita por alto (mínimo 3.5rem arriba + 2rem abajo + bloque de texto).
+  */
+  --mw: min(
+    calc((100vw - 24px) * 0.94 / var(--car-w)),
+    calc((var(--hh) - 5.5rem - var(--copy-gap) - var(--copy-h)) / var(--copy-at) * 4 / 3)
+  );
   --mh: calc(var(--mw) * 0.75);
-  --mr: 12px;
+  --mr: calc((100vw - var(--mw)) / 2);
   --mt: max(
     3.5rem,
     calc((var(--hh) - 2rem - var(--mh) * var(--copy-at) - var(--copy-gap) - var(--copy-h)) / 2)
@@ -53,19 +66,19 @@
 /*
   Reflejo dorado bajo las ruedas. Cada capa es un degradado radial "closest-side",
   que llega a transparente antes del borde de su caja: no se ve ningún recuadro.
-  Ruedas en el último frame: centros aprox. al 18 % y 75 % del ancho del video.
+  Vista 3/4: solo la rueda delantera toca la línea del 71,35 % (centro al ~37 % del ancho de la
+  camioneta); la trasera queda más arriba y solo recibe el halo amplio y tenue.
 */
 .hero__glow {
   position: absolute;
   top: calc(var(--mt) + var(--mh) * 0.7135 - var(--mh) * 0.05);
-  right: calc(var(--mr) + var(--mw) * 0.0258);
-  width: calc(var(--mw) * 0.9508);
+  left: calc(100% - var(--mr) - var(--mw) + var(--mw) * var(--car-l));
+  width: calc(var(--mw) * var(--car-w));
   height: calc(var(--mh) * 0.1);
   pointer-events: none;
   background:
-    radial-gradient(closest-side, rgb(235 203 130 / 0.16), transparent) 13% 50% / 24% 70% no-repeat,
-    radial-gradient(closest-side, rgb(235 203 130 / 0.16), transparent) 76% 50% / 24% 70% no-repeat,
-    radial-gradient(closest-side, rgb(201 162 75 / 0.06), transparent) 50% 50% / 100% 100% no-repeat;
+    radial-gradient(closest-side, rgb(235 203 130 / 0.16), transparent) 34% 50% / 34% 70% no-repeat,
+    radial-gradient(closest-side, rgb(201 162 75 / 0.06), transparent) 55% 50% / 100% 100% no-repeat;
 }
 
 .hero__copy {
@@ -114,7 +127,8 @@
 /* Con movimiento: el texto espera al video. Respaldo por si el JS no llega: visible a los 6 s. */
 .motion .hero__title,
 .motion .hero__meta,
-.motion .hero__glow {
+.motion .hero__glow,
+.motion .hero__ground {
   visibility: hidden;
   animation: hero-failsafe 0s linear 6s forwards;
 }
@@ -139,9 +153,13 @@
     --copy-h: calc(var(--fs-hero) * 3.2 + 5.5rem);
     --mh: min(63vw, calc((var(--hh) - 8rem - var(--copy-h)) / (var(--copy-at) - 0.25)));
     --mw: calc(var(--mh) * 4 / 3);
-    --mr: calc(var(--gutter) + 0.75rem - var(--mw) * 0.0258);
-    /* --copy-drop baja todo el conjunto (titular, camioneta, suelo, botones) para no dejar aire bajo el botón. */
-    --copy-drop: 4rem;
+    --mr: calc(var(--gutter) + 0.75rem - var(--mw) * (1 - var(--car-l) - var(--car-w)));
+    /*
+      --copy-drop baja todo el conjunto (titular, camioneta, suelo, botones) para no dejar aire bajo el botón.
+      Entre 64rem y 80rem el bloque de texto llega casi al borde inferior: con 4rem el subtítulo y el botón
+      se cortaban a 1100×800. Aquí 1rem; el escritorio ancho (≥ 80rem) usa 4rem.
+    */
+    --copy-drop: 1rem;
     --mt: calc(var(--hh) - 2.5rem - var(--copy-h) - var(--mh) * var(--copy-at) + var(--copy-drop));
   }
 
@@ -196,9 +214,10 @@
   .hero {
     --hh: clamp(560px, 100svh, 780px);
     --cw: clamp(36rem, 50vw, 62rem);
-    --mw: calc(var(--cw) / 0.9508);
+    --mw: calc(var(--cw) / var(--car-w));
     --mh: calc(var(--mw) * 0.75);
     --copy-h: calc(var(--fs-hero) * 3.12 + 4.75rem);
+    --copy-drop: 4rem;
     --copy-top: calc((var(--hh) - var(--copy-h)) / 2 + 2rem + var(--copy-drop));
     --ground: calc(var(--copy-top) + var(--fs-hero) * 2.913);
     --mt: calc(var(--ground) - var(--mh) * 0.7135);
@@ -226,6 +245,8 @@
     width: calc(var(--cw) * 1.35);
     height: 1px;
     pointer-events: none;
+    /* Con movimiento se dibuja desde debajo de la camioneta hacia los extremos (GSAP, scaleX). */
+    transform-origin: 58% 50%;
     background: linear-gradient(
       90deg,
       transparent,
@@ -272,7 +293,7 @@
   display: none !important;
 }
 
-/* Sin JS se ve poster.jpg (vista frontal, llega más abajo que el perfil final): texto y reflejo se ajustan. */
+/* Sin JS se ve poster.jpg (detalle del frente, llega más abajo que la vista final): texto y reflejo se ajustan. */
 html:not(.js) .hero {
   --copy-at: 0.84;
 }

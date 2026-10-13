@@ -52,8 +52,24 @@ const dot = (filled) =>
   `<table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td width="12" height="12" style="width:12px;height:12px;font-size:0;line-height:0;border-radius:50%;background:${filled ? C.gold : C.bg};border:2px solid ${C.gold}">&nbsp;</td></tr></table>`;
 
 /**
+ * Fila del vehículo dentro del boleto: etiqueta pequeña ("Your ride") y debajo la descripción en serif crema con la
+ * placa en dorado espaciado. Sin descripción ni placa no hay fila.
+ * @param {{label:string, description?:string, plateLabel?:string, plate?:string}} [v]
+ */
+const vehicleRow = (v) => {
+  if (!v || (!v.description && !v.plate)) return '';
+  const desc = v.description ? `<span style="font:normal 19px/1.35 ${SERIF};color:${C.cream}">${e(v.description)}</span>` : '';
+  const sep = v.description && v.plate ? `<span style="color:${C.gold};padding:0 8px">&middot;</span>` : '';
+  const plate = v.plate
+    ? `<span style="white-space:nowrap;font:12px ${SANS};letter-spacing:.08em;color:${C.muted}">${e(v.plateLabel)}&nbsp;<span style="font:bold 13px ${SANS};letter-spacing:.18em;color:${C.gold}">${e(v.plate)}</span></span>`
+    : '';
+  return `<tr><td colspan="2" style="padding:6px 22px 4px"><p style="margin:10px 0 0;padding-top:14px;border-top:1px solid ${C.line};font:11px ${SANS};letter-spacing:.14em;text-transform:uppercase;color:${C.muted}">${e(v.label)}</p><p style="margin:4px 0 0;line-height:1.5">${desc}${sep}${plate}</p></td></tr>`;
+};
+
+/**
  * "Boleto" del viaje: bloque dorado con el día, fecha y hora, y debajo la ruta (recogida → destino) como línea de tiempo.
- * @param {{day:string, month:string, weekday:string, time:string, from:string, to:string, fromLabel:string, toLabel:string, extra?:string}} p
+ * @param {{day:string, month:string, weekday:string, time:string, from:string, to:string, fromLabel:string, toLabel:string, extra?:string,
+ *          vehicle?:{label:string, description?:string, plateLabel?:string, plate?:string}}} p
  */
 export const tripTicket = (p) => {
   const label = (text) => `<p style="margin:0 0 2px;font:11px ${SANS};letter-spacing:.14em;text-transform:uppercase;color:${C.muted}">${e(text)}</p>`;
@@ -67,6 +83,7 @@ export const tripTicket = (p) => {
 <tr><td width="28" align="center" style="height:26px"><table role="presentation" cellpadding="0" cellspacing="0" align="center"><tr><td width="0" height="26" style="height:26px;border-left:2px dashed #6b5c33;font-size:0;line-height:0">&nbsp;</td></tr></table></td><td></td></tr>
 <tr><td width="28" valign="top" style="padding-top:4px">${dot(false)}</td><td valign="top">${label(p.toLabel)}${place(p.to)}</td></tr>
 </table></td></tr>
+${vehicleRow(p.vehicle)}
 ${p.extra ? `<tr><td colspan="2" style="padding:6px 22px 20px"><p style="margin:12px 0 0;padding-top:12px;border-top:1px solid ${C.line};font:13px ${SANS};color:${C.muted}">${e(p.extra)}</p></td></tr>` : '<tr><td colspan="2" style="padding:0 0 14px;font-size:0;line-height:0">&nbsp;</td></tr>'}
 </table>`;
 };
