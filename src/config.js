@@ -24,3 +24,12 @@ export const VEHICLE_DEFAULT = {
   es: 'Ford Expedition XLT negra',
   plateState: 'Texas',
 };
+
+// Conductor que aparece en el correo de confirmación al pasajero ("Your chauffeur: …"). Valor por defecto que el
+// chofer ve prellenado en /api/confirm y puede cambiar (o vaciar) antes de enviar. La variable de entorno
+// DRIVER_NAME, si existe y es válida, lo reemplaza. Ver src/lib/vehicle.js.
+export const DRIVER_DEFAULT_NAME = 'Abraham Rojas';
+
+// Miniatura del vehículo en el boleto del correo al pasajero: SOLO cuando la descripción final es la
+// predeterminada (nunca la foto de otro carro). Se sirve bajo SITE_URL; foto sin placa, 240×180 (2x), fondo #000.
+export const EMAIL_VEHICLE_PHOTO = { path: '/media/email-vehicle.jpg', width: 120, height: 90 };

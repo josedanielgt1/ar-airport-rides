@@ -45,8 +45,8 @@ test('limpieza: placa en mayúsculas con espacio, una línea, límites y caracte
 });
 
 test('valores por defecto: descripción de config en el idioma del pasajero y placa solo del entorno', () => {
-  assert.deepEqual(vehicleDefaults({}, 'en'), { description: VEHICLE_DEFAULT.en, plate: '' }, 'sin VEHICLE_PLATE no hay placa');
-  assert.deepEqual(vehicleDefaults({ VEHICLE_PLATE: PLATE }, 'es'), { description: 'Ford Expedition XLT negra', plate: 'TST 1234' });
+  assert.deepEqual(vehicleDefaults({}, 'en'), { description: VEHICLE_DEFAULT.en, plate: '', driver: 'Abraham Rojas' }, 'sin VEHICLE_PLATE no hay placa');
+  assert.deepEqual(vehicleDefaults({ VEHICLE_PLATE: PLATE }, 'es'), { description: 'Ford Expedition XLT negra', plate: 'TST 1234', driver: 'Abraham Rojas' });
   assert.equal(vehicleDefaults({ VEHICLE_DESCRIPTION: 'White Chevy Suburban' }, 'es').description, 'White Chevy Suburban', 'VEHICLE_DESCRIPTION pisa el default');
   assert.equal(vehicleDefaults({ VEHICLE_DESCRIPTION: '<b>x</b>' }, 'en').description, VEHICLE_DEFAULT.en, 'variable inválida se ignora');
   assert.equal(vehicleDefaults({ VEHICLE_PLATE: '<script>' }, 'en').plate, '', 'placa inválida se ignora');
@@ -56,8 +56,8 @@ test('valores por defecto: descripción de config en el idioma del pasajero y pl
   assert.equal(vehicleText({ description: 'Black Ford Expedition XLT', plate: '' }, 'en'), 'Black Ford Expedition XLT');
   assert.equal(vehicleText({ description: '', plate: '' }, 'en'), '');
 
-  assert.deepEqual(vehicleFromForm({}, { VEHICLE_PLATE: PLATE }, 'en').vehicle, { description: VEHICLE_DEFAULT.en, plate: 'TST 1234' }, 'campo ausente → default');
-  assert.deepEqual(vehicleFromForm({ vehicle: '', plate: '' }, { VEHICLE_PLATE: PLATE }, 'en').vehicle, { description: '', plate: '' }, 'campo vacío → se respeta');
+  assert.deepEqual(vehicleFromForm({}, { VEHICLE_PLATE: PLATE }, 'en').vehicle, { description: VEHICLE_DEFAULT.en, plate: 'TST 1234', driver: 'Abraham Rojas' }, 'campo ausente → default');
+  assert.deepEqual(vehicleFromForm({ vehicle: '', plate: '', driver: '' }, { VEHICLE_PLATE: PLATE }, 'en').vehicle, { description: '', plate: '', driver: '' }, 'campo vacío → se respeta');
 });
 
 test('correo al pasajero: línea "Your ride" en el boleto y en el texto plano, en ambos idiomas', () => {
