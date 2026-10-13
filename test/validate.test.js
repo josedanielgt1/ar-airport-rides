@@ -1,6 +1,18 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validateReservation, isSpam, escapeHtml, todayIn, shiftDate, LIMITS } from '../src/lib/validate.js';
+import {
+  validateReservation,
+  isSpam,
+  escapeHtml,
+  todayIn,
+  shiftDate,
+  LIMITS,
+  isBlockedEmailDomain,
+  DISPOSABLE_EMAIL_DOMAINS,
+  filledTooFast,
+  MIN_FILL_MS,
+  plainInput,
+} from '../src/lib/validate.js';
 
 const IDS = ['city', 'airport', 'door', 'events', 'corporate', 'hourly'];
 const TODAY = '2026-10-01';
@@ -119,4 +131,83 @@ test('correo del pasajero: obligatorio, con formato prudente y sin inyección de
     const r = validateReservation({ ...valid(), email }, { serviceIds: IDS, today: TODAY });
     assert.ok(r.errors.email, email);
   }
+});
+
+test('correo: un solo destinatario, sin puntos raros ni dominios mal formados', () => {
+  const bad = [
+    'a@example.com;b@example.com',
+    'a@example.com b@example.com',
+    '.ana@example.com',
+    'ana.@example.com',
+    'an..a@example.com',
+    'ana@-example.com',
+    'ana@example-.com',
+    'ana@example..com',
+    'ana@example.c0m',
+    'ana@[127.0.0.1]',
+    '"ana"@example.com',
+    'ana@example.com\nBcc: x@example.com',
+  ];
+  for (const email of bad) {
+    const r = validateReservation({ ...valid(), email }, { serviceIds: IDS, today: TODAY });
+    assert.equal(r.errors.email, 'email', email);
+  }
+  for (const email of ['ana@example.com', 'o\'brien@example.co.uk'.replace("'", ''), 'a_b-c%d@sub.example.travel']) {
+    const r = validateReservation({ ...valid(), email }, { serviceIds: IDS, today: TODAY });
+    assert.equal(r.errors.email, undefined, email);
+  }
+});
+
+test('correo desechable: lista pequeña y configurable (incluye subdominios)', () => {
+  assert.ok(DISPOSABLE_EMAIL_DOMAINS.length > 5 && DISPOSABLE_EMAIL_DOMAINS.length < 50);
+  assert.equal(isBlockedEmailDomain('x@mailinator.com'), true);
+  assert.equal(isBlockedEmailDomain('x@eu.Mailinator.com'), true);
+  assert.equal(isBlockedEmailDomain('x@notmailinator.com'), false);
+  const r = validateReservation({ ...valid(), email: 'bot@yopmail.com' }, { serviceIds: IDS, today: TODAY });
+  assert.equal(r.errors.email, 'email');
+  const custom = validateReservation({ ...valid(), email: 'bot@yopmail.com' }, { serviceIds: IDS, today: TODAY, blockedEmailDomains: [] });
+  assert.equal(custom.errors.email, undefined, 'la lista se puede vaciar o cambiar');
+  const other = validateReservation({ ...valid(), email: 'a@spam.test' }, { serviceIds: IDS, today: TODAY, blockedEmailDomains: ['spam.test'] });
+  assert.equal(other.errors.email, 'email');
+});
+
+test('quita caracteres invisibles y de control bidireccional (SEC-11)', () => {
+  const rlo = String.fromCharCode(0x202e);
+  const zw = String.fromCharCode(0x200b);
+  const bom = String.fromCharCode(0xfeff);
+  const iso = String.fromCharCode(0x2066);
+  const r = validateReservation(
+    { ...valid(), name: `Ana${zw} ${rlo}López${bom}`, origin: `${iso}Downtown Austin`, notes: `pay${rlo}gpj.exe` },
+    { serviceIds: IDS, today: TODAY },
+  );
+  assert.equal(r.ok, true, JSON.stringify(r.errors));
+  assert.equal(r.data.name, 'Ana López');
+  assert.equal(r.data.origin, 'Downtown Austin');
+  assert.equal(r.data.notes, 'paygpj.exe');
+});
+
+test('tiempo mínimo de llenado: solo juzga si llega la cabecera', () => {
+  assert.equal(filledTooFast(undefined), false, 'sin cabecera (sin JS o versión anterior): no se descarta');
+  assert.equal(filledTooFast(''), false);
+  assert.equal(filledTooFast('0'), true);
+  assert.equal(filledTooFast(String(MIN_FILL_MS - 1)), true);
+  assert.equal(filledTooFast(String(MIN_FILL_MS)), false);
+  assert.equal(filledTooFast('600000'), false);
+  assert.equal(filledTooFast('-5'), true);
+  assert.equal(filledTooFast('1e9'), true);
+});
+
+test('plainInput: objeto plano con valores simples; anidados, arreglos o enormes → null', () => {
+  assert.deepEqual(plainInput({ name: 'Ana', passengers: 2, ok: true, nada: null }), { name: 'Ana', passengers: '2', ok: 'true' });
+  assert.equal(plainInput({ name: { a: 1 } }), null);
+  assert.equal(plainInput({ name: ['a'] }), null);
+  assert.equal(plainInput([]), null);
+  assert.equal(plainInput('texto'), null);
+  assert.equal(plainInput(null), null);
+  assert.equal(plainInput({ notes: 'x'.repeat(2001) }), null);
+  assert.equal(plainInput(Object.fromEntries(Array.from({ length: 31 }, (_, i) => [`k${i}`, '1']))), null);
+  assert.equal(plainInput(new Date()), null);
+  const polluted = plainInput(JSON.parse('{"__proto__": "x", "name": "Ana"}'));
+  assert.deepEqual(polluted, { name: 'Ana' });
+  assert.equal(Object.getPrototypeOf(polluted), Object.prototype);
 });

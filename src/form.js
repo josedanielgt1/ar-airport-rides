@@ -29,6 +29,7 @@ export function initForm() {
   if (!form) return;
 
   form.noValidate = true; // la validación la hace este módulo, con mensajes propios en EN/ES
+  const readyAt = Date.now(); // antiabuso: el servidor descarta envíos hechos demasiado rápido (bots)
   const submit = form.querySelector('.form__submit');
   const status = form.querySelector('.form__status');
   const result = form.querySelector('.form__result');
@@ -156,7 +157,11 @@ export function initForm() {
     try {
       const res = await fetch(ENDPOINT, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'X-Form-Elapsed': String(Math.max(0, Date.now() - readyAt)),
+        },
         body: JSON.stringify(raw),
       });
       const body = await res.json().catch(() => ({}));
