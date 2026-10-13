@@ -212,32 +212,59 @@
         </div>
       </section>
 
-      <!-- Vehículo. TODO(cliente): reemplazar por fotos reales de su camioneta (hoy: primer frame del video, vista frontal; el hero termina en el perfil). -->
+      <!-- Vehículo: fotos reales de la camioneta del cliente (Ford Expedition XLT negra). Nunca publicar la placa. -->
       <section class="vehicle" id="vehicle" aria-labelledby="vehicle-title">
         <div class="vehicle__inner">
           <figure class="vehicle__media">
             <!--
-              Foto de referencia (Wikimedia Commons, CC0; crédito en el footer, src/data/credits.json).
-              TODO(cliente): reemplazar por fotos propias de su camioneta (mismas rutas vehicle-front.webp / .jpg).
-              Fondo recortado y pasado a negro (se funde con la página, sin máscara).
+              Fotos propias del cliente (autoriza mostrar marca y modelo). Fondo recortado y pasado a negro
+              (se funde con la página). El detalle del emblema está recortado por encima de la placa.
             -->
             <picture>
               <source type="image/webp" srcset="/media/vehicle-front.webp" />
               <img
                 class="vehicle__img"
                 src="/media/vehicle-front.jpg"
-                width="1066"
-                height="646"
+                width="1560"
+                height="900"
                 loading="lazy"
                 decoding="async"
-                alt="Black full-size SUV, front three-quarter view."
+                alt="Black Ford Expedition, front three-quarter view."
                 data-i18n-attr="alt:vehicle.alt"
               />
             </picture>
+            <div class="vehicle__thumbs">
+              <picture>
+                <source type="image/webp" srcset="/media/vehicle-rear.webp" />
+                <img
+                  class="vehicle__thumb"
+                  src="/media/vehicle-rear.jpg"
+                  width="960"
+                  height="720"
+                  loading="lazy"
+                  decoding="async"
+                  alt="Black Ford Expedition XLT, rear three-quarter view."
+                  data-i18n-attr="alt:vehicle.altRear"
+                />
+              </picture>
+              <picture>
+                <source type="image/webp" srcset="/media/vehicle-badge.webp" />
+                <img
+                  class="vehicle__thumb"
+                  src="/media/vehicle-badge.jpg"
+                  width="720"
+                  height="540"
+                  loading="lazy"
+                  decoding="async"
+                  alt="Ford emblem and Expedition lettering on the tailgate."
+                  data-i18n-attr="alt:vehicle.altBadge"
+                />
+              </picture>
+            </div>
           </figure>
           <div class="vehicle__copy">
             <h2 class="section-title" id="vehicle-title" data-i18n="vehicle.title">The vehicle.</h2>
-            <p class="section-sub" data-i18n="vehicle.text">A full-size luxury SUV with room for you and your luggage.</p>
+            <p class="section-sub" data-i18n="vehicle.text">Ford Expedition — a full-size luxury SUV with room for you and your luggage.</p>
             <!-- Amenidades desde src/data/amenities.json: solo las confirmed: true. -->
             <!-- amenities:list -->
           </div>
@@ -461,7 +488,7 @@
           <a href="terms/" data-i18n="legal.termsShort">Terms</a>
         </nav>
         <p class="site-footer__legal">&copy; <span data-year>@@year@@</span> AR Airport Rides</p>
-        <!-- Créditos de fotos de terceros (src/data/credits.json). TODO(cliente): quitar al usar fotos propias. -->
+        <!-- Créditos de fotos de terceros (src/data/credits.json). Hoy vacío: todas las fotos son del cliente. -->
         <!-- credits:list -->
       </div>
     </footer>
