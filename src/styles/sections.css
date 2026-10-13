@@ -45,8 +45,31 @@
 .vehicle__img {
   width: 100%;
   height: auto;
-  aspect-ratio: 1066 / 646;
+  aspect-ratio: 1560 / 900;
   object-fit: contain;
+}
+
+/* Dos detalles bajo la foto principal (trasera 3/4 y emblema). Sin bordes: se funden con el negro. */
+.vehicle__thumbs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+  padding-inline: var(--gutter);
+}
+
+.vehicle__thumb {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+@media (min-width: 64rem) {
+  .vehicle__thumbs {
+    padding-inline: 0;
+  }
 }
 
 .vehicle__amenities-label {

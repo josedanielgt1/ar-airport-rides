@@ -43,7 +43,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 1. **Hero:** video de fondo + título + subtítulo con botón "Reserve on WhatsApp" y el teléfono "737-529-1720 · 24/7" (enlace tel:) al lado. Al salir del hero, el botón de WhatsApp pasa al header fijo (escritorio ≥ 1024 px) o a una barra inferior (móvil/tablet, con safe-area; se aparta mientras el formulario está en pantalla). Escritorio ≥ 1280 px: titular a la izquierda, camioneta a la derecha (~50 % del ancho) con la línea de las ruedas en la línea base del último renglón, línea de carretera dorada de 1 px y resplandor radial estático; alto máximo del hero 860 px.
 2. **Servicios:** lista (no tarjetas) que se "enciende" al pasar el barrido de luz de la transición "carretera de noche". Un solo revelado de grupo, sin hover por fila.
 3. **Área de servicio:** diagrama esquemático (no a escala) de la I-35 con US 183, SH 130, US 290 y SH 71, ciudades que se encienden con el scroll y lista en texto. En escritorio, título y lista quedan sticky. Etiquetas del mapa ≥ 12 px reales en móvil.
-4. **Vehículo:** `public/media/vehicle-front.webp` + `.jpg` de respaldo (hoy: foto de referencia "23 Ford Expedition Limited", HJUdall, CC0, Wikimedia Commons; crédito en el footer desde `src/data/credits.json`; viñeta oscura porque el fondo no es negro; TODO(cliente): fotos propias) y texto "full-size luxury SUV with room for you and your luggage". Amenidades en `src/data/amenities.json` con `confirmed`: solo se muestran las `true` (hoy ninguna).
+4. **Vehículo:** fotos reales de la camioneta del cliente, **Ford Expedition XLT negra** (el dueño autoriza mostrar marca y modelo). Foto principal `public/media/vehicle-front.webp` + `.jpg` (frente 3/4, recortada sobre `#000`) y dos detalles debajo: `vehicle-rear` (trasera 3/4, recortada sobre negro) y `vehicle-badge` (emblema Ford + letras EXPEDITION, recortado por encima de la placa). Texto "Ford Expedition — a full-size luxury SUV with room for you and your luggage". Amenidades en `src/data/amenities.json` con `confirmed`: solo se muestran las `true` (hoy ninguna).
 5. **Por qué elegirnos:** 3 o 4 puntos cortos (puntualidad, privacidad, trato, experiencia).
 6. **Reserva:** formulario.
 7. **Footer:** teléfono, correo, WhatsApp (los pagos ya no van aquí).
@@ -77,8 +77,9 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 - Carpeta: `public/media/`.
 - Solo `hero.mp4` (H.264, 4:3), sin audio. Objetivo: ≤ 3 MB en móvil. Sin webm (pesaba más que el mp4).
 - `poster.jpg` = **primer frame del video** (solo se ve mientras carga) y `hero-last.jpg` = último frame.
-- Vehículo: `public/media/vehicle-front.webp` + `.jpg`. Fotos de terceros solo CC0, dominio público o CC BY (nunca BY-SA/NC/ND, concesionarios, Ford ni bancos de pago) y siempre con crédito en `src/data/credits.json`.
-- El clip es un arco de cámara de frente a perfil (camioneta quieta, con lluvia) que termina sobre negro puro: el hero usa fondo `#000`. **No usar `loop`**: se vería el salto. Reproducir una vez y dejar el último frame. Con `prefers-reduced-motion` o modo ahorro de datos (`navigator.connection.saveData`) no cargar el video: mostrar `hero-last.jpg` con título y CTA visibles.
+- Vehículo: `vehicle-front`, `vehicle-rear` y `vehicle-badge` (`.webp` + `.jpg`), fotos del cliente. Si algún día se usan fotos de terceros: solo CC0, dominio público o CC BY (nunca BY-SA/NC/ND, concesionarios, Ford ni bancos de pago) y siempre con crédito en `src/data/credits.json` (hoy vacío; el footer no muestra nada).
+- **PLACA: nunca debe verse en ninguna imagen ni frame publicado.** Las fotos originales del cliente (`demo-video/fotos-cliente/`, fuera del repo) nunca van a `public/` ni al repo. Fotos con placa visible solo se usan recortadas por encima/al lado de la placa (sin sus píxeles) y verificando con zoom. Scripts de edición en `demo-video/fotos-reales/scripts/` (fuera del repo).
+- El clip (7 s, 1280×960, 24 fps, ~0,8 MB) se hizo con la foto real del cliente (frente 3/4 sin placa visible, `exp2`): camioneta recortada sobre negro puro, movimiento de cámara lento del detalle del faro a la vista completa (la cámara se detiene a los 5,6 s), gradación sobria y un barrido de luz cálida muy tenue. Sin IA y sin audio. Composición final: camioneta en x 18,09 %–81,92 %, y 24 %–71,35 % (rueda delantera = punto más bajo); `hero.css` usa esas cifras (`--car-l`, `--car-w`). Script: `demo-video/fotos-reales/scripts/hero.py`. El hero usa fondo `#000`. **No usar `loop`**: se vería el salto. Reproducir una vez y dejar el último frame. Con `prefers-reduced-motion` o modo ahorro de datos (`navigator.connection.saveData`) no cargar el video: mostrar `hero-last.jpg` con título y CTA visibles.
 - Título y CTA aparecen en `ended`, a los 4.5 s, si `play()` falla o si hay error (lo que ocurra primero). Sin JS, todo visible.
 - Etiqueta: `<video muted playsinline poster="/media/poster.jpg">`; la fuente `mp4` y el autoplay los agrega JS solo si procede.
 - Un solo video en toda la página. El resto, animaciones ligeras con CSS/GSAP.
@@ -112,10 +113,9 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 
 ## Pendientes (fuera del código)
 - Confirmar con el cliente: ciudades finales, servicios reales, amenidades del vehículo, número de WhatsApp y si mantiene larga distancia.
-- Fotos reales de la camioneta del cliente (las imágenes actuales del proyecto parecen de catálogo y son solo de referencia). Reemplazarlas antes de publicar.
+- Más fotos del cliente, si quiere (ideal: perfil lateral limpio, de noche o con fondo despejado, sin placa visible) para mejorar el hero y la galería.
 - Archivo del logo AR en SVG.
 - Dominio propio y correo con dominio (`reservas@...`).
-- El video se generó con el plan gratuito de Higgsfield, que no incluye uso comercial. Regenerarlo o descargarlo con un plan que lo permita antes de publicar.
 - Tarjeta física: QR en blanco o crema sobre fondo oscuro (el dorado escanea mal), mínimo 2 cm, margen libre y prueba de escaneo antes de imprimir.
 
 - Cabeceras de seguridad y CSP en ercel.json. Los 2 scripts en línea de index.html están permitidos por hash: si se editan, corre 

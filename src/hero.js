@@ -7,7 +7,7 @@ gsap.registerPlugin(SplitText);
 const VIDEO_SRC = `${import.meta.env.BASE_URL}media/hero.mp4`;
 const STILL_POSTER = `${import.meta.env.BASE_URL}media/hero-last.jpg`;
 
-// Tiempos en segundos del video (el clip dura ~5,2 s).
+// Tiempos en segundos del video (el clip dura 7 s; la cámara se detiene a los 5,6 s).
 const LINE_AT = 2.0; // primera línea del titular
 const LINE_GAP = 0.45; // escalonado entre líneas
 const META_AT = 3.4; // subtítulo + botón y reflejo; todo termina hacia 4,2 s
