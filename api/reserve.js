@@ -12,8 +12,8 @@
   2. Mismo origen (CSRF): Sec-Fetch-Site / Origin / Referer, ver sameOriginRequest en src/lib/ratelimit.js.
   3. Límite por IP (IP que pone Vercel, nunca X-Forwarded-For del cliente).
   4. Forma del cuerpo: objeto plano, valores simples y acotados (nada anidado).
-  5. Bots: honeypot "company" y tiempo mínimo de llenado (cabecera X-Form-Elapsed). Reciben EXACTAMENTE la
-     misma respuesta que una reserva real y no se envía nada.
+  5. Bots: honeypot "hp_trap" y tiempo mínimo de llenado (cabecera X-Form-Elapsed). Reciben un error 400
+     "verify" (visible para una persona que caiga por error) y no se envía nada.
   6. Límite por correo y por teléfono del pasajero, y tope global de envíos de la instancia.
   Los límites viven en memoria de la instancia ("mejor esfuerzo"). La capa fuerte es una regla de Rate
   Limiting en Vercel Firewall sobre /api/reserve (ver informe de seguridad, SEC-02).
@@ -49,8 +49,6 @@ export default async function handler(req, res) {
   };
   // Respuesta de error genérica: JSON para fetch, redirección al ancla de error para el formulario sin JS.
   const reject = (status, error) => (wantsJson ? json(status, { ok: false, error }) : redirect('reserve-error'));
-  // Lo que ve un bot descartado: idéntico a una reserva aceptada.
-  const fakeSent = () => (wantsJson ? json(200, { ok: true }) : redirect('reserve-sent'));
 
   try {
     if (req.method !== 'POST') {
@@ -86,7 +84,9 @@ export default async function handler(req, res) {
     const input = plainInput(parseBody(raw, isJson ? 'application/json' : type));
     if (!input) return reject(400, 'invalid_request');
 
-    if (isSpam(input) || filledTooFast(headers['x-form-elapsed'])) return fakeSent();
+    // Nunca se descarta en silencio: si por error una persona cae aquí (autorrelleno, envío muy rápido),
+    // ve un error visible y puede reintentar o contactar por llamada/WhatsApp. No se envía correo.
+    if (isSpam(input) || filledTooFast(headers['x-form-elapsed'])) return reject(400, 'verify');
 
     // Límites por pasajero y tope global: solo para solicitudes que de verdad generarían un correo.
     const check = validateReservation(input, { serviceIds: SERVICE_IDS });

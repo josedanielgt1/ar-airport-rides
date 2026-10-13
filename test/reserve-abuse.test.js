@@ -36,7 +36,7 @@ const formFields = (extra = {}) => {
     destination: 'AUS',
     passengers: '2',
     notes: '',
-    company: '',
+    hp_trap: '',
     lang: 'es',
     ref: 'card',
     ...extra,
@@ -258,7 +258,7 @@ test('IP falsificada en X-Forwarded-For no esquiva el límite (solo cuenta la IP
 
 test('las solicitudes inválidas y de bots también gastan el cupo de la IP', async () => {
   const ip = '192.0.2.88';
-  for (let i = 0; i < 5; i++) await call({ headers: browserHeaders({ 'x-real-ip': ip }), body: formFields({ company: 'bot' }) });
+  for (let i = 0; i < 5; i++) await call({ headers: browserHeaders({ 'x-real-ip': ip }), body: formFields({ hp_trap: 'bot' }) });
   const r = await call({ headers: browserHeaders({ 'x-real-ip': ip }) });
   assert.equal(r.status, 429);
   assert.equal(sent.length, 0);
@@ -315,25 +315,31 @@ test('claves normalizadas y limitador sin vaciado global (SEC-12)', () => {
 
 /* ---------- Honeypot y tiempo mínimo ---------- */
 
-test('honeypot y envío demasiado rápido: misma respuesta que una reserva real, sin correo', async () => {
+test('honeypot y envío demasiado rápido: error VISIBLE (nunca éxito falso), sin correo', async () => {
   const real = await call({ headers: browserHeaders({ 'x-real-ip': '203.0.113.20' }) });
+  assert.equal(real.status, 200);
   assert.equal(sent.length, 1);
-  const hp = await call({ headers: browserHeaders({ 'x-real-ip': '203.0.113.21' }), body: formFields({ company: 'ACME' }) });
+  const hp = await call({ headers: browserHeaders({ 'x-real-ip': '203.0.113.21' }), body: formFields({ hp_trap: 'ACME' }) });
   const fast = await call({ headers: browserHeaders({ 'x-real-ip': '203.0.113.22', 'x-form-elapsed': '300' }) });
   const junk = await call({ headers: browserHeaders({ 'x-real-ip': '203.0.113.23', 'x-form-elapsed': 'abc' }) });
   for (const bot of [hp, fast, junk]) {
-    assert.equal(bot.status, real.status);
-    assert.equal(bot.raw, real.raw);
-    assert.deepEqual(bot.headers, real.headers);
+    assert.equal(bot.status, 400);
+    assert.match(bot.raw, /"ok":false/);
+    assert.match(bot.raw, /"error":"verify"/);
   }
   assert.equal(sent.length, 1, 'los bots no generan correo');
 
+  // Un navegador que autorrellena "company" (campo que ya no existe) NO se confunde con un bot.
+  const autofill = await call({ headers: browserHeaders({ 'x-real-ip': '203.0.113.25' }), body: formFields({ company: 'Mi Empresa' }) });
+  assert.equal(autofill.status, 200);
+  assert.equal(sent.length, 2);
+
   const noJs = await call({
     headers: browserHeaders({ 'content-type': 'application/x-www-form-urlencoded', 'x-real-ip': '203.0.113.24' }),
-    body: new URLSearchParams(formFields({ company: 'x' })).toString(),
+    body: new URLSearchParams(formFields({ hp_trap: 'x' })).toString(),
   });
-  assert.equal(noJs.headers.location, '/#reserve-sent');
-  assert.equal(sent.length, 1);
+  assert.equal(noJs.headers.location, '/#reserve-error');
+  assert.equal(sent.length, 2);
 });
 
 /* ---------- Cuerpos enormes o anidados ---------- */

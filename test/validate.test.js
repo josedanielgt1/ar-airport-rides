@@ -104,9 +104,11 @@ test('quita caracteres de control', () => {
 });
 
 test('honeypot', () => {
-  assert.equal(isSpam({ company: '' }), false);
+  assert.equal(isSpam({ hp_trap: '' }), false);
   assert.equal(isSpam({}), false);
-  assert.equal(isSpam({ company: 'ACME' }), true);
+  assert.equal(isSpam({ hp_trap: 'ACME' }), true);
+  // "company" lo rellena el autorrelleno del navegador: ya no cuenta como señal de bot.
+  assert.equal(isSpam({ company: 'ACME' }), false);
 });
 
 test('escapeHtml', () => {

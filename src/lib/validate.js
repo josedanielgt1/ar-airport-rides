@@ -161,8 +161,13 @@ export function validateReservation(input, { serviceIds, today, blockedEmailDoma
   return { ok: Object.keys(errors).length === 0, errors, data };
 }
 
-/** Honeypot: el campo "company" está oculto para personas; si trae texto, es un bot. */
-export const isSpam = (input) => oneLine(input?.company).length > 0;
+/**
+ * Honeypot: el campo "hp_trap" está oculto para personas; si trae texto, lo más probable es un bot.
+ * OJO: NO usar nombres que el autorrelleno del navegador reconozca (company, url, address...): Chrome
+ * los rellena aunque estén ocultos y se perdían reservas reales. Por eso el servidor ya no finge éxito
+ * con estos casos: devuelve un error visible para que una persona pueda reintentar.
+ */
+export const isSpam = (input) => oneLine(input?.hp_trap).length > 0;
 
 /**
  * Tiempo mínimo de llenado. El formulario con JS manda en la cabecera X-Form-Elapsed los milisegundos

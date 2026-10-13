@@ -37,13 +37,15 @@ const input = (extra = {}) => ({
 let ipSeq = 0;
 const ctx = (extra = {}) => ({ ip: `10.0.0.${++ipSeq}`, serviceIds: IDS, now: NOW, ...extra });
 
-test('honeypot: misma respuesta que un éxito real, sin enviar', async () => {
+test('honeypot: error visible (400 verify), nunca éxito falso, sin enviar', async () => {
   let calls = 0;
   const send = async () => (calls++, true);
-  const spam = await handleReservation(input({ company: 'bot' }), ctx({ send }));
+  const spam = await handleReservation(input({ hp_trap: 'bot' }), ctx({ send }));
   const real = await handleReservation(input(), ctx({ send }));
   assert.equal(calls, 1, 'solo el envío real llama a send');
-  assert.deepEqual(spam, real);
+  assert.equal(spam.status, 400);
+  assert.deepEqual(spam.body, { ok: false, error: 'verify' });
+  assert.equal(real.status, 200);
 });
 
 test('datos inválidos: 422 con errores por campo', async () => {
