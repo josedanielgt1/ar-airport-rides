@@ -4,12 +4,68 @@
   2) El servidor manda al pasajero un correo con la marca (en su idioma) con los QR de Venmo y Cash App
      generados desde las variables de entorno, y le deja una copia (BCC) al chofer.
   Sin base de datos: los datos de la reserva viajan cifrados dentro del enlace (src/lib/token.js).
+
+  Un enlace = un correo al pasajero (sin base de datos, de mejor esfuerzo):
+  - Cada envío lleva la cabecera Idempotency-Key de Resend derivada del enlace (sha256 de sus bytes). Resend
+    recuerda la clave 24 h: el mismo envío repetido no sale dos veces, y otro distinto (otra tarifa, o
+    rechazar después de confirmar) responde 409 → la página dice "Already sent".
+  - El enlace vence a las 24 h (TOKEN_TTL_MS), así que mientras es válido la clave sigue recordada.
+  - Límite real: depende de que Resend respete la clave. Una garantía fuerte de uso único necesita estado
+    propio (p. ej. Vercel KV / Upstash: SET used:<id> NX al enviar). Ver CLAUDE.md.
 */
 import { escapeHtml as e } from './validate.js';
-import { openToken, secretOk, siteUrl } from './token.js';
+import { openToken, secretStatus, secretsOf, siteUrl, tokenId, warnWeakSecret } from './token.js';
 import { payQrs, qrAttachments } from './qr.js';
 import { layout, eyebrow, goldButton, mapBlock, confirmedBadge, tripTicket, heading, paragraph, muted, sectionTitle, detailRows, highlight, paymentCards } from './email-ui.js';
-import { paymentOptions, confirmationMessage, sendWithResend, rateLimited, clock } from './reservation.js';
+import { paymentOptions, confirmationMessage, headerSafe, rateLimited, clock } from './reservation.js';
+
+/** Idempotency-Key para Resend: igual para todos los envíos del mismo enlace (≤ 256 caracteres). */
+export const idempotencyKeyFor = (token) => {
+  const id = tokenId(token);
+  return id ? `ar-confirm/${id}` : null;
+};
+
+/**
+ * Envía el correo al pasajero por la API REST de Resend con Idempotency-Key.
+ * Devuelve true (aceptado), { duplicate: true } (409: ese enlace ya envió otro correo, o hay un envío
+ * igual en curso) o false (error).
+ */
+export async function sendPassengerEmail({ apiKey, from, to, bcc }, { subject, text, html, replyTo, attachments, idempotencyKey }) {
+  const payload = { from: headerSafe(from), to: [headerSafe(to)], subject: headerSafe(subject), text, html };
+  if (replyTo) payload.reply_to = headerSafe(replyTo);
+  if (bcc) payload.bcc = [headerSafe(bcc)];
+  if (attachments?.length) payload.attachments = attachments;
+  const headers = { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' };
+  if (idempotencyKey) headers['Idempotency-Key'] = headerSafe(idempotencyKey);
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(10_000),
+  });
+  if (res.status === 409) return { duplicate: true };
+  if (!res.ok) console.error(`confirm: Resend respondió ${res.status}`);
+  return res.ok;
+}
+
+/**
+ * true si un POST viene de esta misma página (no de otro sitio). Usa Sec-Fetch-Site (todos los navegadores
+ * actuales). Como la página usa Referrer-Policy: no-referrer, el navegador manda `Origin: null` en sus propios
+ * POST, así que Origin solo se compara cuando trae un valor real. Sin ninguna de las dos cabeceras (navegador
+ * antiguo o cliente sin navegador) se permite: sin el enlace no se puede hacer nada de todos modos.
+ */
+export function sameOriginPost(headers = {}) {
+  const site = String(headers['sec-fetch-site'] ?? '').trim().toLowerCase();
+  if (site) return site === 'same-origin';
+  const origin = String(headers.origin ?? '').trim();
+  if (!origin || origin === 'null') return true;
+  const host = String(headers.host ?? headers['x-forwarded-host'] ?? '').split(',')[0].trim().toLowerCase();
+  try {
+    return Boolean(host) && new URL(origin).host.toLowerCase() === host;
+  } catch {
+    return false;
+  }
+}
 
 /** Tarifa escrita por el chofer → "$85.00", o null si no es un monto válido (hasta 5 cifras, 2 decimales). */
 export function parseFare(input) {
@@ -188,9 +244,10 @@ button{margin-top:18px;width:100%;background:#C9A24B;color:#000;border:0;border-
 const shell = (title, inner) =>
   `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer"><title>${e(title)}</title><style>${CSS}</style></head><body><main><p class="brand">AR <span style="font:12px Arial;letter-spacing:.3em;text-transform:uppercase;color:#F3EBDD">&nbsp;Airport Rides</span></p><div class="rule"></div>${inner}</main></body></html>`;
 
-const notice = (status, title, text) => ({
+const notice = (status, title, text, headers) => ({
   status,
   html: shell(title, `<p class="eyebrow">AR Airport Rides</p><h1>${e(title)}</h1><p class="muted">${e(text)}</p>`),
+  ...(headers ? { headers } : {}),
 });
 
 const inlineCids = (html, qr) =>
@@ -205,7 +262,7 @@ function previewView(data, token, { heading: title, summary, fields, sendLabel, 
 <form method="post" action="/api/confirm"><input type="hidden" name="t" value="${e(token)}">${fields}<input type="hidden" name="send" value="1">
 <button type="submit">${e(sendLabel)}</button></form>
 <p style="text-align:center;margin:16px 0 0"><a href="/api/confirm?t=${encodeURIComponent(token)}" style="color:#C9A24B">Back</a></p>
-<p class="muted" style="margin-top:12px">You get a copy (BCC) and their replies come to you.</p>`,
+<p class="muted" style="margin-top:12px">You get a copy (BCC) and their replies come to you. Each link sends only one email (confirmation or decline), so check it before sending.</p>`,
   );
 }
 
@@ -248,15 +305,26 @@ ${error ? `<p class="err" role="alert">${e(error)}</p>` : ''}
 /**
  * Procesa GET (muestra el formulario o la vista previa del rechazo) y POST (vista previa y envío).
  * @param {{ method?: string, query?: object, body?: object, ip?: string, env?: object,
- *           send?: Function, pay?: object, now?: Date }} req
- * @returns {Promise<{status:number, html:string}>}
+ *           headers?: Record<string,string>, send?: Function, pay?: object, now?: Date }} req
+ *   headers: cabeceras de la petición en minúsculas (para comprobar que el POST es del mismo sitio).
+ *   send(config, email): true = enviado, { duplicate: true } = ya enviado antes, false = error.
+ * @returns {Promise<{status:number, html:string, headers?:Record<string,string>}>}
  */
-export async function handleConfirm({ method = 'GET', query = {}, body = {}, ip, env = {}, send = sendWithResend, pay, now = new Date() } = {}) {
-  if (!secretOk(env)) return notice(503, 'Not available', 'Confirmation links are not set up yet.');
-  if (method !== 'GET' && method !== 'POST') return notice(405, 'Not allowed', 'This page only accepts GET and POST.');
+export async function handleConfirm({ method = 'GET', query = {}, body = {}, ip, env = {}, headers = {}, send = sendPassengerEmail, pay, now = new Date() } = {}) {
+  if (method !== 'GET' && method !== 'POST') return notice(405, 'Not allowed', 'This page only accepts GET and POST.', { Allow: 'GET, POST' });
+  warnWeakSecret(env);
+  const status = secretStatus(env);
+  if (status === 'short') {
+    return notice(503, 'Not available', 'Confirmation links are turned off until the site owner updates the security key. Reply to the passenger from the original email.');
+  }
+  if (status !== 'ok') return notice(503, 'Not available', 'Confirmation links are not set up yet.');
+
+  if (method === 'POST' && !sameOriginPost(headers)) {
+    return notice(403, 'Not allowed', 'Open the link from your reservation email and use the buttons on that page.');
+  }
 
   const token = String((method === 'POST' ? body.t : query.t) ?? '');
-  const data = openToken(token, env.CONFIRM_SECRET, now.getTime());
+  const data = openToken(token, secretsOf(env), now.getTime());
   if (!data || !data.email) return notice(410, 'Link expired', 'This link is invalid or has expired. Reply to the passenger from the original email instead.');
 
   const decline = String((method === 'POST' ? body.action : query.a) ?? '') === 'decline';
@@ -269,22 +337,43 @@ export async function handleConfirm({ method = 'GET', query = {}, body = {}, ip,
   if (rateLimited(`confirm:${ip}`, now.getTime())) return notice(429, 'Too many attempts', 'Please wait a few minutes and try again.');
 
   const config = { apiKey: env.RESEND_API_KEY, from: env.RESERVATION_FROM_EMAIL, to: data.email, bcc: env.RESERVATION_TO_EMAIL };
+  // Misma clave para confirmar y rechazar: un enlace solo puede mandar UN correo al pasajero.
+  const idempotencyKey = idempotencyKeyFor(token);
+  /** 'sent' | 'duplicate' | 'failed' */
   const deliver = async (email) => {
     try {
-      return (await send(config, { ...email, replyTo: env.RESERVATION_TO_EMAIL })) !== false;
+      const r = await send(config, { ...email, replyTo: env.RESERVATION_TO_EMAIL, idempotencyKey });
+      if (r === false) return 'failed';
+      if (r && typeof r === 'object' && r.duplicate) {
+        console.info('confirm: envío repetido bloqueado (Idempotency-Key)');
+        return 'duplicate';
+      }
+      return 'sent';
     } catch (err) {
       console.error(`confirm: error al enviar (${err?.name ?? 'Error'})`);
-      return false;
+      return 'failed';
     }
   };
-  const notSent = () => notice(502, 'Could not send', 'The email was not sent. Try again in a moment, or reply to the passenger from the original email.');
+  const ONE_EMAIL = 'This link sends only one email: opening it again will not send another.';
+  const after = (result, sentTitle, sentText) => {
+    if (result === 'failed') {
+      return notice(502, 'Could not send', 'The email was not sent. Try again in a moment, or reply to the passenger from the original email.');
+    }
+    if (result === 'duplicate') {
+      return notice(
+        409,
+        'Already sent',
+        `This link already sent an email to ${data.email}, so nothing new was sent. To change anything, reply to the passenger from the original reservation email.`,
+      );
+    }
+    return notice(200, sentTitle, `${sentText} ${ONE_EMAIL}`);
+  };
 
   if (decline) {
     if (!config.apiKey || !config.from) return notice(503, 'Not available', 'Email sending is not set up yet.');
     const email = declineEmail();
     if (!body.send) return { status: 200, html: declinePreview(data, token, email.html) };
-    if (!(await deliver(email))) return notSent();
-    return notice(200, 'Decline sent', `A polite note with a link to choose another time was sent to ${data.email}. You received a copy.`);
+    return after(await deliver(email), 'Decline sent', `A polite note with a link to choose another time was sent to ${data.email}. You received a copy.`);
   }
 
   const fare = parseFare(body.fare);
@@ -304,6 +393,5 @@ export async function handleConfirm({ method = 'GET', query = {}, body = {}, ip,
   }
 
   if (!body.send) return { status: 200, html: confirmPreview(data, token, fare, inlineCids(email.html, qr)) };
-  if (!(await deliver(email))) return notSent();
-  return notice(200, 'Confirmation sent', `${fare} · sent to ${data.email}. You received a copy.`);
+  return after(await deliver(email), 'Confirmation sent', `${fare} · sent to ${data.email}. You received a copy.`);
 }
