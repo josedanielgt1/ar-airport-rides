@@ -37,7 +37,7 @@ test('token: ida y vuelta, vencimiento y alteración', () => {
   assert.equal(data.email, 'ana@example.com');
   assert.equal(data.origin, TRIP.origin);
 
-  assert.equal(openToken(t, SECRET, NOW.getTime() + 15 * 86400000), null, 'vence a los 14 días');
+  assert.equal(openToken(t, SECRET, NOW.getTime() + 25 * 3600000), null, 'vence a las 24 h');
   assert.equal(openToken(t, 'otra-clave-distinta-0123456789', NOW.getTime()), null, 'otra clave no abre');
   const bad = t.slice(0, -4) + (t.endsWith('AAAA') ? 'BBBB' : 'AAAA');
   assert.equal(openToken(bad, SECRET, NOW.getTime()), null, 'alterado');

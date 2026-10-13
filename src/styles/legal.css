@@ -1,0 +1,59 @@
+/*
+  Avisos legales en la página principal (auditoría SEC-04): aviso de mapas/ubicación junto a
+  "Usar mi ubicación", consentimiento bajo "Enviar solicitud" y enlaces Privacidad · Términos del footer.
+  Discretos: texto pequeño en niebla, enlaces crema subrayados en dorado.
+*/
+
+.legal-note {
+  max-width: 60ch;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--c-mist);
+}
+
+.legal-note a,
+.site-footer__links a {
+  color: var(--c-cream);
+  text-decoration: underline;
+  text-decoration-color: rgb(201 162 75 / 0.6);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: color var(--t-fast) ease, text-decoration-color var(--t-fast) ease;
+}
+
+@media (hover: hover) {
+  .legal-note a:hover,
+  .site-footer__links a:hover {
+    color: var(--c-beam);
+    text-decoration-color: var(--c-beam);
+  }
+}
+
+/* Junto a los botones del mapa: un respiro arriba, sin competir con ellos. */
+.mapfield .legal-note {
+  margin-top: 0.25rem;
+}
+
+.form__consent {
+  margin-top: var(--s-3);
+}
+
+/* Footer: Privacidad · Términos. Objetivo táctil ≥ 44 px de alto. */
+.site-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--s-3);
+  font-size: var(--fs-sm);
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+@media (min-width: 80rem) {
+  .site-footer__links {
+    grid-column: 1 / -1;
+  }
+}

@@ -24,11 +24,14 @@ for (const k of Object.keys(en)) {
   }
 }
 
-// Claves usadas en el HTML.
-const html = read('index.html');
+// Claves usadas en el HTML (página principal y páginas legales).
 const used = new Set();
-for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) used.add(m[1]);
-for (const m of html.matchAll(/data-i18n-attr="[^:"]+:([^"]+)"/g)) used.add(m[1]);
+for (const page of ['index.html', 'privacy/index.html', 'terms/index.html']) {
+  const html = read(page);
+  for (const m of html.matchAll(/data-i18n="([^"]+)"/g)) used.add(m[1]);
+  for (const m of html.matchAll(/data-i18n-attr="[^:"]+:([^"]+)"/g)) used.add(m[1]);
+  for (const m of html.matchAll(/data-title-key="([^"]+)"/g)) used.add(m[1]);
+}
 
 // Claves usadas en el JS: t('clave') literales.
 const walk = (dir) =>
