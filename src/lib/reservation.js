@@ -198,11 +198,12 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     timeZoneName: 'short',
   }).format(now);
 
-  const service = serviceName(data.service);
+  // El servicio es opcional (el formulario ya no lo pide): sin él, el correo no inventa uno.
+  const service = data.service ? serviceName(data.service) : '';
   const rows = [
     ['Visitor language', LANG_NAME[data.lang] ?? data.lang],
     ['Source', SOURCE[data.ref] ?? data.ref],
-    ['Service', service],
+    ...(service ? [['Service', service]] : []),
     ['Date', `${longDate(data.date)} (${data.date})`],
     ['Time', data.time],
     ['Pickup', data.origin],
@@ -215,7 +216,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     ['Received', `${received} (America/Chicago)`],
   ];
 
-  const subject = headerSafe(`New ride request: ${service}, ${data.date} ${data.time}`);
+  const subject = headerSafe(`New ride request: ${service ? `${service}, ` : ''}${data.date} ${data.time}`);
 
   // Respuesta al pasajero: (1) confirmación con tarifa y QR enviada desde el servidor (si dio correo),
   // (2) mensaje listo para correo o SMS desde el teléfono del chofer. La tarifa queda como [FARE].
@@ -262,7 +263,7 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
           .join(' &middot; ')} &middot; editable when you confirm</p>`
       : '',
     eyebrow('New ride request'),
-    heading(service),
+    heading(service || 'Private ride'),
     highlight(longDate(data.date), data.time),
     `<p style="margin:14px 0 6px;font:16px/1.5 Arial,Helvetica,sans-serif;color:${C.cream}">${escapeHtml(data.origin)} <span style="color:${C.gold}">&rarr;</span> ${escapeHtml(data.destination)}</p>`,
     sectionTitle('Trip details'),

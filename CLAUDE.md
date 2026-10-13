@@ -55,7 +55,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 7. **Footer:** teléfono, correo, WhatsApp (los pagos ya no van aquí).
 
 ## Formulario de reserva
-- Campos: nombre, teléfono, correo (opcional), tipo de servicio, fecha, hora, origen, destino, pasajeros, notas (opcional).
+- Campos: nombre, teléfono, correo (opcional), fecha, hora, origen, destino, pasajeros, notas (opcional).
 - Al enviar: (a) POST a `/api/reserve` que manda el correo al cliente, y (b) abre un enlace `https://wa.me/<numero>?text=<mensaje prellenado>` en el idioma actual del visitante. Sin API de WhatsApp.
 - El correo llega siempre en formato fijo en inglés e indica el idioma del visitante.
 - Validación en cliente y servidor, campo honeypot anti-spam y límite básico de envíos.

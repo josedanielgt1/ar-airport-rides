@@ -91,6 +91,16 @@ test('correo en inglés con idioma, origen y hora de Chicago, y HTML escapado', 
   assert.ok(!html.includes('<b>Austin</b>'));
 });
 
+test('sin servicio (el formulario ya no lo pide): el correo no inventa uno', () => {
+  const data = { ...input(), passengers: 2, service: '' };
+  const { subject, text, html } = buildEmail(data, { serviceName: () => 'NO DEBE SALIR', now: NOW });
+  assert.equal(subject, `New ride request: ${TRIP_DATE} 07:30`);
+  assert.ok(!text.includes('Service:'));
+  assert.ok(!text.includes('NO DEBE SALIR') && !html.includes('NO DEBE SALIR'));
+  assert.ok(html.includes('Private ride'));
+  assert.match(text, /Pickup: /);
+});
+
 test('asunto y cabeceras sin saltos de línea (no se pueden inyectar cabeceras)', () => {
   const { subject, html } = buildEmail({ ...input(), passengers: 2 }, {
     serviceName: () => 'Airport\r\nBcc: victim@example.com',

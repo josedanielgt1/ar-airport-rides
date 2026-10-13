@@ -2,7 +2,6 @@ import services from './data/services.json';
 import { validateReservation, FIELDS } from './lib/validate.js';
 import { t, getLang, onLangChange } from './i18n/index.js';
 import { whatsappUrl } from './whatsapp.js';
-import { serviceName } from './content.js';
 import { getRef } from './ref.js';
 import { setSmsMessage } from './sms.js';
 
@@ -77,13 +76,11 @@ export function initForm() {
 
   // Mensaje (WhatsApp y SMS) en el idioma activo, con los datos de la solicitud.
   const bookingMessage = (data) => {
-    const lang = getLang();
     const lines = [
       t('wa.formIntro'),
       '',
       `${t('form.name')}: ${data.name}`,
       `${t('form.phone')}: ${data.phone}`,
-      `${t('form.service')}: ${serviceName(data.service, lang)}`,
       `${t('form.date')}: ${data.date}`,
       `${t('form.time')}: ${data.time}`,
       `${t('form.origin')}: ${data.origin}`,

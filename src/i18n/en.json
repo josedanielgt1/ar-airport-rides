@@ -33,8 +33,6 @@
   "form.name": "Full name",
   "form.phone": "Phone",
   "form.email": "Email",
-  "form.service": "Service",
-  "form.servicePlaceholder": "Choose a service",
   "form.date": "Date",
   "form.time": "Time",
   "form.origin": "Pickup address",

@@ -129,9 +129,10 @@ export function validateReservation(input, { serviceIds, today, blockedEmailDoma
     errors.email = 'email';
   }
 
+  // El tipo de servicio ya no se pide en el formulario (recogida y destino lo dicen todo): es opcional.
+  // Si llega (clientes antiguos o envíos directos), debe ser un id válido.
   data.service = oneLine(src.service);
-  if (!data.service) errors.service = 'service';
-  else if (!/^[a-z0-9-]{1,40}$/.test(data.service) || (serviceIds && !serviceIds.includes(data.service))) {
+  if (data.service && (!/^[a-z0-9-]{1,40}$/.test(data.service) || (serviceIds && !serviceIds.includes(data.service)))) {
     errors.service = 'service';
   }
 
