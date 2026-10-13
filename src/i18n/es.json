@@ -33,8 +33,6 @@
   "form.name": "Nombre completo",
   "form.phone": "Teléfono",
   "form.email": "Correo",
-  "form.service": "Servicio",
-  "form.servicePlaceholder": "Elige un servicio",
   "form.date": "Fecha",
   "form.time": "Hora",
   "form.origin": "Dirección de recogida",

@@ -48,8 +48,15 @@ test('marca los obligatorios vacíos', () => {
   for (const f of ['name', 'phone', 'date', 'time', 'origin', 'destination', 'passengers']) {
     assert.equal(r.errors[f], 'required', f);
   }
-  assert.equal(r.errors.service, 'service');
+  assert.equal(r.errors.service, undefined, 'el servicio ya no se pide: es opcional');
   assert.equal(r.errors.notes, undefined, 'notas es opcional');
+});
+
+test('sin servicio la solicitud es válida (el formulario ya no lo pide)', () => {
+  const { service, ...sinServicio } = valid();
+  const r = validateReservation(sinServicio, { serviceIds: IDS, today: TODAY });
+  assert.equal(r.ok, true);
+  assert.equal(r.data.service, '');
 });
 
 test('rechaza teléfonos inválidos', () => {

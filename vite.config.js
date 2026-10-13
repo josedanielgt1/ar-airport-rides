@@ -46,14 +46,6 @@ function servicesMarkup() {
     .join('\n            ');
 }
 
-/** <option> del selector de servicio del formulario (en inglés; se traducen en el navegador). */
-function serviceOptionsMarkup() {
-  const { items } = readData('services.json');
-  return items
-    .map((s) => `<option value="${esc(s.id)}">${esc(s.en.name)}</option>`)
-    .join('\n                  ');
-}
-
 /** Créditos de fotos de terceros (src/data/credits.json): "Photo: <autor>, <licencia>" con enlaces. */
 function creditsMarkup() {
   const { items } = readData('credits.json');
@@ -160,7 +152,6 @@ function dataMarkup() {
       html = html.replace(/@@(\w+)@@/g, (m, k) => (k in tokens ? esc(tokens[k]) : m));
       return html
         .replace('<!-- services:list -->', servicesMarkup())
-        .replace('<!-- form:services -->', serviceOptionsMarkup())
         .replace('<!-- vehicle:gallery -->', vehicle.gallery)
         .replace('<!-- amenities:list -->', vehicle.amenities)
         .replace('<!-- credits:list -->', creditsMarkup())
