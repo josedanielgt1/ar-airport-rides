@@ -1,5 +1,6 @@
 import services from './data/services.json';
 import amenities from './data/amenities.json';
+import vehiclePhotos from './data/vehicle-photos.json';
 import { getLang, onLangChange } from './i18n/index.js';
 
 /*
@@ -13,6 +14,8 @@ export function initContent() {
   const rows = document.querySelectorAll('.service[data-service]');
   const options = document.querySelectorAll('#f-service option[value]:not([value=""])');
   const amenityItems = document.querySelectorAll('[data-amenity]');
+  const photoById = new Map(vehiclePhotos.items.map((p) => [p.id, p]));
+  const photoItems = document.querySelectorAll('[data-photo]');
 
   const apply = (lang) => {
     rows.forEach((row) => {
@@ -28,12 +31,30 @@ export function initContent() {
     });
     amenityItems.forEach((li) => {
       const item = amenityById.get(li.dataset.amenity);
-      if (item) li.textContent = item[lang] ?? item.en;
+      const text = li.querySelector('.vehicle__amenity-text');
+      if (item && text) text.textContent = item[lang] ?? item.en;
+    });
+    photoItems.forEach((li) => {
+      const item = photoById.get(li.dataset.photo);
+      const img = li.querySelector('img');
+      if (item && img) img.alt = item.alt[lang] ?? item.alt.en;
     });
   };
 
   apply(getLang());
   onLangChange(apply);
+
+  // Galería en carrusel (móvil): solo cuando de verdad se desplaza entra en el orden de tabulación,
+  // para poder recorrerla con las flechas del teclado.
+  const gallery = document.querySelector('.vehicle__gallery');
+  if (gallery) {
+    const syncFocus = () => {
+      if (gallery.scrollWidth > gallery.clientWidth + 1) gallery.setAttribute('tabindex', '0');
+      else gallery.removeAttribute('tabindex');
+    };
+    syncFocus();
+    if ('ResizeObserver' in window) new ResizeObserver(syncFocus).observe(gallery);
+  }
 
   document.querySelectorAll('[data-year]').forEach((el) => (el.textContent = String(new Date().getFullYear())));
 }

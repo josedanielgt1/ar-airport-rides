@@ -18,16 +18,26 @@
 
 /* ---------- Vehículo ---------- */
 
+/*
+  Tres bloques con mucho aire entre sí (--v-gap, el doble del espacio interno):
+  1) foto principal sola y grande + texto; 2) galería de detalles (src/data/vehicle-photos.json);
+  3) fila de amenidades confirmadas (src/data/amenities.json). Sin animación de entrada.
+*/
 .vehicle {
-  padding: var(--s-6) var(--gutter);
+  --v-gap: clamp(4rem, 3rem + 5vw, 8rem);
+  --shot-gap: clamp(1.25rem, 0.5rem + 3.5vw, 4rem);
+  padding: var(--s-6) var(--gutter) var(--s-7);
   background: #000;
 }
 
 .vehicle__inner {
-  display: grid;
-  row-gap: var(--s-4);
   max-width: var(--content-max);
   margin-inline: auto;
+}
+
+.vehicle__lead {
+  display: grid;
+  row-gap: var(--s-4);
 }
 
 .vehicle__media {
@@ -49,16 +59,30 @@
   object-fit: contain;
 }
 
-/* Dos detalles bajo la foto principal (trasera 3/4 y emblema). Sin bordes: se funden con el negro. */
-.vehicle__thumbs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--s-2);
-  margin-top: var(--s-2);
-  padding-inline: var(--gutter);
+/* ---- Galería de detalles ---- */
+
+.vehicle__gallery {
+  margin-top: var(--v-gap);
 }
 
-.vehicle__thumb {
+.vehicle__gallery-list {
+  display: grid;
+  /* auto-fill: el ancho de cada foto no depende de cuántas haya (2 hoy; más cuando lleguen las del interior). */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: var(--shot-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Cada foto en su propio marco: misma proporción (4:3), filete dorado muy tenue y respiro interior. */
+.vehicle__shot {
+  margin: 0;
+  border: 1px solid rgb(201 162 75 / 0.16);
+  padding: clamp(0.5rem, 0.25rem + 0.8vw, 0.875rem);
+}
+
+.vehicle__shot-img {
   display: block;
   width: 100%;
   height: auto;
@@ -66,24 +90,92 @@
   object-fit: cover;
 }
 
-@media (min-width: 64rem) {
-  .vehicle__thumbs {
-    padding-inline: 0;
+/*
+  Móvil: carrusel horizontal con snap (la foto siguiente asoma). El desplazamiento queda dentro de la
+  galería (sale al borde de la pantalla, sin scroll horizontal de la página). Con 1 foto, sin carrusel.
+*/
+@media (max-width: 39.99rem) {
+  .vehicle__gallery {
+    margin-inline: calc(var(--gutter) * -1);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .vehicle__gallery::-webkit-scrollbar {
+    display: none;
+  }
+
+  .vehicle__gallery-list {
+    padding-inline: var(--gutter);
+  }
+
+  /* Cada foto ocupa ~80 % del ancho de la pantalla; la siguiente asoma a la derecha. */
+  .vehicle__gallery-list:not([data-count='1']) {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: min(80vw, 26rem);
+    gap: var(--s-3);
+    width: max-content;
+  }
+
+  .vehicle__shot {
+    scroll-snap-align: start;
+  }
+
+  .vehicle__gallery:focus-visible {
+    outline: 1px solid var(--c-gold);
+    outline-offset: -1px;
   }
 }
 
+/* ---- Amenidades ---- */
+
+.vehicle__extras {
+  margin-top: var(--v-gap);
+  padding-top: var(--s-5);
+  border-top: 1px solid rgb(201 162 75 / 0.18);
+}
+
 .vehicle__amenities-label {
-  margin-top: var(--s-4);
+  font-family: var(--ff-text);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--c-mist);
 }
 
 .vehicle__amenities {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
-  margin: var(--s-1) 0 0;
+  display: grid;
+  gap: var(--s-3);
+  margin: var(--s-4) 0 0;
   padding: 0;
   list-style: none;
+}
+
+.vehicle__amenity {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--c-cream);
+}
+
+.vehicle__amenity-icon {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  color: var(--c-gold);
+}
+
+@media (min-width: 40rem) {
+  .vehicle__amenities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3) clamp(2rem, 1rem + 4vw, 6rem);
+  }
 }
 
 /* Por qué elegirnos: ver why.css */
@@ -322,7 +414,7 @@
     font-size: var(--fs-2xl);
   }
 
-  .vehicle__inner {
+  .vehicle__lead {
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     column-gap: var(--s-6);
     align-items: center;
@@ -331,7 +423,7 @@
 
 /* Escritorio ancho: más espacio para la foto, texto a la derecha. */
 @media (min-width: 80rem) {
-  .vehicle__inner {
+  .vehicle__lead {
     grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
   }
 
