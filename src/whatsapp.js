@@ -29,7 +29,7 @@ export function initWhatsApp() {
     root.classList.add('is-past-hero');
   }
 
-  // Los botones redondos de contacto se esconden mientras el formulario est� en pantalla (estorban al llenarlo).
+  // Los botones redondos de contacto se esconden mientras el formulario está en pantalla (estorban al llenarlo).
   const reserve = document.getElementById('reserve');
   if (reserve) {
     new IntersectionObserver(([e]) => root.classList.toggle('at-form', e.isIntersecting), { threshold: 0.08 }).observe(reserve);
