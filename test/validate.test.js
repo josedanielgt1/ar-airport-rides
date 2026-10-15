@@ -30,6 +30,7 @@ const valid = () => ({
   notes: 'Two bags.\r\nFlight AA 123',
   lang: 'es',
   ref: 'card',
+  consent: 'yes',
 });
 
 test('acepta una solicitud válida y sanea los textos', () => {
@@ -57,6 +58,22 @@ test('sin servicio la solicitud es válida (el formulario ya no lo pide)', () =>
   const r = validateReservation(sinServicio, { serviceIds: IDS, today: TODAY });
   assert.equal(r.ok, true);
   assert.equal(r.data.service, '');
+});
+
+test('consentimiento: obligatorio; acepta "yes" (JS) y "on" (sin JS), nada más', () => {
+  const { consent, ...sin } = valid();
+  const none = validateReservation(sin, { serviceIds: IDS, today: TODAY });
+  assert.equal(none.ok, false);
+  assert.equal(none.errors.consent, 'consent');
+  for (const v of ['yes', 'on', 'true', ' YES ']) {
+    const r = validateReservation({ ...valid(), consent: v }, { serviceIds: IDS, today: TODAY });
+    assert.equal(r.ok, true, v);
+    assert.equal(r.data.consent, 'yes');
+  }
+  for (const v of ['', 'no', 'off', 'false', '0', '1', 'sí']) {
+    const r = validateReservation({ ...valid(), consent: v }, { serviceIds: IDS, today: TODAY });
+    assert.equal(r.errors.consent, 'consent', v);
+  }
 });
 
 test('rechaza teléfonos inválidos', () => {

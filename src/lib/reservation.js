@@ -23,6 +23,8 @@ import {
 } from './email-ui.js';
 
 const TZ = 'America/Chicago';
+// Versión de los textos legales que aceptó el pasajero (privacy/ y terms/). Cambiarla cuando se editen.
+export const LEGAL_VERSION = '2026-10-14';
 const RATE = { windowMs: 10 * 60 * 1000, max: 5 };
 const hits = new Map(); // ip → marcas de tiempo (memoria de la instancia: límite de mejor esfuerzo)
 
@@ -214,6 +216,13 @@ export function buildEmail(data, { serviceName = (id) => id, now = new Date(), p
     ['Email', data.email || '—'],
     ['Notes', data.notes || '—'],
     ['Received', `${received} (America/Chicago)`],
+    // Registro de la aceptación: el servidor ya exigió la casilla; el correo deja constancia con fecha, hora y versión.
+    [
+      'Consent',
+      data.consent === 'yes'
+        ? `Accepted the Terms of Service and Privacy Policy (version ${LEGAL_VERSION}) on ${received}, in ${LANG_NAME[data.lang] ?? data.lang}`
+        : 'Not recorded',
+    ],
   ];
 
   const subject = headerSafe(`New ride request: ${service ? `${service}, ` : ''}${data.date} ${data.time}`);

@@ -39,6 +39,7 @@ const formFields = (extra = {}) => {
     hp_trap: '',
     lang: 'es',
     ref: 'card',
+    consent: 'yes',
     ...extra,
   };
 };

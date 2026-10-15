@@ -128,7 +128,7 @@ test('secreto corto (< 32): falla cerrado sin romper las reservas', async () => 
   // La reserva al chofer SIGUE enviándose, solo que sin el botón de confirmar.
   let email;
   const res = await handleReservation(
-    { name: 'Ana', email: 'ana@example.com', phone: '737-529-1720', service: 'airport', date: '2099-01-10', time: '07:30', origin: 'A', destination: 'B', passengers: '2', notes: '', lang: 'en', ref: 'direct' },
+    { name: 'Ana', email: 'ana@example.com', phone: '737-529-1720', service: 'airport', date: '2099-01-10', time: '07:30', origin: 'A', destination: 'B', passengers: '2', notes: '', lang: 'en', ref: 'direct', consent: 'yes' },
     { ip: ip(), serviceIds: ['airport'], now: NOW, env: corto, send: async (_c, e) => ((email = e), true) },
   );
   assert.equal(res.status, 200);

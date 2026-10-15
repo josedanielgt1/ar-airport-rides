@@ -98,8 +98,10 @@
   "legal.navLabel": "Legal",
   "legal.back": "Back to AR Airport Rides",
   "legal.skip": "Skip to content",
-  "form.consentPre": "By sending, you agree to our",
+  "form.consentPre": "I agree to the",
   "form.consentAnd": "and",
+  "form.consentPost": ", and to be contacted about my ride by email, text or phone.",
+  "form.error.consent": "Please check this box to send your request.",
   "form.mapsNotice": "Address suggestions and the map use third-party services (Photon and OpenStreetMap). If you tap “Use my location”, your browser asks for permission and your location is used only to place the pickup pin.",
   "form.mapsNoticeLink": "How we use your data"
 }

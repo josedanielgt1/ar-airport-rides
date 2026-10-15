@@ -127,7 +127,7 @@ test('correo al chofer: botón de confirmación solo con enlace; sin QR (el chof
 test('handleReservation: genera el enlace (sin QR) solo si hay correo, clave y sitio', async () => {
   let email;
   const send = async (_c, e) => ((email = e), true);
-  const base = { phone: '737-529-1720', service: 'airport', date: '2099-01-10', time: '07:30', origin: 'A', destination: 'B', passengers: '2', notes: '', lang: 'en', ref: 'direct' };
+  const base = { phone: '737-529-1720', service: 'airport', date: '2099-01-10', time: '07:30', origin: 'A', destination: 'B', passengers: '2', notes: '', lang: 'en', ref: 'direct', consent: 'yes' };
   const ctx = (env) => ({ ip: ip(), serviceIds: ['airport'], now: NOW, send, env: { ...env, PAY_VENMO_URL: PAY.venmo, PAY_CASHAPP_URL: PAY.cashapp } });
 
   await handleReservation({ ...base, name: 'Ana', email: 'ana@example.com' }, ctx(ENV));

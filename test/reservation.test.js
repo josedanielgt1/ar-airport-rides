@@ -12,6 +12,7 @@ import {
   smsLink,
   smsNumber,
   sendWithResend,
+  LEGAL_VERSION,
 } from '../src/lib/reservation.js';
 import handler from '../api/reserve.js';
 
@@ -32,6 +33,7 @@ const input = (extra = {}) => ({
   notes: '',
   lang: 'es',
   ref: 'card',
+  consent: 'yes',
   ...extra,
 });
 let ipSeq = 0;
@@ -46,6 +48,30 @@ test('honeypot: error visible (400 verify), nunca éxito falso, sin enviar', asy
   assert.equal(spam.status, 400);
   assert.deepEqual(spam.body, { ok: false, error: 'verify' });
   assert.equal(real.status, 200);
+});
+
+test('sin la casilla de consentimiento: 422 y no se envía nada', async () => {
+  let calls = 0;
+  const send = async () => (calls++, true);
+  for (const consent of [undefined, '', 'no']) {
+    const r = await handleReservation(input({ consent }), ctx({ send }));
+    assert.equal(r.status, 422);
+    assert.equal(r.body.errors.consent, 'consent');
+  }
+  assert.equal(calls, 0);
+});
+
+test('el correo al chofer deja el registro de la aceptación (fecha, hora, versión e idioma)', async () => {
+  let email;
+  const send = async (_cfg, e) => ((email = e), true);
+  const r = await handleReservation(input({ lang: 'es' }), ctx({ send }));
+  assert.equal(r.status, 200);
+  assert.match(email.text, new RegExp(`Consent: Accepted the Terms of Service and Privacy Policy \\(version ${LEGAL_VERSION}\\) on .*3:04.PM.*CDT, in Spanish \\(es\\)`));
+  assert.ok(email.html.includes('Consent'), 'también en el HTML');
+  assert.ok(email.html.includes(LEGAL_VERSION));
+  // Sin registro (llamada directa a buildEmail sin consentimiento): lo dice, no inventa una aceptación.
+  const bare = buildEmail({ ...input(), passengers: 2, consent: '' }, { now: NOW });
+  assert.match(bare.text, /Consent: Not recorded/);
 });
 
 test('datos inválidos: 422 con errores por campo', async () => {

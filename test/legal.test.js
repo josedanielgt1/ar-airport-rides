@@ -58,7 +58,10 @@ test('privacidad: cubre ubicación, SMS, cookies y derechos en ambos idiomas', (
 test('página principal: enlaces a privacidad y términos, consentimiento y aviso de ubicación', () => {
   const html = read('index.html');
   assert.match(html, /class="site-footer__links"[\s\S]*href="privacy\/"[\s\S]*href="terms\/"/);
-  assert.match(html, /class="legal-note form__consent"[\s\S]*?href="terms\/"[\s\S]*?href="privacy\/"/);
+  // Consentimiento: casilla obligatoria y SIN marcar (sin `checked`), con enlaces a términos y privacidad.
+  assert.match(html, /<input class="check__input" id="f-consent" name="consent" type="checkbox" value="yes" required/);
+  assert.doesNotMatch(html, /id="f-consent"[^>]*\bchecked\b/);
+  assert.match(html, /class="check__text"[\s\S]*?href="terms\/"[\s\S]*?href="privacy\/"/);
   assert.match(html, /id="maps-notice"[\s\S]*?href="privacy\/#location"/);
 });
 
