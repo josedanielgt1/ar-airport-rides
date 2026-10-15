@@ -397,19 +397,27 @@
             <input type="hidden" name="lang" value="en" />
             <input type="hidden" name="ref" value="" />
 
+            <!-- Consentimiento (auditoría SEC-04): casilla obligatoria y SIN marcar. El servidor la exige y el correo
+                 al chofer deja el registro (fecha, hora, versión). TODO(legal): confirmar redacción con un abogado. -->
+            <div class="field field--full field--check">
+              <label class="check" for="f-consent">
+                <input class="check__input" id="f-consent" name="consent" type="checkbox" value="yes" required aria-describedby="f-consent-error" />
+                <span class="check__text">
+                  <span data-i18n="form.consentPre">I agree to the</span>
+                  <a href="terms/" target="_blank" rel="noopener" data-i18n="legal.terms">Terms of Service</a>
+                  <span data-i18n="form.consentAnd">and</span>
+                  <a href="privacy/" target="_blank" rel="noopener" data-i18n="legal.privacy">Privacy Policy</a><span data-i18n="form.consentPost">, and to be contacted about my ride by email, text or phone.</span>
+                </span>
+              </label>
+              <p class="field__error" id="f-consent-error" hidden></p>
+            </div>
+
             <div class="form__actions">
               <button class="btn btn--primary form__submit" type="submit">
                 <span data-i18n="form.submit">Send request</span>
               </button>
               <p class="form__status" role="status" aria-live="polite"></p>
             </div>
-            <!-- Consentimiento breve (auditoría SEC-04). TODO(legal): confirmar redacción con un abogado. -->
-            <p class="legal-note form__consent">
-              <span data-i18n="form.consentPre">By sending, you agree to our</span>
-              <a href="terms/" data-i18n="legal.terms">Terms of Service</a>
-              <span data-i18n="form.consentAnd">and</span>
-              <a href="privacy/" data-i18n="legal.privacy">Privacy Policy</a>.
-            </p>
 
             <div class="form__result" hidden tabindex="-1">
               <p class="form__result-title"></p>

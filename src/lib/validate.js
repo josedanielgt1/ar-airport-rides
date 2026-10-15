@@ -15,7 +15,7 @@ export const LIMITS = {
   passengersMax: 7,
 };
 
-export const FIELDS = ['name', 'phone', 'email', 'service', 'date', 'time', 'origin', 'destination', 'passengers', 'notes'];
+export const FIELDS = ['name', 'phone', 'email', 'service', 'date', 'time', 'origin', 'destination', 'passengers', 'notes', 'consent'];
 
 // Un solo destinatario y nada que pueda romper una cabecera: sin espacios, comillas, comas, punto y coma,
 // ángulos ni saltos de línea. Parte local sin puntos al inicio/fin ni dobles; etiquetas del dominio sin
@@ -154,6 +154,11 @@ export function validateReservation(input, { serviceIds, today, blockedEmailDoma
   data.passengers = Number.isFinite(n) ? n : 0;
 
   text('notes', LIMITS.notes, { required: false, multiline: true });
+
+  // Consentimiento: casilla obligatoria (Términos y Política de privacidad). Una casilla marcada llega como
+  // "yes" (con JS) u "on" (sin JS). El servidor la exige: no basta con que el navegador la pida.
+  data.consent = /^(yes|on|true)$/i.test(oneLine(src.consent)) ? 'yes' : '';
+  if (!data.consent) errors.consent = 'consent';
 
   // Metadatos: valores cerrados, nunca texto libre.
   data.lang = src.lang === 'es' ? 'es' : 'en';

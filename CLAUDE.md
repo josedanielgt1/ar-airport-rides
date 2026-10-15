@@ -55,7 +55,8 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 7. **Footer:** teléfono, correo, WhatsApp (los pagos ya no van aquí).
 
 ## Formulario de reserva
-- Campos: nombre, teléfono, correo (opcional), fecha, hora, origen, destino, pasajeros, notas (opcional).
+- Campos: nombre, teléfono, correo (obligatorio), fecha, hora, origen, destino, pasajeros, notas (opcional) y la **casilla de consentimiento** (obligatoria, sin marcar).
+- **Consentimiento:** casilla `consent` junto al botón: "Acepto los Términos del servicio y la Política de privacidad, y que me contacten sobre mi traslado por correo, mensaje de texto o llamada" (EN/ES, enlaces en pestaña nueva). Sin ella el cliente muestra el error y el **servidor responde 422** (`errors.consent`), no se envía nada. Llega como `yes` (JS) u `on` (sin JS). El correo al chofer trae la fila **Consent**: "Accepted the Terms of Service and Privacy Policy (version AAAA-MM-DD) on <fecha y hora de Austin>, in <idioma>". La versión es `LEGAL_VERSION` en `src/lib/reservation.js`: **cambiarla cada vez que se editen `privacy/` o `terms/`**. El registro vive solo en ese correo (sin base de datos). La casilla no cubre SMS automáticos/marketing: si algún día se envían, hace falta un consentimiento aparte (ver el TODO(legal) en `privacy/index.html`). TODO(legal): revisar la redacción con un abogado.
 - Al enviar: (a) POST a `/api/reserve` que manda el correo al cliente, y (b) abre un enlace `https://wa.me/<numero>?text=<mensaje prellenado>` en el idioma actual del visitante. Sin API de WhatsApp.
 - El correo llega siempre en formato fijo en inglés e indica el idioma del visitante.
 - Validación en cliente y servidor, campo honeypot anti-spam y límite básico de envíos.
@@ -114,7 +115,7 @@ Página one-page para un conductor de traslados privados premium en Austin, TX. 
 
 ## Implementación (decisiones tomadas)
 - Datos editables: `src/config.js` (contacto; los pagos van en variables de entorno, ver `.env.example`), `src/data/services.json`, `src/data/service-area.json`, `src/data/amenities.json`, `src/data/vehicle-photos.json`. El HTML recibe estos datos en el build (plugin en `vite.config.js`, marcadores `@@clave@@` y comentarios `<!-- x:list -->`), así la página es legible sin JS; el JS solo traduce.
-- Formulario: validación compartida en `src/lib/validate.js` (cliente, servidor y simulación). Lógica de servidor en `src/lib/reservation.js`; función Vercel en `api/reserve.js` (Resend por REST con `fetch`, honeypot `company`, límite de 5 envíos / 10 min por IP en memoria, 503 si faltan variables). Correo fijo en inglés con idioma, origen (`ref`: card / direct) y hora de America/Chicago.
+- Formulario: validación compartida en `src/lib/validate.js` (cliente, servidor y simulación). Lógica de servidor en `src/lib/reservation.js`; función Vercel en `api/reserve.js` (Resend por REST con `fetch`, honeypot `hp_trap`, límite de 5 envíos / 10 min por IP en memoria, 503 si faltan variables). Correo fijo en inglés con idioma, origen (`ref`: card / direct) y hora de America/Chicago.
 - Cliente (`src/form.js`): el enlace de WhatsApp se arma antes de esperar al servidor; tras el envío se muestra "Continue on WhatsApp" (enlace normal, sin `window.open`). Si el correo falla, mismo botón + aviso. Sin JS, el servidor redirige a `#reserve-sent` / `#reserve-error`.
 - `npm run dev` incluye una SIMULACIÓN de `/api/reserve` que valida y responde `{ ok, simulated }` sin enviar correos. Para probar el envío real: `vercel dev` con `.env`.
 - `ref` de la URL (`/r` → `/?ref=card`) se guarda en sessionStorage (try/catch) y viaja en el correo.
